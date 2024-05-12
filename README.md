@@ -16,9 +16,7 @@ Sobald der Suppengumbo auf deinem Server online ist, kannst du ihn mit `!lord` h
 
 ## TL;DR
 
-### Einladungslink: [Meddl los!](https://discord.com/oauth2/authorize?client_id=913509665718038548&scope=bot&permissions=277062441280)
-
-#### [Support Server!](https://discord.gg/rwnHns5uzU)
+#### [Support Server!](https://discord.gg/7J4mgSyB8n)
 
 
 
