@@ -1,4 +1,4 @@
-FROM gorialis/discord.py:3.9.4-minimal
+FROM gorialis/discord.py
 
 COPY src/ /app
 WORKDIR /app
