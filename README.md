@@ -1,4 +1,4 @@
-![grafik](https://github.com/user-attachments/assets/6c96422b-7b0f-49a7-b88c-38aac6263229)
+![draaaaa](https://github.com/user-attachments/assets/8c0f4ec0-e1ab-42be-a0aa-a2c08841a916)
 
 # Drachenlord Discord Bot
 
