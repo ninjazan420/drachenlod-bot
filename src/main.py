@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import discord
-from discord.ext import commands, timers
+from discord.ext import commands
 import random
 import requests
 import json
@@ -26,9 +26,33 @@ random_joins = str(os.environ['ENABLE_RANDOM_JOINS']).lower()
 logging_channel = int(os.environ['LOGGING_CHANNEL'])
 blacklisted_guilds = get_blacklisted_guilds(
     str(os.environ['BLACKLISTED_GUILDS']))
+intents = discord.Intents.default()
+intents.message_content = True
 client = commands.Bot(command_prefix=commands.when_mentioned_or(
-    "!"), description='Buttergolem Discord Bot Version: 1.1.0 \nCreated by: \nninja#1337 \n!help für Hilfe \n!lord für random GESCHREI \n!cringe oh no, cringe \n!porn Poste ein neues Bild von porns.to')
-client.timer_manager = timers.TimerManager(client)
+    "!"), description='Buttergolem Discord Bot Version: 1.1.0 \nCreated by: \nninjazan420 \n!help für Hilfe \n!lord für random GESCHREI \n!cringe oh no, cringe', intents=intents)
+
+# Entferne die Standard-Hilfe und erstelle eine eigene
+client.remove_command('help')
+
+@client.command(name='help')
+async def help(ctx):
+    # Bot Beschreibung
+    description = (
+        "Buttergolem Discord Bot Version: 1.1.0\n"
+        "Created by: ninjazan420\n"
+        "!help für Hilfe\n"
+        "!lord für random GESCHREI\n"
+        "!cringe oh no, cringe\n"
+        "\n"  # Leerzeile für bessere Lesbarkeit
+    )
+    
+    # Sammle alle Command-Namen (außer hidden commands)
+    commands_list = sorted([command.name for command in client.commands if not command.hidden])
+    # Formatiere sie als kommagetrennte Liste
+    commands_str = ', '.join(commands_list)
+    
+    # Sende beide Informationen
+    await ctx.send(f'{description}Verfügbare Befehle: {commands_str}')
 
 # simple log function
 async def _log(message):
@@ -85,7 +109,7 @@ async def get_biggest_vc(guild):
 
 # Log every command used by a server to a specific channel
 async def on_command(ctx):
-    channel = client.get_channel(976866742200590427)
+    channel = client.get_channel(1329478135443488769)
     server = ctx.guild.name
     user = ctx.author
     command = ctx.command
@@ -125,14 +149,15 @@ def get_random_datetime(min, max):
 
 # create timer
 async def create_random_timer(min, max):
-    # time has to be datetime.datetime object
-    # get a random time in the next min-max minutes
-    endtime = get_random_datetime(min, max)
-
-    # start timer
-    timers.Timer(client, "reminder", endtime).start()
+    minutes = randint(min, max)
     if logging_channel:
+        endtime = datetime.datetime.now() + datetime.timedelta(minutes=minutes)
         await _log("⤷ Timer gesetzt! Nächster Drachenlordbesuch: " + endtime.strftime("%d-%m-%Y %H:%M:%S"))
+    
+    # Wait for the specified minutes
+    await asyncio.sleep(minutes * 60)
+    # Call the callback directly
+    await on_reminder()
 
 
 # get random filename from /app/data/clips
@@ -146,7 +171,6 @@ def get_random_clipname_cringe():
     return str(random.choice(all_clips))
 
 # this will run when the last timer rings
-@client.event
 async def on_reminder():
     if logging_channel:
         await _log("🟠 TIMER! Sound wird abgespielt...")
@@ -168,7 +192,7 @@ async def on_reminder():
     if logging_channel:
         await _log("⤷ ⏲ Neuer Timer wird gesetzt...")
     
-    # set new timer to ring in 30 to 60 minutes
+    # set new timer to ring in 30 to 120 minutes
     await create_random_timer(30, 120)
 
 
@@ -339,21 +363,6 @@ async def wiwi(ctx):
 @client.command(pass_context=True)
 async def rumwichsen(ctx):
     await voice_quote(ctx, "Rumzuwichsen.mp3")
-
-# porns.to funktion
-
-@client.command()
-async def rnsfw(ctx):
-    # Sende eine Anfrage an die URL und lade die HTML-Seite herunter
-    response = requests.get("https://porns.to/?random")
-    # Parse die HTML-Seite mit BeautifulSoup
-    soup = BeautifulSoup(response.text, 'html.parser')
-    # Suche das Bild auf der Seite
-    image_tag = soup.find('img')
-    # Extrahiere die URL des Bildes aus dem img-Tag
-    image_url = image_tag['src']
-    # Sende das Bild an den Discord-Channel
-    await ctx.send(image_url)
 
 # finally run our bot ;)
 client.run(token)
