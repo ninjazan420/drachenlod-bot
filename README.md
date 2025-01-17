@@ -28,4 +28,5 @@ Für ein Zufallszitat, einfach `!zitat` eingeben
 | `!meddl`      | Na was wohl |
 | `!cringe`      | Wenn dein mate mal wieder cringe war, schmeiß ihm einen random cringe sound entgegen |
 | `!id`		    | Zeigt dir die ID deines Text- & VoiceChannels|
+| `!help`		    | Der Hilfe-Command. Aktuelle Version, Kontaktinfos und mehr|
 
