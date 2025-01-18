@@ -30,3 +30,4 @@ Für ein Zufallszitat, einfach `!zitat` eingeben
 | `!id`		    | Zeigt dir die ID deines Text- & VoiceChannels|
 | `!help`		    | Der Hilfe-Command. Aktuelle Version, Kontaktinfos und mehr|
 
+*Wichtig: da GitHub die Sounddateien wegen DMCA runter genommen hat, sind diese nur über den Bot direkt verfügbar! Falls du den Bot selbst hosten willst und die Sounds brauchst, schreib mir eine nachricht im discord `ninjazan420`
