@@ -11,6 +11,7 @@ import asyncio
 import datetime
 from random import randint
 from bs4 import BeautifulSoup
+from discord import Status  # Neuer Import für Status
 
 
 # config stuff
@@ -29,8 +30,9 @@ blacklisted_guilds = get_blacklisted_guilds(
     str(os.environ['BLACKLISTED_GUILDS']))
 intents = discord.Intents.default()
 intents.message_content = True
+intents.members = True  # Diese Zeile hinzufügen
 client = commands.Bot(command_prefix=commands.when_mentioned_or(
-    "!"), description='Buttergolem Discord Bot Version: 1.3.0 \nCreated by: \nninjazan420 \n!help für Hilfe \n!lord für random GESCHREI \n!cringe oh no, cringe', intents=intents)
+    "!"), description='Buttergolem Discord Bot Version: 1.4.0 \nCreated by: \nninjazan420 \n!help für Hilfe \n!lord für random GESCHREI \n!cringe oh no, cringe', intents=intents)
 
 # Entferne die Standard-Hilfe und erstelle eine eigene
 client.remove_command('help')
@@ -39,7 +41,7 @@ client.remove_command('help')
 async def help(ctx):
     # Bot Beschreibung
     description = (
-        "Buttergolem Discord Bot Version: 1.3.0\n"
+        "Buttergolem Discord Bot Version: 1.4.0\n"
         "Created by: ninjazan420\n"
         "!help für Hilfe\n"
         "!lord für random GESCHREI\n"
@@ -378,6 +380,35 @@ async def server(ctx):
     await ctx.send(message)
     if logging_channel:
         await _log(f"Admin-Befehl !server wurde von {ctx.author.name} ausgeführt")
+
+# Neuer Befehl für Nutzer-Statistiken (nur für Admin)
+@client.command(pass_context=True)
+async def user(ctx):
+    if ctx.author.id != admin_user_id:
+        await ctx.send("Du bist nicht berechtigt, diesen Befehl zu nutzen!")
+        return
+    
+    total_users = 0
+    online_users = 0
+    server_stats = []
+    
+    for guild in client.guilds:
+        guild_total = len(guild.members)
+        guild_online = len([m for m in guild.members if m.status != Status.offline])
+        total_users += guild_total
+        online_users += guild_online
+        server_stats.append(f"• {guild.name}: {guild_total} Nutzer ({guild_online} online)")
+    
+    message = f"```Nutzerstatistiken:\n\n"
+    message += f"Gesamt über alle Server: {total_users} Nutzer\n"
+    message += f"Davon online: {online_users} Nutzer\n\n"
+    message += "Details pro Server:\n"
+    message += "\n".join(server_stats)
+    message += "```"
+    
+    await ctx.send(message)
+    if logging_channel:
+        await _log(f"Admin-Befehl !user wurde von {ctx.author.name} ausgeführt")
 
 # finally run our bot ;)
 client.run(token)
