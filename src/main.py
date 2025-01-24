@@ -29,7 +29,7 @@ blacklisted_guilds = get_blacklisted_guilds(
 intents = discord.Intents.default()
 intents.message_content = True
 client = commands.Bot(command_prefix=commands.when_mentioned_or(
-    "!"), description='Buttergolem Discord Bot Version: 1.1.0 \nCreated by: \nninjazan420 \n!help für Hilfe \n!lord für random GESCHREI \n!cringe oh no, cringe', intents=intents)
+    "!"), description='Buttergolem Discord Bot Version: 1.2.0 \nCreated by: \nninjazan420 \n!help für Hilfe \n!lord für random GESCHREI \n!cringe oh no, cringe', intents=intents)
 
 # Entferne die Standard-Hilfe und erstelle eine eigene
 client.remove_command('help')
@@ -38,7 +38,7 @@ client.remove_command('help')
 async def help(ctx):
     # Bot Beschreibung
     description = (
-        "Buttergolem Discord Bot Version: 1.1.0\n"
+        "Buttergolem Discord Bot Version: 1.2.0\n"
         "Created by: ninjazan420\n"
         "!help für Hilfe\n"
         "!lord für random GESCHREI\n"
@@ -108,12 +108,13 @@ async def get_biggest_vc(guild):
     return voice_channel_with_most_users
 
 # Log every command used by a server to a specific channel
-async def on_command(ctx):
-    channel = client.get_channel(1329478135443488769)
-    server = ctx.guild.name
+@client.event
+async def on_command_completion(ctx):
+    channel = client.get_channel(logging_channel)  # Nutzt den gleichen Channel wie on_ready
+    server = ctx.guild.name if ctx.guild else "DM"
     user = ctx.author
     command = ctx.command
-    await channel.send('{} used {} in {}'.format(user, command, server))
+    await channel.send(f"```\n{datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')} # {user} used {command} in {server}```")
 
 
 # joins the voicechannel from ctx.message.author
