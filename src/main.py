@@ -24,12 +24,13 @@ def get_blacklisted_guilds(guild_str):
 token = str(os.environ['DISCORD_API_TOKEN'])
 random_joins = str(os.environ['ENABLE_RANDOM_JOINS']).lower()
 logging_channel = int(os.environ['LOGGING_CHANNEL'])
+admin_user_id = int(os.environ['ADMIN_USER_ID'])
 blacklisted_guilds = get_blacklisted_guilds(
     str(os.environ['BLACKLISTED_GUILDS']))
 intents = discord.Intents.default()
 intents.message_content = True
 client = commands.Bot(command_prefix=commands.when_mentioned_or(
-    "!"), description='Buttergolem Discord Bot Version: 1.2.0 \nCreated by: \nninjazan420 \n!help für Hilfe \n!lord für random GESCHREI \n!cringe oh no, cringe', intents=intents)
+    "!"), description='Buttergolem Discord Bot Version: 1.3.0 \nCreated by: \nninjazan420 \n!help für Hilfe \n!lord für random GESCHREI \n!cringe oh no, cringe', intents=intents)
 
 # Entferne die Standard-Hilfe und erstelle eine eigene
 client.remove_command('help')
@@ -38,7 +39,7 @@ client.remove_command('help')
 async def help(ctx):
     # Bot Beschreibung
     description = (
-        "Buttergolem Discord Bot Version: 1.2.0\n"
+        "Buttergolem Discord Bot Version: 1.3.0\n"
         "Created by: ninjazan420\n"
         "!help für Hilfe\n"
         "!lord für random GESCHREI\n"
@@ -364,6 +365,19 @@ async def wiwi(ctx):
 @client.command(pass_context=True)
 async def rumwichsen(ctx):
     await voice_quote(ctx, "Rumzuwichsen.mp3")
+
+# Neuer Befehl für Server-Liste (nur für Admin)
+@client.command(pass_context=True)
+async def server(ctx):
+    if ctx.author.id != admin_user_id:
+        await ctx.send("Du bist nicht berechtigt, diesen Befehl zu nutzen!")
+        return
+    
+    server_list = "\n".join([f"• {guild.name} (ID: {guild.id})" for guild in client.guilds])
+    message = f"```Der Bot ist auf folgenden Servern aktiv:\n{server_list}```"
+    await ctx.send(message)
+    if logging_channel:
+        await _log(f"Admin-Befehl !server wurde von {ctx.author.name} ausgeführt")
 
 # finally run our bot ;)
 client.run(token)
