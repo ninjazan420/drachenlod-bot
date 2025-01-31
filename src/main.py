@@ -14,7 +14,7 @@ from bs4 import BeautifulSoup
 from discord import Status  # Neuer Import für Status
 
 
-## config stuff
+# config stuff
 def get_blacklisted_guilds(guild_str):
     if guild_str != "":
         return guild_str.split(",")
@@ -30,10 +30,10 @@ blacklisted_guilds = get_blacklisted_guilds(
     str(os.environ['BLACKLISTED_GUILDS']))
 intents = discord.Intents.default()
 intents.message_content = True
-intents.members = True  # Diese Zeile hinzufügen
-intents.presences = True  # Diese Zeile hinzufügen
+intents.members = True
+intents.presences = True  # Füge presence intent hinzu
 client = commands.Bot(command_prefix=commands.when_mentioned_or(
-    "!"), description='Buttergolem Discord Bot Version: 1.5.0 \nCreated by: \nninjazan420 \n!help für Hilfe \n!lord für random GESCHREI \n!cringe oh no, cringe', intents=intents)
+    "!"), description='Buttergolem Discord Bot Version: 1.6.0 \nCreated by: \nninjazan420 \n!help für Hilfe \n!lord für random GESCHREI \n!cringe oh no, cringe', intents=intents)
 
 # Entferne die Standard-Hilfe und erstelle eine eigene
 client.remove_command('help')
@@ -42,7 +42,7 @@ client.remove_command('help')
 async def help(ctx):
     # Bot Beschreibung
     description = (
-        "Buttergolem Discord Bot Version: 1.5.0\n"
+        "Buttergolem Discord Bot Version: 1.6.0\n"
         "Created by: ninjazan420\n"
         "!help für Hilfe\n"
         "!lord für random GESCHREI\n"
@@ -167,7 +167,7 @@ async def create_random_timer(min, max):
 
 # get random filename from /app/data/clips
 def get_random_clipname():
-    all_clips = os.listdir('app/data/clips')
+    all_clips = os.listdir('/app/data/clips')
     return str(random.choice(all_clips))
 
 # get random cringe from /data/clips/cringe
@@ -394,9 +394,8 @@ async def user(ctx):
     server_stats = []
     
     for guild in client.guilds:
-        guild_total = len(guild.members)
-        # Überprüfe alle Status-Arten, die als "online" gelten
-        guild_online = len([m for m in guild.members if m.status in [Status.online, Status.idle, Status.dnd]])
+        guild_total = guild.member_count
+        guild_online = len([m for m in guild.members if m.status != Status.offline and not m.bot])
         total_users += guild_total
         online_users += guild_online
         server_stats.append(f"• {guild.name}: {guild_total} Nutzer ({guild_online} online)")
@@ -414,4 +413,3 @@ async def user(ctx):
 
 # finally run our bot ;)
 client.run(token)
-
