@@ -27,6 +27,7 @@ Für ein Zufallszitat, einfach `!zitat` eingeben
 | `!zitat`      | Der Quallemann antwortet dir mit einem Zitat seinerseits |
 | `!meddl`      | Na was wohl |
 | `!cringe`      | Wenn dein mate mal wieder cringe war, schmeiß ihm einen random cringe sound entgegen |
+| `!mett`      | 🥓🥓🥓🥓🥓🥓🥓⬜⬜⬜ 7/10 Mett|
 | `!id`		    | Zeigt dir die ID deines Text- & VoiceChannels|
 | `!help`		    | Der Hilfe-Command. Aktuelle Version, Kontaktinfos und mehr|
 | `!server`		    | Admin: listet alle Server auf, auf dem der Golem vor sich hin schimmelt|
