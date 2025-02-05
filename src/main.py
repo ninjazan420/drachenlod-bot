@@ -7,6 +7,7 @@ import json
 import random
 import asyncio
 import datetime
+import platform
 from random import randint
 
 # Third party imports
@@ -15,6 +16,7 @@ from discord.ext import commands
 from discord import Status
 import requests
 from bs4 import BeautifulSoup
+import psutil  # Neuer Import für Systeminfos
 
 # --- Configuration and Setup ---
 def get_blacklisted_guilds(guild_str):
@@ -35,10 +37,14 @@ intents.presences = True
 
 client = commands.Bot(
     command_prefix=commands.when_mentioned_or("!"),
-    description='Buttergolem Discord Bot Version: 2.0.0\nCreated by: ninjazan420',
+    description='Buttergolem Discord Bot Version: 3.0.0\nCreated by: ninjazan420',
     intents=intents
 )
 client.remove_command('help')
+
+# Quiz-Modul importieren und Befehle registrieren
+from quiz import register_quiz_commands
+register_quiz_commands(client)
 
 # --- Helper Functions ---
 async def _log(message):
@@ -62,8 +68,6 @@ async def get_biggest_vc(guild):
 
     if logging_channel:
         await _log(logtext)
-        await _log(f"    ⤷ 🏁 Vollster VC Kanal: {voice_channel_with_most_users.name}")
-
     return voice_channel_with_most_users
 
 # --- Sound Related Functions ---
@@ -147,12 +151,15 @@ async def on_command_completion(ctx):
 @client.command(name='help')
 async def help(ctx):
     description = (
-        "Buttergolem Discord Bot Version: 2.0.0\n"
+        "Buttergolem Discord Bot Version: 3.0.0\n"
         "Created by: ninjazan420\n"
         "!help für Hilfe\n"
         "!lord für random GESCHREI\n"
         "!cringe oh no, cringe\n"
-        "!mett Mettlevel 🥓/10\n\n"
+        "!mett Mettlevel 🥓/10\n"
+        "!lordquiz - alle Informationen zum Quiz\n"
+        "!lordquiz start <anzahl> - Starte ein Quiz mit X Fragen\n"
+        "!lordquiz stop - Beende das aktuelle Quiz\n\n"
     )
     
     commands_list = sorted([command.name for command in client.commands if not command.hidden])
