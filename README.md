@@ -17,6 +17,8 @@ Für ein Zufallszitat, einfach `!zitat` eingeben
 
   ✅ mehr als 100 Zitate
 
+  ❓ Bist du ein Drachi oder ein echter Haider? Teste es im Quiz mit über 150 Fragen!
+  
   🎉 Überraschung alle 30-60 Minuten
 
   # Befehle
@@ -26,10 +28,13 @@ Für ein Zufallszitat, einfach `!zitat` eingeben
 | `!lord`       | Der Kotmidas joint in deinen VoiceChannel und schreit irgendein wirres Zeug |
 | `!zitat`      | Der Quallemann antwortet dir mit einem Zitat seinerseits |
 | `!meddl`      | Na was wohl |
-| `!cringe`      | Wenn dein mate mal wieder cringe war, schmeiß ihm einen random cringe sound entgegen |
 | `!mett`      | 🥓🥓🥓🥓🥓🥓🥓⬜⬜⬜ 7/10 Mett|
+| `!lordquiz`      | Teste ob deine Kreddig berechtigt is, du Drachi! |
+| `!lordquiz start X`      | Startet das Quiz mit X (1-20) Runden |
+| `!lordquiz stop`      | Wenn der Lord mal widder zu stark war, aber du zu schwach, kannst du hiermit das laufende Quiz im Channel abbrechen |
 | `!id`		    | Zeigt dir die ID deines Text- & VoiceChannels|
 | `!help`		    | Der Hilfe-Command. Aktuelle Version, Kontaktinfos und mehr|
+| `!cringe`      | Wenn dein mate mal wieder cringe war, schmeiß ihm einen random cringe sound entgegen |
 | `!server`		    | Admin: listet alle Server auf, auf dem der Golem vor sich hin schimmelt|
 | `!user`		    | Admin: zählt alle user und online-user auf jedem Server auf dem sich deine Instanz befindet|
 
