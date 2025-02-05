@@ -37,7 +37,7 @@ intents.presences = True
 
 client = commands.Bot(
     command_prefix=commands.when_mentioned_or("!"),
-    description='Buttergolem Discord Bot Version: 3.0.0\nCreated by: ninjazan420',
+    description='Buttergolem Discord Bot Version: 3.1.0\nCreated by: ninjazan420',
     intents=intents
 )
 client.remove_command('help')
@@ -133,7 +133,7 @@ async def on_ready():
         await _log("⏳           Server beigetreten           ⏳")
         await _log("🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢")
         
-    await client.change_presence(activity=discord.Game(name="!help du kaschber"))
+    await client.change_presence(activity=discord.Game(name="NEU: !lordquiz"))
     
     if random_joins == "true":
         await _log(f"📛 blacklisted Server: {''.join(str(e) + ',' for e in blacklisted_guilds)}")
@@ -151,7 +151,7 @@ async def on_command_completion(ctx):
 @client.command(name='help')
 async def help(ctx):
     description = (
-        "Buttergolem Discord Bot Version: 3.0.0\n"
+        "Buttergolem Discord Bot Version: 3.1.0\n"
         "Created by: ninjazan420\n"
         "!help für Hilfe\n"
         "!lord für random GESCHREI\n"
