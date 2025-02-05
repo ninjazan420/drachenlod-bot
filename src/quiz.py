@@ -224,16 +224,29 @@ async def end_game(ctx, reason):
         else:
             message = "🎮 **Quiz beendet!**"
             
-            # Füge Gewinner-Nachricht hinzu wenn normal beendet
-            if rankings:
-                winner = rankings[0]
-                message += f"\n\n👑 **HERZLICHEN GLÜCKWUNSCH!**\n{winner.user.mention} ist der neue **Ehrendrachi**!"
+            # Prüfe ob alle 0 Punkte haben
+            if all(p.score == 0 for p in rankings):
+                message += "\n\n😡 **BUUUUUH!** Niemand hat auch nur eine Frage richtig beantwortet! **SCHWACHE LEISTUNG!**"
+            
+            # Prüfe auf Gewinner
+            elif rankings:
+                top_score = rankings[0].score
+                winners = [p for p in rankings if p.score == top_score]
                 
-                # Top 3 Celebration
-                if len(rankings) >= 2:
-                    message += f"\n🥈 Zweiter Platz: {rankings[1].user.mention}"
-                if len(rankings) >= 3:
-                    message += f"\n🥉 Dritter Platz: {rankings[2].user.mention}"
+                if len(winners) == 1:
+                    winner = winners[0]
+                    message += f"\n\n👑 **HERZLICHEN GLÜCKWUNSCH!**\n{winner.user.mention} ist der neue **Ehrendrachi**!"
+                    
+                    # Top 3 Celebration
+                    if len(rankings) >= 2:
+                        message += f"\n🥈 Zweiter Platz: {rankings[1].user.mention}"
+                    if len(rankings) >= 3:
+                        message += f"\n🥉 Dritter Platz: {rankings[2].user.mention}"
+                else:
+                    # Mehrere Gewinner mit gleichem Score
+                    winners_mentions = ", ".join(w.user.mention for w in winners)
+                    message += f"\n\n👥 **UNENTSCHIEDEN!**\n{winners_mentions} haben jeweils **{top_score} Punkte**!"
+                    message += "\n\n🤪 **Zeit für ein Grubbeseggs um den wahren Champion zu ermitteln!**"
         
         rankings_text = "\n".join([
             f"{idx + 1}. {p.user.mention}: **{p.score} Punkte**"
