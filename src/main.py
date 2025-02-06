@@ -18,6 +18,7 @@ import requests
 from bs4 import BeautifulSoup
 import psutil  # Neuer Import für Systeminfos
 import servercounter
+from discord import app_commands  # Neuer Import für Slash-Befehle
 
 # --- Configuration and Setup ---
 def get_blacklisted_guilds(guild_str):
@@ -38,7 +39,7 @@ intents.presences = True
 
 client = commands.Bot(
     command_prefix=commands.when_mentioned_or("!"),
-    description='Buttergolem Discord Bot Version: 3.5.0\nCreated by: ninjazan420',
+    description='Buttergolem Discord Bot Version: 3.6.0\nCreated by: ninjazan420',
     intents=intents
 )
 client.remove_command('help')
@@ -134,7 +135,7 @@ async def on_ready():
         await _log("⏳           Server beigetreten           ⏳")
         await _log("🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢")
         
-    await client.change_presence(activity=discord.Game(name="NEU: !lordquiz"))
+    await client.change_presence(activity=discord.Game(name="!help du kaschber"))
     
     # Set logging channel for servercounter
     client.logging_channel = logging_channel
@@ -147,6 +148,8 @@ async def on_ready():
         if logging_channel:
             await _log("⏲ Erster Timer wird gesetzt...")
         await create_random_timer(1, 1)
+    
+    await client.tree.sync()  # Synchronisiere Slash-Befehle
 
 @client.event
 async def on_command_completion(ctx):
@@ -159,7 +162,7 @@ async def on_command_completion(ctx):
 async def help(ctx):
     embed = discord.Embed(
         title="🤖 Buttergolem Bot Hilfe",
-        description="Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.\n\nVersion: 3.3.0 | Created by: ninjazan420",
+        description="Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.\n\nVersion: 3.6.0 | Created by: ninjazan420",
         color=0xf1c40f
     )
 
@@ -175,7 +178,7 @@ async def help(ctx):
     # Sound-Befehle
     embed.add_field(
         name="🔊 Sound-Befehle",
-        value="• `!lord` - Zufälliges GESCHREI\n"
+        value="• `!lord` - Zufälliges GESCHREI im Voice\n"
               "• `!cringe` - Oh no, cringe!\n"
               "• Weitere Sounds: `!warum`, `!frosch`, `!idiot`, `!meddl`, "
               "`!scheiße`, `!huso`, `!maul2` und mehr...",
@@ -201,7 +204,7 @@ async def help(ctx):
             inline=False
         )
 
-    embed.set_footer(text="Verwende die Befehle in einem Server-Channel!")
+    embed.set_footer(text="Verwende die Befehle in einem Text-Channel!")
     await ctx.send(embed=embed)
 
 @client.command(name='mett')
@@ -323,11 +326,62 @@ async def ping(ctx):
 @client.command()
 @commands.has_permissions(administrator=True)
 async def servercount(ctx):
-    """Führt ein manuelles Servercount-Update durch"""
-    await ctx.send("🔄 Starte manuelles Servercount Update...")
+    """Führt ein manuelles Servercounter-Update durch"""
+    await ctx.send("🔄 Starte manuelles Servercounter Update...")
     success = await servercounter.single_update(client)
     if not success:
-        await ctx.send("❌ Servercount Update fehlgeschlagen! Überprüfe die Logs.")
+        await ctx.send("❌ Servercounter Update fehlgeschlagen! Überprüfe die Logs.")
     
+@client.tree.command(name="hilfe", description="Zeigt die Hilfe für den Buttergolem Bot")
+async def hilfe(interaction: discord.Interaction):
+    embed = discord.Embed(
+        title="🤖 Buttergolem Bot Hilfe",
+        description="Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.\n\nVersion: 3.3.0 | Created by: ninjazan420",
+        color=0xf1c40f
+    )
+
+    # Basis-Befehle
+    embed.add_field(
+        name="📋 Basis-Befehle",
+        value="• `!help` - Zeigt diese Hilfe an\n"
+              "• `!mett` - Zeigt den aktuellen Mett-Level 🥓\n"
+              "• `!zitat` - Zufälliges Zitat",
+        inline=False
+    )
+
+    # Unterhaltung
+    embed.add_field(
+        name="🎭 Unterhaltung",
+        value="• `!lordquiz` - Starte ein Quiz\n"
+              "• `!lordquiz start <1-20>` - Quiz mit X Runden\n"
+              "• `!lordquiz stop` - Beende das Quiz",
+        inline=False
+    )
+
+    # Sound-Befehle
+    embed.add_field(
+        name="🔊 Sound-Befehle",
+        value="• `!lord` - Zufälliges GESCHREI\n"
+              "• `!cringe` - Oh no, cringe!\n"
+              "• `!warum` - WARUM\n"
+              "• `!frosch` - Quak\n"
+              "• `!idiot` - Beleidigung\n"
+              "• `!meddl` - Meddl Leude",
+        inline=False
+    )
+
+    # Weitere Sounds
+    embed.add_field(
+        name="🎵 Weitere Sound-Befehle",
+        value="• `!scheiße`, `!huso`, `!maul2`\n"
+              "• `!bla`, `!maske`, `!regeln`\n"
+              "• `!lol`, `!bastard`, `!lappen`\n"
+              "• `!wiwi`, `!rumwichsen`",
+        inline=False
+    )
+
+    embed.set_footer(text="Der Bot muss die Berechtigung besitzen, in den Voice zu joinen!")
+    await interaction.response.send_message(embed=embed, ephemeral=True)
+
 # Bot starten
 client.run(token)
