@@ -3,8 +3,8 @@ services:
   drachenlord:
     build: .
     environment:
-      DISCORD_API_TOKEN: "BOT_TOKEN"
-      ENABLE_RANDOM_JOINS: "False"
-      LOGGING_CHANNEL: "LOGGING_CHANNEL_ID"
-      BLACKLISTED_GUILDS: "123x,456y"
-      ADMIN_USER_ID: "YOUR_DISCORD_USER_ID_HERE"
+      DISCORD_API_TOKEN: "BOT_TOKEN" # Get your Discord API Token from https://discord.com/developers/applications
+      ENABLE_RANDOM_JOINS: "False/True" # Enables random joins on the biggest VC
+      LOGGING_CHANNEL: "ChannelID" # Logging Channel ID
+      BLACKLISTED_GUILDS: "123x,456y" # Comma seperated
+      ADMIN_USER_ID: "Admin UserID" # CAREFUL also able to use Admin commands
