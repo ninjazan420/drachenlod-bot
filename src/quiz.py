@@ -40,23 +40,49 @@ class QuizButton(Button):
             
         participant = self.game.participants[interaction.user.id]
         
+        # Prüfe ob der Benutzer bereits geantwortet hat
+        if self.participant_answers[participant]['answered']:
+            await interaction.response.send_message("Du hast bereits geantwortet!", ephemeral=True)
+            return
+        
         # Lösche vorherige ephemerale Nachricht, falls vorhanden
         if interaction.user.id in self.game.ephemeral_messages:
             try:
                 await self.game.ephemeral_messages[interaction.user.id].delete()
             except:
-                pass  # Ignoriere Fehler beim Löschen
+                pass
         
         # Aktualisiere die letzte Antwort des Teilnehmers
         self.participant_answers[participant]['answered'] = True
         self.participant_answers[participant]['answer'] = self.index
         
-        # Sende neue ephemerale Nachricht und speichere sie
-        await interaction.response.send_message(
-            f"Antwort auf '{self.label}' registriert!", 
-            ephemeral=True
-        )
-        self.game.ephemeral_messages[interaction.user.id] = await interaction.original_response()
+        try:
+            # Markiere den gewählten Button für ALLE Spieler
+            for button in self.view.children:
+                if button.custom_id == self.custom_id:
+                    button.style = discord.ButtonStyle.secondary
+                    button.label = f"{button.label} ✓"
+                    
+            # Aktualisiere die View
+            try:
+                await interaction.response.edit_message(view=self.view)
+            except discord.NotFound:
+                # Falls die Nachricht nicht mehr existiert, ignorieren wir den Fehler
+                pass
+                
+            # Sende Bestätigung
+            await interaction.followup.send(
+                f"Antwort registriert!", 
+                ephemeral=True
+            )
+            self.game.ephemeral_messages[interaction.user.id] = await interaction.original_response()
+            
+        except Exception as e:
+            # Bei Fehlern versuchen wir zumindest die ephemerale Nachricht zu senden
+            await interaction.response.send_message(
+                f"Antwort wurde registriert, aber die Anzeige konnte nicht aktualisiert werden.", 
+                ephemeral=True
+            )
 
 # Globale Variable für aktive Spiele
 active_games = {}  # {channel_id: {user_id: QuizGame}}
@@ -187,21 +213,26 @@ async def ask_question(ctx):
 
     # Countdown während der Antwortzeit
     for i in range(15, 0, -1):
-        # Aktualisiere Scores für jeden Countdown
-        updated_scores = "\n".join([
-            f"{ctx.guild.get_member(p.user.id).display_name}: {p.score}" 
-            for p in game.participants.values()
-        ])
-        
-        await message.edit(
-            content=(
-                f"🔍 **Frage {game.current_round}/{game.rounds}:**\n"
-                f"{question['question']}\n\n"
-                f"**Punktestand:**\n{updated_scores}\n\n"
-                f"⏰ Noch **{i}** Sekunden zum Antworten!"
-            ),
-            view=view
-        )
+        try:
+            # Aktualisiere Scores für jeden Countdown
+            updated_scores = "\n".join([
+                f"{ctx.guild.get_member(p.user.id).display_name}: {p.score}" 
+                for p in game.participants.values()
+            ])
+            
+            await message.edit(
+                content=(
+                    f"🔍 **Frage {game.current_round}/{game.rounds}:**\n"
+                    f"{question['question']}\n\n"
+                    f"**Punktestand:**\n{updated_scores}\n\n"
+                    f"⏰ Noch **{i}** Sekunden zum Antworten!"
+                ),
+                view=view
+            )
+        except discord.NotFound:
+            # Falls die Nachricht gelöscht wurde, brechen wir den Countdown ab
+            return
+            
         await asyncio.sleep(1)
     
     # Deaktiviere Buttons
