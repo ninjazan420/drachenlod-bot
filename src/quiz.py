@@ -3,6 +3,7 @@ import random
 import asyncio
 import discord
 from discord.ext import commands
+from discord.ui import Button, View
 
 def load_questions():
     with open('/app/data/questions.json', 'r', encoding='utf-8') as file:
@@ -22,10 +23,43 @@ class QuizGame:
         self.active = True
         self.rounds = rounds
         self.current_round = 0
+        self.ephemeral_messages = {}  # {user_id: message}
+
+class QuizButton(Button):
+    def __init__(self, choice: str, index: int, game: QuizGame, question: dict, participant_answers: dict):
+        super().__init__(label=choice, custom_id=f"choice_{index}", style=discord.ButtonStyle.primary)
+        self.index = index
+        self.game = game
+        self.question = question
+        self.participant_answers = participant_answers
+
+    async def callback(self, interaction: discord.Interaction):
+        if interaction.user.id not in self.game.participants:
+            await interaction.response.send_message("Du nimmst nicht am Quiz teil!", ephemeral=True)
+            return
+            
+        participant = self.game.participants[interaction.user.id]
+        
+        # Lösche vorherige ephemerale Nachricht, falls vorhanden
+        if interaction.user.id in self.game.ephemeral_messages:
+            try:
+                await self.game.ephemeral_messages[interaction.user.id].delete()
+            except:
+                pass  # Ignoriere Fehler beim Löschen
+        
+        # Aktualisiere die letzte Antwort des Teilnehmers
+        self.participant_answers[participant]['answered'] = True
+        self.participant_answers[participant]['answer'] = self.index
+        
+        # Sende neue ephemerale Nachricht und speichere sie
+        await interaction.response.send_message(
+            f"Antwort auf '{self.label}' registriert!", 
+            ephemeral=True
+        )
+        self.game.ephemeral_messages[interaction.user.id] = await interaction.original_response()
 
 # Globale Variable für aktive Spiele
 active_games = {}  # {channel_id: {user_id: QuizGame}}
-emoji_numbers = ["1️⃣", "2️⃣", "3️⃣", "4️⃣"]
 questions = load_questions()
 
 async def show_quiz_help(ctx):
@@ -122,82 +156,72 @@ async def ask_question(ctx):
 
     game.current_round += 1
     
-    # Setze has_answered für alle Teilnehmer zurück
     for participant in game.participants.values():
         participant.has_answered = False
 
-    # Wähle eine zufällige Frage
     question = random.choice(questions)
     game.current_question = question
 
-    # Erstelle die Nachricht mit Emojis
-    choices_text = "\n".join([f"{emoji_numbers[i]} {c}" for i, c in enumerate(question['choices'])])
-    
     # Erstelle Scoring-Board
     scores = "\n".join([f"{p.user.name}: {p.score}" for p in game.participants.values()])
     
+    # Erstelle View mit Buttons
+    view = View(timeout=15)
+    participant_answers = {p: {'answered': False, 'answer': None} for p in game.participants.values()}
+
+    for i, choice in enumerate(question['choices']):
+        button = QuizButton(choice, i, game, question, participant_answers)
+        view.add_item(button)
+
     message = await ctx.send(
         f"🔍 **Frage {game.current_round}/{game.rounds}:**\n"
         f"{question['question']}\n\n"
-        f"{choices_text}\n\n"
         f"**Punktestand:**\n{scores}\n\n"
         "Zeit zum Antworten: 15 Sekunden!"
+        , view=view
     )
     game.message = message
 
-    # Füge Reaktionen hinzu
-    for i in range(len(question['choices'])):
-        await message.add_reaction(emoji_numbers[i])
-
-    participant_answers = {p: {'answered': False, 'answer': None} for p in game.participants.values()}
-    
-    try:
-        # Warte auf Reaktionen (15 Sekunden)
-        end_time = asyncio.get_event_loop().time() + 15
-        while asyncio.get_event_loop().time() < end_time:
-            try:
-                reaction, user = await ctx.bot.wait_for(
-                    'reaction_add',
-                    timeout=end_time - asyncio.get_event_loop().time(),
-                    check=lambda reaction, user: (
-                        user.id in game.participants and
-                        not game.participants[user.id].has_answered and
-                        str(reaction.emoji) in emoji_numbers and
-                        reaction.message.id == message.id
-                    )
-                )
-                
-                participant = game.participants[user.id]
-                participant.has_answered = True
-                selected_answer = emoji_numbers.index(str(reaction.emoji))
-                
-                participant_answers[participant]['answered'] = True
-                participant_answers[participant]['answer'] = selected_answer
-                
-                if selected_answer == question['answer']:
-                    participant.score += 1
-                
-            except asyncio.TimeoutError:
-                continue
-
-        # Zeige Auflösung
-        results = await format_answer_results(question, participant_answers)
-        
-        # Aktualisiere Punktestand
-        scores = "\n".join([f"{p.user.name}: {p.score} Punkte" for p in game.participants.values()])
-        
-        await ctx.send(
-            "⏰ **Zeit abgelaufen! Hier ist die Auflösung:**\n\n"
-            f"{results}\n\n"
-            f"**Aktueller Punktestand:**\n{scores}"
+    # Countdown während der Antwortzeit
+    for i in range(15, 0, -1):
+        await message.edit(
+            content=(
+                f"🔍 **Frage {game.current_round}/{game.rounds}:**\n"
+                f"{question['question']}\n\n"
+                f"**Punktestand:**\n{scores}\n\n"
+                f"⏰ Noch **{i}** Sekunden zum Antworten!"
+            ),
+            view=view
         )
-        
-        await asyncio.sleep(3)
-        await ask_question(ctx)
+        await asyncio.sleep(1)
+    
+    # Deaktiviere Buttons
+    for child in view.children:
+        child.disabled = True
+    await message.edit(view=view)
 
-    except Exception as e:
-        print(f"Error in ask_question: {e}")
-        await end_game(ctx, "Ein Fehler ist aufgetreten!")
+    # Verarbeite die endgültigen Antworten und verteile Punkte
+    for participant, answers in participant_answers.items():
+        if answers['answered'] and answers['answer'] == question['answer']:
+            participant.score += 1
+            await ctx.send(f"✅ {participant.user.mention} - Richtige Antwort!", delete_after=5)
+        elif answers['answered']:
+            await ctx.send(f"❌ {participant.user.mention} - Leider falsch!", delete_after=5)
+
+    # Zeige Auflösung
+    results = await format_answer_results(question, participant_answers)
+    
+    # Aktualisiere Punktestand
+    scores = "\n".join([f"{p.user.name}: {p.score} Punkte" for p in game.participants.values()])
+    
+    await ctx.send(
+        "⏰ **Zeit abgelaufen! Hier ist die Auflösung:**\n\n"
+        f"{results}\n\n"
+        f"**Aktueller Punktestand:**\n{scores}"
+    )
+    
+    await asyncio.sleep(3)
+    await ask_question(ctx)
 
 async def stop_quiz(ctx):
     """Beendet das aktive Quiz."""
