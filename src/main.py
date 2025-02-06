@@ -37,7 +37,7 @@ intents.presences = True
 
 client = commands.Bot(
     command_prefix=commands.when_mentioned_or("!"),
-    description='Buttergolem Discord Bot Version: 3.1.0\nCreated by: ninjazan420',
+    description='Buttergolem Discord Bot Version: 3.2.0\nCreated by: ninjazan420',
     intents=intents
 )
 client.remove_command('help')
@@ -150,22 +150,52 @@ async def on_command_completion(ctx):
 # --- Basic Commands ---
 @client.command(name='help')
 async def help(ctx):
-    description = (
-        "Buttergolem Discord Bot Version: 3.1.0\n"
-        "Created by: ninjazan420\n"
-        "!help für Hilfe\n"
-        "!lord für random GESCHREI\n"
-        "!cringe oh no, cringe\n"
-        "!mett Mettlevel 🥓/10\n"
-        "!lordquiz - alle Informationen zum Quiz\n"
-        "!lordquiz start <anzahl> - Starte ein Quiz mit X Fragen\n"
-        "!lordquiz stop - Beende das aktuelle Quiz\n\n"
+    embed = discord.Embed(
+        title="🤖 Buttergolem Bot Hilfe",
+        description="Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.\n\nVersion: 3.2.0 | Created by: ninjazan420",
+        color=0xf1c40f
     )
-    
-    commands_list = sorted([command.name for command in client.commands if not command.hidden])
-    commands_str = ', '.join(commands_list)
-    
-    await ctx.send(f'{description}Verfügbare Befehle: {commands_str}')
+
+    # Basis-Befehle
+    embed.add_field(
+        name="📋 Basis-Befehle",
+        value="• `!help` - Zeigt diese Hilfe an\n"
+              "• `!mett` - Zeigt den aktuellen Mett-Level 🥓\n"
+              "• `!zitat` - Zufälliges Zitat",
+        inline=False
+    )
+
+    # Sound-Befehle
+    embed.add_field(
+        name="🔊 Sound-Befehle",
+        value="• `!lord` - Zufälliges GESCHREI\n"
+              "• `!cringe` - Oh no, cringe!\n"
+              "• Weitere Sounds: `!warum`, `!frosch`, `!idiot`, `!meddl`, "
+              "`!scheiße`, `!huso`, `!maul2` und mehr...",
+        inline=False
+    )
+
+    # Quiz-Befehle
+    embed.add_field(
+        name="❓ Quiz-Befehle",
+        value="• `!lordquiz` - Quiz-Informationen\n"
+              "• `!lordquiz start <Anzahl Runden (1-20)>` - Startet Quiz\n"
+              "• `!lordquiz stop` - Beende Quiz",
+        inline=False
+    )
+
+    # Admin-Befehle
+    if ctx.author.guild_permissions.administrator:
+        embed.add_field(
+            name="⚙️ Admin-Befehle",
+            value="• `!server` - Server-Liste\n"
+                  "• `!user` - Nutzerstatistiken\n"
+                  "• `!ping` - Bot-Latenz",
+            inline=False
+        )
+
+    embed.set_footer(text="Verwende die Befehle in einem Server-Channel!")
+    await ctx.send(embed=embed)
 
 @client.command(name='mett')
 async def mett_level(ctx):
@@ -276,5 +306,12 @@ async def user(ctx):
     if logging_channel:
         await _log(f"Admin-Befehl !user wurde von {ctx.author.name} ausgeführt")
 
+
+@client.command()
+@commands.has_permissions(administrator=True)
+async def ping(ctx):
+    latency = round(client.latency * 1000)
+    await ctx.send(f"🏓 Pong! Bot Latenz: {latency}ms")
+    
 # Bot starten
 client.run(token)
