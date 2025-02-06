@@ -162,8 +162,11 @@ async def ask_question(ctx):
     question = random.choice(questions)
     game.current_question = question
 
-    # Erstelle Scoring-Board
-    scores = "\n".join([f"{p.user.name}: {p.score}" for p in game.participants.values()])
+    # Erstelle Scoring-Board mit Server-Nicknamen
+    scores = "\n".join([
+        f"{ctx.guild.get_member(p.user.id).display_name}: {p.score}" 
+        for p in game.participants.values()
+    ])
     
     # Erstelle View mit Buttons
     view = View(timeout=15)
@@ -184,11 +187,17 @@ async def ask_question(ctx):
 
     # Countdown während der Antwortzeit
     for i in range(15, 0, -1):
+        # Aktualisiere Scores für jeden Countdown
+        updated_scores = "\n".join([
+            f"{ctx.guild.get_member(p.user.id).display_name}: {p.score}" 
+            for p in game.participants.values()
+        ])
+        
         await message.edit(
             content=(
                 f"🔍 **Frage {game.current_round}/{game.rounds}:**\n"
                 f"{question['question']}\n\n"
-                f"**Punktestand:**\n{scores}\n\n"
+                f"**Punktestand:**\n{updated_scores}\n\n"
                 f"⏰ Noch **{i}** Sekunden zum Antworten!"
             ),
             view=view
@@ -208,11 +217,14 @@ async def ask_question(ctx):
         elif answers['answered']:
             await ctx.send(f"❌ {participant.user.mention} - Leider falsch!", delete_after=5)
 
-    # Zeige Auflösung
+    # Zeige Auflösung mit Server-Nicknamen
     results = await format_answer_results(question, participant_answers)
     
-    # Aktualisiere Punktestand
-    scores = "\n".join([f"{p.user.name}: {p.score} Punkte" for p in game.participants.values()])
+    # Aktualisiere Punktestand mit Server-Nicknamen
+    scores = "\n".join([
+        f"{ctx.guild.get_member(p.user.id).display_name}: {p.score} Punkte" 
+        for p in game.participants.values()
+    ])
     
     await ctx.send(
         "⏰ **Zeit abgelaufen! Hier ist die Auflösung:**\n\n"
@@ -273,7 +285,7 @@ async def end_game(ctx, reason):
                     message += "\n\n🤪 **Zeit für ein Grubbeseggs um den wahren Champion zu ermitteln!**"
         
         rankings_text = "\n".join([
-            f"{idx + 1}. {p.user.mention}: **{p.score} Punkte**"
+            f"{idx + 1}. {ctx.guild.get_member(p.user.id).display_name}: **{p.score} Punkte**"
             for idx, p in enumerate(rankings)
         ])
         
