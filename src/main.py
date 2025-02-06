@@ -17,6 +17,7 @@ from discord import Status
 import requests
 from bs4 import BeautifulSoup
 import psutil  # Neuer Import für Systeminfos
+import servercounter
 
 # --- Configuration and Setup ---
 def get_blacklisted_guilds(guild_str):
@@ -37,7 +38,7 @@ intents.presences = True
 
 client = commands.Bot(
     command_prefix=commands.when_mentioned_or("!"),
-    description='Buttergolem Discord Bot Version: 3.3.0\nCreated by: ninjazan420',
+    description='Buttergolem Discord Bot Version: 3.5.0\nCreated by: ninjazan420',
     intents=intents
 )
 client.remove_command('help')
@@ -134,6 +135,12 @@ async def on_ready():
         await _log("🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢")
         
     await client.change_presence(activity=discord.Game(name="NEU: !lordquiz"))
+    
+    # Set logging channel for servercounter
+    client.logging_channel = logging_channel
+    
+    # Start server counter
+    client.loop.create_task(servercounter.update_server_count(client))
     
     if random_joins == "true":
         await _log(f"📛 blacklisted Server: {''.join(str(e) + ',' for e in blacklisted_guilds)}")
@@ -312,6 +319,15 @@ async def user(ctx):
 async def ping(ctx):
     latency = round(client.latency * 1000)
     await ctx.send(f"🏓 Pong! Bot Latenz: {latency}ms")
+
+@client.command()
+@commands.has_permissions(administrator=True)
+async def servercount(ctx):
+    """Führt ein manuelles Servercount-Update durch"""
+    await ctx.send("🔄 Starte manuelles Servercount Update...")
+    success = await servercounter.single_update(client)
+    if not success:
+        await ctx.send("❌ Servercount Update fehlgeschlagen! Überprüfe die Logs.")
     
 # Bot starten
 client.run(token)
