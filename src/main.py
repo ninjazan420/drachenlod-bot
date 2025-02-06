@@ -37,7 +37,7 @@ intents.presences = True
 
 client = commands.Bot(
     command_prefix=commands.when_mentioned_or("!"),
-    description='Buttergolem Discord Bot Version: 3.2.0\nCreated by: ninjazan420',
+    description='Buttergolem Discord Bot Version: 3.3.0\nCreated by: ninjazan420',
     intents=intents
 )
 client.remove_command('help')
@@ -152,7 +152,7 @@ async def on_command_completion(ctx):
 async def help(ctx):
     embed = discord.Embed(
         title="🤖 Buttergolem Bot Hilfe",
-        description="Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.\n\nVersion: 3.2.0 | Created by: ninjazan420",
+        description="Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.\n\nVersion: 3.3.0 | Created by: ninjazan420",
         color=0xf1c40f
     )
 
