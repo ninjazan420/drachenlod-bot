@@ -12,6 +12,7 @@ from random import randint
 import uuid  # Neu für eindeutige IDs
 from collections import defaultdict  # Neu für Nachrichten-Tracking
 import time  # Neu für Rate-Limiting
+import math  # Neu für Seitenberechnung
 
 # Third party imports
 import discord
@@ -42,7 +43,7 @@ intents.presences = True
 
 client = commands.Bot(
     command_prefix=commands.when_mentioned_or("!"),
-    description='Buttergolem Discord Bot Version: 3.8.2\nCreated by: ninjazan420',
+    description='Buttergolem Discord Bot Version: 3.9.1\nCreated by: ninjazan420',
     intents=intents
 )
 client.remove_command('help')
@@ -198,11 +199,62 @@ async def on_command_completion(ctx):
     await channel.send(f"```\n{datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')} # {ctx.author} used {ctx.command} in {server}```")
 
 # --- Basic Commands ---
+class SoundBrowser:
+    def __init__(self, clips_dir='/app/data/clips'):
+        self.clips_dir = clips_dir
+        self.sounds_per_page = 15
+        self.cached_sounds = []
+        self.load_sounds()
+
+    def load_sounds(self):
+        """Lädt alle Sound-Dateien und bereitet sie für die Anzeige vor"""
+        sounds = []
+        for file in os.listdir(self.clips_dir):
+            if file.endswith('.mp3'):
+                # Entferne .mp3 und erstelle den Befehl-Namen
+                command_name = os.path.splitext(file)[0].lower()
+                sounds.append({
+                    'file': file,
+                    'command': command_name
+                })
+        self.cached_sounds = sorted(sounds, key=lambda x: x['command'])
+        self.total_pages = math.ceil(len(self.cached_sounds) / self.sounds_per_page)
+
+    def get_page(self, page):
+        """Gibt die Sounds für eine bestimmte Seite zurück"""
+        start_idx = (page - 1) * self.sounds_per_page
+        end_idx = start_idx + self.sounds_per_page
+        return self.cached_sounds[start_idx:end_idx]
+
+    async def create_embed(self, page):
+        """Erstellt ein Embed für die aktuelle Seite"""
+        sounds = self.get_page(page)
+        
+        embed = discord.Embed(
+            title="🎵 Verfügbare Sounds",
+            description="Nutze `!sound <name>` um einen Sound abzuspielen",
+            color=0x3498db
+        )
+
+        # Erstelle eine formatierte Liste der Sounds
+        sound_list = []
+        for idx, sound in enumerate(sounds, 1):
+            sound_list.append(f"`{sound['command']}`")
+        
+        if sound_list:
+            embed.add_field(name="Sounds auf dieser Seite:", value=" • ".join(sound_list), inline=False)
+        
+        embed.set_footer(text=f"Seite {page}/{self.total_pages} • Navigiere mit ⬅️ ➡️")
+        return embed
+
+# Erstelle eine globale Instanz des SoundBrowsers
+sound_browser = SoundBrowser()
+
 async def create_help_embed(is_admin: bool) -> discord.Embed:
     """Erstellt das Help-Embed basierend auf den Berechtigungen"""
     embed = discord.Embed(
         title="🤖 Buttergolem Bot Hilfe",
-        description="Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.\n\nVersion: 3.8.2 | Created by: ninjazan420",
+        description="Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.\n\nVersion: 3.9.1 | Created by: ninjazan420",
         color=0xf1c40f
     )
 
@@ -220,8 +272,8 @@ async def create_help_embed(is_admin: bool) -> discord.Embed:
         name="🔊 Sound-Befehle",
         value="• `!lord` - Zufälliges GESCHREI im Voice\n"
               "• `!cringe` - Oh no, cringe!\n"
-              "• Weitere Sounds: `!warum`, `!frosch`, `!idiot`, `!meddl`, "
-              "`!scheiße`, `!huso`, `!maul2` und mehr...",
+              "• `!sounds` - Zeigt alle verfügbaren Sounds\n"
+              "• `!sound <name>` - Spielt einen bestimmten Sound ab",
         inline=False
     )
 
@@ -326,25 +378,63 @@ async def cringe(ctx):
     else:
         await ctx.message.channel.send('Das funktioniert nur in serverchannels du scheiß HAIDER')
 
-# --- Individual Sound Commands ---
-# Dictionary für Sound-Kommandos
-SOUND_COMMANDS = {
-    'warum': 'warum.mp3', 'frosch': 'frosch.mp3', 'furz': 'furz.mp3',
-    'idiot': 'idiot.mp3', 'meddl': 'meddl.mp3', 'scheiße': 'scheiße.mp3',
-    'durcheinander': 'Durcheinander.mp3', 'wiebitte': 'Wiebitte.mp3',
-    'dick': 'Dick.mp3', 'vorbei': 'Vorbei.mp3', 'hahn': 'Hahn.mp3',
-    'bla': 'Blablabla.mp3', 'maske': 'Maske.mp3', 'lockdown': 'Regeln.mp3',
-    'regeln': 'Regeln2.mp3', 'csu': 'Seehofer.mp3', 'lol': 'LOL.mp3',
-    'huso': 'Huso.mp3', 'bastard': 'Bastard.mp3', 'lappen': 'Lappen.mp3',
-    'maul2': 'Maul2.mp3', 'wiwi': 'Wiwi.mp3', 'rumwichsen': 'Rumzuwichsen.mp3'
-}
+@client.command(name='sounds')
+@cooldown_check()
+async def list_sounds(ctx):
+    """Zeigt eine durchblätterbare Liste aller verfügbaren Sounds"""
+    embed = await sound_browser.create_embed(1)
+    message = await ctx.send(embed=embed)
+    
+    # Füge Reaktionen hinzu
+    await message.add_reaction("⬅️")
+    await message.add_reaction("➡️")
 
-# Automatisch Kommandos für alle Sounds erstellen
-for cmd_name, sound_file in SOUND_COMMANDS.items():
-    @client.command(name=cmd_name)
-    @cooldown_check()
-    async def sound_cmd(ctx, sound_file=sound_file):
-        await voice_quote(ctx, sound_file)
+    def check(reaction, user):
+        return user == ctx.author and str(reaction.emoji) in ["⬅️", "➡️"]
+
+    current_page = 1
+    while True:
+        try:
+            reaction, user = await client.wait_for("reaction_add", timeout=60.0, check=check)
+
+            if str(reaction.emoji) == "➡️" and current_page < sound_browser.total_pages:
+                current_page += 1
+            elif str(reaction.emoji) == "⬅️" and current_page > 1:
+                current_page -= 1
+            
+            await message.edit(embed=await sound_browser.create_embed(current_page))
+            await message.remove_reaction(reaction, user)
+
+        except asyncio.TimeoutError:
+            break
+
+@client.tree.command(name="sounds", description="Zeigt eine Liste aller verfügbaren Sounds")
+async def sounds_slash(interaction: discord.Interaction):
+    embed = await sound_browser.create_embed(1)
+    await interaction.response.send_message(embed=embed, ephemeral=True)
+
+@client.command(name='sound')
+@cooldown_check()
+async def play_sound(ctx, sound_name: str):
+    """Spielt einen bestimmten Sound ab"""
+    sound_name = sound_name.lower()
+    
+    # Suche nach dem Sound in der Cache-Liste
+    sound_file = None
+    for sound in sound_browser.cached_sounds:
+        if sound['command'] == sound_name:
+            sound_file = sound['file']
+            break
+    
+    if not sound_file:
+        await ctx.send("❌ Sound nicht gefunden! Nutze `!sounds` um alle verfügbaren Sounds zu sehen.")
+        return
+        
+    if hasattr(ctx.message.author, "voice"):
+        voice_channel = ctx.message.author.voice.channel
+        await playsound(voice_channel, sound_file)
+    else:
+        await ctx.send('Das funktioniert nur in Voice-Channels du scheiß HAIDER')
 
 # --- Admin Commands ---
 @client.command(pass_context=True)
