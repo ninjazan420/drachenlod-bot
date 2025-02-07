@@ -3,5 +3,4 @@ beautifulsoup4
 aiohttp>=3.8.0
 discord.py 
 python-dotenv 
-requests 
-beautifulsoup4
+requests
