@@ -42,7 +42,7 @@ intents.presences = True
 
 client = commands.Bot(
     command_prefix=commands.when_mentioned_or("!"),
-    description='Buttergolem Discord Bot Version: 3.7.0\nCreated by: ninjazan420',
+    description='Buttergolem Discord Bot Version: 3.8.2\nCreated by: ninjazan420',
     intents=intents
 )
 client.remove_command('help')
@@ -71,11 +71,22 @@ def cooldown_check():
     async def predicate(ctx):
         if is_on_cooldown(ctx.author.id):
             remaining = round(5 - (time.time() - user_cooldowns[ctx.author.id]), 1)
-            await ctx.send(f"⏳ Nicht so schnell! Bitte warte noch {remaining} Sekunden.", delete_after=5)
+            await ctx.send(f"⏳ Nicht so schnell! Bitte warte noch {remaining} Sekunden.")
             return False
         update_cooldown(ctx.author.id)
         return True
     return commands.check(predicate)
+
+# Add error handler for cooldown check failures
+@client.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CheckFailure):
+        # Error already handled in cooldown_check
+        pass
+    else:
+        # Log other errors
+        if logging_channel:
+            await _log(f"Error in {ctx.command}: {str(error)}")
 
 # --- Helper Functions ---
 async def _log(message):
@@ -191,7 +202,7 @@ async def create_help_embed(is_admin: bool) -> discord.Embed:
     """Erstellt das Help-Embed basierend auf den Berechtigungen"""
     embed = discord.Embed(
         title="🤖 Buttergolem Bot Hilfe",
-        description="Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.\n\nVersion: 3.7.0 | Created by: ninjazan420",
+        description="Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.\n\nVersion: 3.8.2 | Created by: ninjazan420",
         color=0xf1c40f
     )
 
@@ -270,17 +281,22 @@ async def mett_level(ctx):
 @client.command(pass_context=True)
 @cooldown_check()
 async def zitat(ctx):
-    if ctx.message.author == client.user:
-        return
+    try:
+        if ctx.message.author == client.user:
+            return
 
-    with open('/app/data/quotes.json', mode="r", encoding="utf-8") as quotes_file:
-        buttergolem_quotes = json.load(quotes_file)
-    with open('/app/data/names.json', mode="r", encoding="utf-8") as names_file:
-        buttergolem_names = json.load(names_file)
+        with open('/app/data/quotes.json', mode="r", encoding="utf-8") as quotes_file:
+            buttergolem_quotes = json.load(quotes_file)
+        with open('/app/data/names.json', mode="r", encoding="utf-8") as names_file:
+            buttergolem_names = json.load(names_file)
 
-    name = random.choice(buttergolem_names)
-    quote = random.choice(buttergolem_quotes)
-    await ctx.message.channel.send(f"{name} sagt: {quote}")
+        name = random.choice(buttergolem_names)
+        quote = random.choice(buttergolem_quotes)
+        await ctx.message.channel.send(f"{name} sagt: {quote}")
+    except Exception as e:
+        if logging_channel:
+            await _log(f"Error in zitat command: {str(e)}")
+        await ctx.send("Ein Fehler ist aufgetreten beim Ausführen des Befehls.")
 
 # --- Utility Commands ---
 @client.command(pass_context=True)
@@ -407,7 +423,7 @@ async def contact(ctx, *, message=None):
         title="📨 Neue Nachricht",
         description=message,
         color=0x3498db,
-        timestamp=datetime.datetime.utcnow()
+        timestamp=datetime.datetime.now(datetime.UTC)
     )
     embed.add_field(name="Absender", value=f"{ctx.author} (ID: {ctx.author.id})")
     embed.add_field(name="Server", value=ctx.guild.name if ctx.guild else "DM")
@@ -444,7 +460,7 @@ async def reply(ctx, message_id=None, *, response=None):
             title="📩 Antwort vom Administrator",
             description=response,
             color=0x2ecc71,
-            timestamp=datetime.datetime.utcnow()
+            timestamp=datetime.datetime.now(datetime.UTC)
         )
         embed.add_field(name="Bezugnehmend auf ID", value=message_id)
         
