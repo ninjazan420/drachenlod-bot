@@ -36,29 +36,8 @@ Für ein Zufallszitat, einfach `!zitat` eingeben
 |--------|--------------|
 | `!lord` | Zufälliges GESCHREI im Voice-Channel |
 | `!cringe` | Zufälliger Cringe-Sound wenn's mal wieder zu viel wird |
-| `!warum` | WARUM?! |
-| `!frosch` | Quak Quak |
-| `!idiot` | Klassischer Idiot-Sound |
-| `!meddl` | Meddl Leude! |
-| `!scheiße` | Wenn mal wieder alles scheiße ist |
-| `!huso` | Du H...! |
-| `!maul2` | Halt dein Maul! |
-| `!furz` | *pfffffft* |
-| `!dick` | Dicke Eier! |
-| `!vorbei` | Es ist vorbei! |
-| `!hahn` | Kikeriki |
-| `!bla` | Blablabla... |
-| `!maske` | Corona-Special |
-| `!lockdown` | Noch mehr Corona |
-| `!regeln` | Regeln sind Regeln |
-| `!csu` | Politik vom Feinsten |
-| `!lol` | LOL! |
-| `!bastard` | Du Bastard! |
-| `!lappen` | Du Lappen! |
-| `!wiwi` | Wenn's mal dringend ist |
-| `!rumwichsen` | Kein Kommentar |
-| `!durcheinander` | Alles durcheinander |
-| `!wiebitte` | Wie bitte?! |
+| `!sounds` | Zeigt eine durchblätterbare Liste aller verfügbaren Sounds |
+| `!sound <name>` | Spielt den angegebenen Sound ab |
 
 ## ❓ Quiz-Befehle
 | Befehl | Beschreibung |
