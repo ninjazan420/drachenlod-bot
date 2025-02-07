@@ -21,22 +21,60 @@ Für ein Zufallszitat, einfach `!zitat` eingeben
   
   🎉 Überraschung alle 30-60 Minuten
 
-  # Befehle
+# Befehle
 
-| Befehl		| Beschreibung |
-| ------------- | ------------- |
-| `!lord`       | Der Kotmidas joint in deinen VoiceChannel und schreit irgendein wirres Zeug |
-| `!zitat`      | Der Quallemann antwortet dir mit einem Zitat seinerseits |
-| `!meddl`      | Na was wohl |
-| `!mett`      | 🥓🥓🥓🥓🥓🥓🥓⬜⬜⬜ 7/10 Mett|
-| `!lordquiz`      | Teste ob deine Kreddig berechtigt is, du Drachi! |
-| `!lordquiz start X`      | Startet das Quiz mit X (1-20) Runden |
-| `!lordquiz stop`      | Wenn der Lord mal widder zu stark war, aber du zu schwach, kannst du hiermit das laufende Quiz im Channel abbrechen |
-| `!id`		    | Zeigt dir die ID deines Text- & VoiceChannels|
-| `!help`		    | Der Hilfe-Command. Aktuelle Version, Kontaktinfos und mehr|
-| `!cringe`      | Wenn dein mate mal wieder cringe war, schmeiß ihm einen random cringe sound entgegen |
-| `!server`		    | Admin: listet alle Server auf, auf dem der Golem vor sich hin schimmelt|
-| `!user`		    | Admin: zählt alle user und online-user auf jedem Server auf dem sich deine Instanz befindet|
+## 📋 Basis-Befehle
+| Befehl | Beschreibung |
+|--------|--------------|
+| `!hilfe` | Zeigt die Hilfeseite mit allen Befehlen und der aktuellen Version an |
+| `!mett` | Zeigt den aktuellen Mett-Level mit Mett-Meter an 🥓 |
+| `!zitat` | Der Quallemann antwortet dir mit einem zufälligen Zitat |
+| `!kontakt` | Sende eine Nachricht an den Bot-Administrator |
+
+## 🔊 Sound-Befehle
+| Befehl | Beschreibung |
+|--------|--------------|
+| `!lord` | Zufälliges GESCHREI im Voice-Channel |
+| `!cringe` | Zufälliger Cringe-Sound wenn's mal wieder zu viel wird |
+| `!warum` | WARUM?! |
+| `!frosch` | Quak Quak |
+| `!idiot` | Klassischer Idiot-Sound |
+| `!meddl` | Meddl Leude! |
+| `!scheiße` | Wenn mal wieder alles scheiße ist |
+| `!huso` | Du H...! |
+| `!maul2` | Halt dein Maul! |
+| `!furz` | *pfffffft* |
+| `!dick` | Dicke Eier! |
+| `!vorbei` | Es ist vorbei! |
+| `!hahn` | Kikeriki |
+| `!bla` | Blablabla... |
+| `!maske` | Corona-Special |
+| `!lockdown` | Noch mehr Corona |
+| `!regeln` | Regeln sind Regeln |
+| `!csu` | Politik vom Feinsten |
+| `!lol` | LOL! |
+| `!bastard` | Du Bastard! |
+| `!lappen` | Du Lappen! |
+| `!wiwi` | Wenn's mal dringend ist |
+| `!rumwichsen` | Kein Kommentar |
+| `!durcheinander` | Alles durcheinander |
+| `!wiebitte` | Wie bitte?! |
+
+## ❓ Quiz-Befehle
+| Befehl | Beschreibung |
+|--------|--------------|
+| `!lordquiz` | Zeigt Informationen zum Quiz |
+| `!lordquiz start X` | Startet ein Quiz mit X Runden (1-20) |
+| `!lordquiz stop` | Beendet das aktuelle Quiz im Channel |
+
+## ⚙️ Admin-Befehle
+| Befehl | Beschreibung |
+|--------|--------------|
+| `!server` | Listet alle Server auf, auf denen der Bot aktiv ist |
+| `!user` | Zeigt Nutzerstatistiken aller Server |
+| `!ping` | Zeigt die Bot-Latenz |
+| `!id` | Zeigt die IDs des aktuellen Text- & Voice-Channels |
+| `!antwort` | Antwortet auf Kontaktnachrichten von Nutzern |
 
 ## Installation
 
