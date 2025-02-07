@@ -218,5 +218,150 @@
         "question": "Welcher Journalist hat die erste große Doku über Rainer gemacht?",
         "choices": ["Clemens Schöll", "Sebastian Schulz", "Dennis Leiffels", "Christian Solmecke"],
         "answer": 0
+    },
+        {
+        "question": "Welches dieser Spiele hat Rainer nie gespielt?",
+        "choices": ["Minecraft", "Skyrim", "The Witcher 3", "GTA IV"],
+        "answer": 2
+    },
+    {
+        "question": "Was ist Rainers meistgesperrtes Social-Media-Konto?",
+        "choices": ["YouTube", "Twitter", "Twitch", "TikTok"],
+        "answer": 0
+    },
+    {
+        "question": "Welche Aussage hat Rainer im Stream gesagt?",
+        "choices": ["Ich bin der intelligenteste Mensch", "Ich bin härter als Leben", "Ich habe Abi gemacht", "Ich bin Informatiker"],
+        "answer": 1
+    },
+    {
+        "question": "Welches dieser Getränke bevorzugt Rainer?",
+        "choices": ["Fanta", "Cola", "Spezi", "Eistee"],
+        "answer": 2
+    },
+    {
+        "question": "Welche Farbe hatte Rainers berühmtes Stirnband?",
+        "choices": ["Rot", "Blau", "Grün", "Gelb"],
+        "answer": 0
+    },
+    {
+        "question": "Welchen dieser Songs hat Rainer gecovert?",
+        "choices": ["Schrei nach Liebe", "Smoke on the Water", "Thunderstruck", "Enter Sandman"],
+        "answer": 0
+    },
+    {
+        "question": "Mit welchem Fahrzeug wurde Rainer 2023 gesehen?",
+        "choices": ["Fahrrad", "E-Scooter", "Roller", "Auto"],
+        "answer": 1
+    },
+    {
+        "question": "Welches Format hat Rainer am längsten durchgezogen?",
+        "choices": ["Drache-Umfragen", "Let’s Plays", "Vlogs", "Reactions"],
+        "answer": 2
+    },
+    {
+        "question": "Welches Essen hat Rainer selbst gemacht und als 'Gourmet' bezeichnet?",
+        "choices": ["Nudeln mit Ketchup", "Rührei mit Käse", "Pizza mit Chips", "Toast mit Nutella und Salami"],
+        "answer": 3
+    },
+    {
+        "question": "Welches dieser Länder hat Rainer besucht?",
+        "choices": ["Spanien", "Italien", "Frankreich", "Österreich"],
+        "answer": 3
+    },
+    {
+        "question": "Wie nennt Rainer seine 'Projekte' oft?",
+        "choices": ["Zukunftsvisionen", "Mega-Events", "Langzeitprojekte", "Drachenprojekte"],
+        "answer": 2
+    },
+    {
+        "question": "Welche Behauptung hat Rainer über seine Kampfkünste gemacht?",
+        "choices": ["Ich kann mit einem Schlag töten", "Ich bin ein ausgebildeter Kämpfer", "Ich habe Ninja-Training gemacht", "Ich kann mit Schwert kämpfen"],
+        "answer": 0
+    },
+    {
+        "question": "Welcher Film gehört zu Rainers Lieblingsfilmen?",
+        "choices": ["The Fast and the Furious", "Herr der Ringe", "Harry Potter", "Matrix"],
+        "answer": 1
+    },
+    {
+        "question": "Welche Art von Musik macht Rainer?",
+        "choices": ["Rap", "Metal", "Schlager", "Pop"],
+        "answer": 1
+    },
+    {
+        "question": "Wie viele Abonnenten hatte Rainers Hauptkanal vor der endgültigen Löschung?",
+        "choices": ["50.000", "100.000", "150.000", "200.000"],
+        "answer": 1
+    },
+    {
+        "question": "Was hat Rainer einmal als seine geheime Superkraft bezeichnet?",
+        "choices": ["Unbesiegbarkeit", "Gedankenkontrolle", "Megaintelligenz", "Drachenatem"],
+        "answer": 0
+    },
+    {
+        "question": "Wie heißt eine von Rainers 'Freundinnen', die er öffentlich erwähnt hat?",
+        "choices": ["Sandra", "Ramona", "Lisa", "Katrin"],
+        "answer": 1
+    },
+    {
+        "question": "Welchen dieser Berufe hat Rainer fälschlicherweise für sich beansprucht?",
+        "choices": ["Elektriker", "Mediendesigner", "Koch", "Informatiker"],
+        "answer": 3
+    },
+    {
+        "question": "Welche Stadt hat Rainer als seinen Wohnort nach der Schanze angegeben?",
+        "choices": ["Berlin", "Hamburg", "Nürnberg", "Leipzig"],
+        "answer": 2
+    },
+    {
+        "question": "Welches Wort benutzt Rainer oft als Beleidigung?",
+        "choices": ["Honk", "Depp", "Häider", "Dulli"],
+        "answer": 2
+    },
+    {
+        "question": "Welche Sportart hat Rainer als sein Hobby bezeichnet?",
+        "choices": ["Boxen", "Schwimmen", "Bodybuilding", "Joggen"],
+        "answer": 0
+    },
+    {
+        "question": "Welches YouTube-Format hat Rainer 2022 ausprobiert?",
+        "choices": ["Minecraft Let's Play", "Kochvideos", "Fitness-Vlogs", "Talkrunden"],
+        "answer": 1
+    },
+    {
+        "question": "Welche Plattform hat Rainer zuletzt für Streams genutzt?",
+        "choices": ["Twitch", "Kick", "YouTube", "TikTok"],
+        "answer": 3
+    },
+    {
+        "question": "Welche Aussage hat Rainer zu seiner finanziellen Lage gemacht?",
+        "choices": ["Ich bin Millionär", "Ich habe ausgesorgt", "Ich habe mehr Geld als ihr", "Ich lebe von Ersparnissen"],
+        "answer": 2
+    },
+    {
+        "question": "Wie viele Bands hat Rainer angeblich gehabt?",
+        "choices": ["1", "2", "3", "4"],
+        "answer": 1
+    },
+    {
+        "question": "Was hat Rainer als seinen Traumberuf bezeichnet?",
+        "choices": ["YouTuber", "Musiker", "Autor", "Schauspieler"],
+        "answer": 0
+    },
+    {
+        "question": "Welche dieser Aussagen hat Rainer über Frauen gemacht?",
+        "choices": ["Ich hatte 100 Frauen", "Frauen stehen auf mich", "Ich bin ein Playboy", "Frauen verstehen mich nicht"],
+        "answer": 1
+    },
+    {
+        "question": "Welche dieser Plattformen nutzt Rainer für bezahlte Inhalte?",
+        "choices": ["OnlyFans", "Patreon", "Ko-Fi", "Tipeee"],
+        "answer": 1
+    },
+    {
+        "question": "Welche Aussage hat Rainer über seine körperliche Fitness gemacht?",
+        "choices": ["Ich bin athletisch", "Ich bin fitter als ihr", "Ich trainiere jeden Tag", "Ich brauche keine Fitness"],
+        "answer": 1
     }
 ]
