@@ -11,6 +11,7 @@ import platform
 from random import randint
 import uuid  # Neu für eindeutige IDs
 from collections import defaultdict  # Neu für Nachrichten-Tracking
+import time  # Neu für Rate-Limiting
 
 # Third party imports
 import discord
@@ -51,6 +52,30 @@ from quiz import register_quiz_commands
 register_quiz_commands(client)
 
 message_history = defaultdict(dict)  # Speichert Nachrichten-IDs und zugehörige User
+
+# Rate Limiting System
+user_cooldowns = {}
+
+def is_on_cooldown(user_id: int) -> bool:
+    """Überprüft, ob ein Benutzer sich noch in der Cooldown-Phase befindet"""
+    if user_id not in user_cooldowns:
+        return False
+    return time.time() - user_cooldowns[user_id] < 5
+
+def update_cooldown(user_id: int):
+    """Aktualisiert den Cooldown für einen Benutzer"""
+    user_cooldowns[user_id] = time.time()
+
+# Erstelle einen Check für Cooldowns
+def cooldown_check():
+    async def predicate(ctx):
+        if is_on_cooldown(ctx.author.id):
+            remaining = round(5 - (time.time() - user_cooldowns[ctx.author.id]), 1)
+            await ctx.send(f"⏳ Nicht so schnell! Bitte warte noch {remaining} Sekunden.", delete_after=5)
+            return False
+        update_cooldown(ctx.author.id)
+        return True
+    return commands.check(predicate)
 
 # --- Helper Functions ---
 async def _log(message):
@@ -234,6 +259,7 @@ async def hilfe_slash(interaction: discord.Interaction):
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
 @client.command(name='mett')
+@cooldown_check()
 async def mett_level(ctx):
     """Zeigt den aktuellen Mett-Level an"""
     level = random.randint(1, 10)
@@ -242,6 +268,7 @@ async def mett_level(ctx):
 
 # --- Quote Commands ---
 @client.command(pass_context=True)
+@cooldown_check()
 async def zitat(ctx):
     if ctx.message.author == client.user:
         return
@@ -266,6 +293,7 @@ async def id(ctx):
 
 # --- Sound Commands ---
 @client.command(pass_context=True)
+@cooldown_check()
 async def lord(ctx):
     if hasattr(ctx.message.author, "voice"):
         voice_channel = ctx.message.author.voice.channel
@@ -274,6 +302,7 @@ async def lord(ctx):
         await ctx.message.channel.send('Das funktioniert nur in serverchannels du scheiß HAIDER')
 
 @client.command(pass_context=True)
+@cooldown_check()
 async def cringe(ctx):
     if hasattr(ctx.message.author, "voice"):
         voice_channel = ctx.message.author.voice.channel
@@ -297,6 +326,7 @@ SOUND_COMMANDS = {
 # Automatisch Kommandos für alle Sounds erstellen
 for cmd_name, sound_file in SOUND_COMMANDS.items():
     @client.command(name=cmd_name)
+    @cooldown_check()
     async def sound_cmd(ctx, sound_file=sound_file):
         await voice_quote(ctx, sound_file)
 
