@@ -9,6 +9,8 @@ import asyncio
 import datetime
 import platform
 from random import randint
+import uuid  # Neu für eindeutige IDs
+from collections import defaultdict  # Neu für Nachrichten-Tracking
 
 # Third party imports
 import discord
@@ -39,7 +41,7 @@ intents.presences = True
 
 client = commands.Bot(
     command_prefix=commands.when_mentioned_or("!"),
-    description='Buttergolem Discord Bot Version: 3.6.0\nCreated by: ninjazan420',
+    description='Buttergolem Discord Bot Version: 3.7.0\nCreated by: ninjazan420',
     intents=intents
 )
 client.remove_command('help')
@@ -47,6 +49,8 @@ client.remove_command('help')
 # Quiz-Modul importieren und Befehle registrieren
 from quiz import register_quiz_commands
 register_quiz_commands(client)
+
+message_history = defaultdict(dict)  # Speichert Nachrichten-IDs und zugehörige User
 
 # --- Helper Functions ---
 async def _log(message):
@@ -135,7 +139,7 @@ async def on_ready():
         await _log("⏳           Server beigetreten           ⏳")
         await _log("🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢")
         
-    await client.change_presence(activity=discord.Game(name="!help du kaschber"))
+    await client.change_presence(activity=discord.Game(name="/hilfe du kaschber"))
     
     # Set logging channel for servercounter
     client.logging_channel = logging_channel
@@ -158,18 +162,18 @@ async def on_command_completion(ctx):
     await channel.send(f"```\n{datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')} # {ctx.author} used {ctx.command} in {server}```")
 
 # --- Basic Commands ---
-@client.command(name='help')
-async def help(ctx):
+async def create_help_embed(is_admin: bool) -> discord.Embed:
+    """Erstellt das Help-Embed basierend auf den Berechtigungen"""
     embed = discord.Embed(
         title="🤖 Buttergolem Bot Hilfe",
-        description="Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.\n\nVersion: 3.6.0 | Created by: ninjazan420",
+        description="Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.\n\nVersion: 3.7.0 | Created by: ninjazan420",
         color=0xf1c40f
     )
 
     # Basis-Befehle
     embed.add_field(
         name="📋 Basis-Befehle",
-        value="• `!help` - Zeigt diese Hilfe an\n"
+        value="• `!hilfe` - Zeigt diese Hilfe an\n"
               "• `!mett` - Zeigt den aktuellen Mett-Level 🥓\n"
               "• `!zitat` - Zufälliges Zitat",
         inline=False
@@ -194,18 +198,40 @@ async def help(ctx):
         inline=False
     )
 
-    # Admin-Befehle
-    if ctx.author.guild_permissions.administrator:
+    # Kontakt-Befehle
+    embed.add_field(
+        name="📧 Kontakt",
+        value="• `!kontakt <Nachricht>` - Sende eine Nachricht an den Admin\n",
+        inline=False
+    )
+
+    # Admin-Befehle nur anzeigen wenn Admin
+    if is_admin:
         embed.add_field(
             name="⚙️ Admin-Befehle",
             value="• `!server` - Server-Liste\n"
                   "• `!user` - Nutzerstatistiken\n"
-                  "• `!ping` - Bot-Latenz",
+                  "• `!ping` - Bot-Latenz\n"
+                  "• `!antwort <ID> <Text>` - Auf Kontaktnachrichten antworten",
             inline=False
         )
 
-    embed.set_footer(text="Verwende die Befehle in einem Text-Channel!")
+    embed.set_footer(text="Der Bot muss die Berechtigung besitzen, in den Voice zu joinen!")
+    return embed
+
+@client.command(name='hilfe')
+async def hilfe_command(ctx):
+    """Zeigt die Hilfe für den Buttergolem Bot"""
+    is_admin = ctx.author.guild_permissions.administrator
+    embed = await create_help_embed(is_admin)
     await ctx.send(embed=embed)
+
+@client.tree.command(name="hilfe", description="Zeigt die Hilfe für den Buttergolem Bot")
+async def hilfe_slash(interaction: discord.Interaction):
+    """Zeigt die Hilfe für den Buttergolem Bot"""
+    is_admin = interaction.user.guild_permissions.administrator
+    embed = await create_help_embed(is_admin)
+    await interaction.response.send_message(embed=embed, ephemeral=True)
 
 @client.command(name='mett')
 async def mett_level(ctx):
@@ -331,57 +357,73 @@ async def servercount(ctx):
     success = await servercounter.single_update(client)
     if not success:
         await ctx.send("❌ Servercounter Update fehlgeschlagen! Überprüfe die Logs.")
-    
-@client.tree.command(name="hilfe", description="Zeigt die Hilfe für den Buttergolem Bot")
-async def hilfe(interaction: discord.Interaction):
+
+@client.command(name='kontakt')
+async def contact(ctx, *, message=None):
+    """Sendet eine Nachricht an den Bot-Administrator"""
+    if not message:
+        await ctx.send("Bitte gib eine Nachricht an! Beispiel: `!kontakt Hallo, ich habe eine Frage`")
+        return
+
+    admin_user = await client.fetch_user(admin_user_id)
+    if not admin_user:
+        await ctx.send("❌ Fehler: Admin konnte nicht gefunden werden!")
+        return
+
+    message_id = str(uuid.uuid4())[:8]  # Erstelle kurze eindeutige ID
+    message_history[message_id] = ctx.author.id
+
     embed = discord.Embed(
-        title="🤖 Buttergolem Bot Hilfe",
-        description="Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.\n\nVersion: 3.3.0 | Created by: ninjazan420",
-        color=0xf1c40f
+        title="📨 Neue Nachricht",
+        description=message,
+        color=0x3498db,
+        timestamp=datetime.datetime.utcnow()
     )
+    embed.add_field(name="Absender", value=f"{ctx.author} (ID: {ctx.author.id})")
+    embed.add_field(name="Server", value=ctx.guild.name if ctx.guild else "DM")
+    embed.add_field(name="Nachrichten-ID", value=message_id, inline=False)
+    embed.set_footer(text=f"Antworte mit: !antwort {message_id} <deine Antwort>")
 
-    # Basis-Befehle
-    embed.add_field(
-        name="📋 Basis-Befehle",
-        value="• `!help` - Zeigt diese Hilfe an\n"
-              "• `!mett` - Zeigt den aktuellen Mett-Level 🥓\n"
-              "• `!zitat` - Zufälliges Zitat",
-        inline=False
-    )
+    try:
+        await admin_user.send(embed=embed)
+        await ctx.send("✅ Deine Nachricht wurde erfolgreich an den Administrator gesendet!")
+        if logging_channel:
+            await _log(f"Kontaktnachricht von {ctx.author} (ID: {message_id})")
+    except:
+        await ctx.send("❌ Fehler beim Senden der Nachricht!")
 
-    # Unterhaltung
-    embed.add_field(
-        name="🎭 Unterhaltung",
-        value="• `!lordquiz` - Starte ein Quiz\n"
-              "• `!lordquiz start <1-20>` - Quiz mit X Runden\n"
-              "• `!lordquiz stop` - Beende das Quiz",
-        inline=False
-    )
+@client.command(name='antwort')
+async def reply(ctx, message_id=None, *, response=None):
+    """Ermöglicht dem Admin, auf Kontaktnachrichten zu antworten"""
+    if ctx.author.id != admin_user_id:
+        await ctx.send("❌ Nur der Administrator kann diesen Befehl nutzen!")
+        return
 
-    # Sound-Befehle
-    embed.add_field(
-        name="🔊 Sound-Befehle",
-        value="• `!lord` - Zufälliges GESCHREI\n"
-              "• `!cringe` - Oh no, cringe!\n"
-              "• `!warum` - WARUM\n"
-              "• `!frosch` - Quak\n"
-              "• `!idiot` - Beleidigung\n"
-              "• `!meddl` - Meddl Leude",
-        inline=False
-    )
+    if not message_id or not response:
+        await ctx.send("❌ Syntax: `!antwort <message_id> <deine Antwort>`")
+        return
 
-    # Weitere Sounds
-    embed.add_field(
-        name="🎵 Weitere Sound-Befehle",
-        value="• `!scheiße`, `!huso`, `!maul2`\n"
-              "• `!bla`, `!maske`, `!regeln`\n"
-              "• `!lol`, `!bastard`, `!lappen`\n"
-              "• `!wiwi`, `!rumwichsen`",
-        inline=False
-    )
+    if message_id not in message_history:
+        await ctx.send("❌ Diese Nachrichten-ID existiert nicht!")
+        return
 
-    embed.set_footer(text="Der Bot muss die Berechtigung besitzen, in den Voice zu joinen!")
-    await interaction.response.send_message(embed=embed, ephemeral=True)
+    user_id = message_history[message_id]
+    try:
+        user = await client.fetch_user(user_id)
+        embed = discord.Embed(
+            title="📩 Antwort vom Administrator",
+            description=response,
+            color=0x2ecc71,
+            timestamp=datetime.datetime.utcnow()
+        )
+        embed.add_field(name="Bezugnehmend auf ID", value=message_id)
+        
+        await user.send(embed=embed)
+        await ctx.send("✅ Antwort wurde erfolgreich gesendet!")
+        if logging_channel:
+            await _log(f"Admin-Antwort an User {user.id} (ID: {message_id})")
+    except:
+        await ctx.send("❌ Fehler beim Senden der Antwort!")
 
 # Bot starten
 client.run(token)
