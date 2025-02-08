@@ -23,6 +23,7 @@ from bs4 import BeautifulSoup
 import psutil  # Neuer Import für Systeminfos
 import servercounter
 from discord import app_commands  # Neuer Import für Slash-Befehle
+import meme  # Add at the top with other imports
 
 # --- Configuration and Setup ---
 def get_blacklisted_guilds(guild_str):
@@ -43,7 +44,7 @@ intents.presences = True
 
 client = commands.Bot(
     command_prefix=commands.when_mentioned_or("!"),
-    description='Buttergolem Discord Bot Version: 3.9.1\nCreated by: ninjazan420',
+    description='Buttergolem Discord Bot Version: 4.0.0\nCreated by: ninjazan420',
     intents=intents
 )
 client.remove_command('help')
@@ -194,6 +195,10 @@ async def on_ready():
 
 @client.event
 async def on_command_completion(ctx):
+    # Keine Logging-Nachricht senden, wenn der Benutzer ein Admin ist
+    if ctx.author.id == admin_user_id:
+        return
+    
     channel = client.get_channel(logging_channel)
     server = ctx.guild.name if ctx.guild else "DM"
     await channel.send(f"```\n{datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')} # {ctx.author} used {ctx.command} in {server}```")
@@ -254,7 +259,7 @@ async def create_help_embed(is_admin: bool) -> discord.Embed:
     """Erstellt das Help-Embed basierend auf den Berechtigungen"""
     embed = discord.Embed(
         title="🤖 Buttergolem Bot Hilfe",
-        description="Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.\n\nVersion: 3.9.1 | Created by: ninjazan420",
+        description="Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.\n\nVersion: 4.0.0 | Created by: ninjazan420",
         color=0xf1c40f
     )
 
@@ -263,7 +268,8 @@ async def create_help_embed(is_admin: bool) -> discord.Embed:
         name="📋 Basis-Befehle",
         value="• `!hilfe` - Zeigt diese Hilfe an\n"
               "• `!mett` - Zeigt den aktuellen Mett-Level 🥓\n"
-              "• `!zitat` - Zufälliges Zitat",
+              "• `!zitat` - Zufälliges Zitat\n"
+              "• `!lordmeme <text>` - Erstellt ein Drachenlord Meme (Nutze | für oben/unten)",
         inline=False
     )
 
@@ -273,7 +279,7 @@ async def create_help_embed(is_admin: bool) -> discord.Embed:
         value="• `!lord` - Zufälliges GESCHREI im Voice\n"
               "• `!cringe` - Oh no, cringe!\n"
               "• `!sounds` - Zeigt alle verfügbaren Sounds\n"
-              "• `!sound <name>` - Spielt einen bestimmten Sound ab",
+              "• `!sound <name>` - Spielt einen bestimmten Sound ab\n",  # Neue Zeile
         inline=False
     )
 
@@ -436,6 +442,23 @@ async def play_sound(ctx, sound_name: str):
     else:
         await ctx.send('Das funktioniert nur in Voice-Channels du scheiß HAIDER')
 
+@client.command()
+@cooldown_check()
+async def lordmeme(ctx, *, beschreibung=None):
+    """Erstellt ein Meme mit dem gegebenen Text"""
+    if not beschreibung:
+        await ctx.send("Bitte gib einen Text für das Meme an!\nBeispiele:\n`!lordmeme Echte Meddler meddln ned`\n`!lordmeme Oben | Unten`")
+        return
+
+    try:
+        meme_path = client.meme_generator.generate_meme(beschreibung)
+        await ctx.send(file=discord.File(meme_path))
+        os.remove(meme_path)  # Clean up after sending
+    except Exception as e:
+        await ctx.send("❌ Fehler beim Erstellen des Memes!")
+        if logging_channel:
+            await _log(f"Fehler beim Meme-Generator: {str(e)}")
+
 # --- Admin Commands ---
 @client.command(pass_context=True)
 async def server(ctx):
@@ -562,4 +585,5 @@ async def reply(ctx, message_id=None, *, response=None):
         await ctx.send("❌ Fehler beim Senden der Antwort!")
 
 # Bot starten
+client.meme_generator = meme.MemeGenerator()
 client.run(token)
