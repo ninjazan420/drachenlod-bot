@@ -451,9 +451,8 @@ async def lordmeme(ctx, *, beschreibung=None):
         return
 
     try:
-        meme_path, quote = client.meme_generator.generate_meme(beschreibung)
+        meme_path = client.meme_generator.generate_meme(beschreibung)
         await ctx.send(file=discord.File(meme_path))
-        await ctx.send(f"*{quote}*")  # Sende das Zitat als kursiven Text
         os.remove(meme_path)  # Clean up after sending
     except Exception as e:
         await ctx.send("❌ Fehler beim Erstellen des Memes!")
