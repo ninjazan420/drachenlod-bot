@@ -1,8 +1,8 @@
 ![draaaaa](https://github.com/user-attachments/assets/8c0f4ec0-e1ab-42be-a0aa-a2c08841a916)
 
-# Drachenlord Discord Bot v4.0.1
+# [Aktueller invitelink](https://discord.com/oauth2/authorize?client_id=1329104199794954240)
 
-## [Aktueller invitelink](https://discord.com/oauth2/authorize?client_id=1329104199794954240)
+# Drachenlord Discord Bot v4.0.1
 
 ## Meddl Loidde! 
 
@@ -53,7 +53,7 @@ Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschan
 | `!id` | Zeigt die IDs des aktuellen Text- & Voice-Channels |
 | `!antwort` | Antwortet auf Kontaktnachrichten von Nutzern |
 
-## Installation
+## Installation & Selbst hosten
 
 - [Im Discord Developer Portal Golem hinzufügen](https://discord.com/developers/)
 - in der [docker-compose.yml](https://github.com/ninjazan420/drachenlord-bot/blob/master/docker-compose.yml) den Bot-Token, Log Channel ID und Admin ID hinzufügen
@@ -61,6 +61,6 @@ Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschan
 - `docker compose build`, gefolgt von `docker compose up -d`
 - Logs können per `docker compose logs -f` abgerufen werden
 
-> **Wichtig:** Der Bot muss die Berechtigung besitzen, in den Voice zu joinen!
+> Der Bot muss die Berechtigung besitzen, in den Voice zu joinen!
 
 <sup>*Wichtig: da GitHub die Sounddateien wegen DMCA runter genommen hat, sind diese nur über den Bot direkt verfügbar! Falls du den Bot selbst hosten willst und die Sounds brauchst, schreib mir eine nachricht im discord `ninjazan420`</sup>
