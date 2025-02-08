@@ -1,20 +1,27 @@
 import os
+import json
 import random
 from PIL import Image, ImageDraw, ImageFont
 
 class MemeGenerator:
     def __init__(self):
-        self.image_folder = "/app/data/imgs/drache"  # Angepasster Docker-Pfad
-        self.font_path = "/app/data/fonts/impact.ttf"  # Font-Pfad in Docker
-        self.output_folder = "/tmp"  # Temporäres Verzeichnis für generierte Memes
+        self.image_folder = "/app/data/imgs/drache"  
+        self.font_path = "/app/data/fonts/impact.ttf" 
+        self.output_folder = "/tmp"
+        self.quotes_file = "/app/data/quotes.json"  # Neu: Pfad zur quotes.json
+
+        # Überprüfen der Pfade
+        for path in [self.image_folder, self.font_path, self.quotes_file]:
+            if not os.path.exists(path):
+                raise RuntimeError(f"Datei/Ordner nicht gefunden: {path}")
         
-        # Überprüfe ob der Bildordner existiert
-        if not os.path.exists(self.image_folder):
-            raise RuntimeError(f"Bildordner nicht gefunden: {self.image_folder}")
-            
-        # Überprüfe ob die Font-Datei existiert
-        if not os.path.exists(self.font_path):
-            raise RuntimeError(f"Font nicht gefunden: {self.font_path}")
+        # Quotes laden
+        with open(self.quotes_file, 'r', encoding='utf-8') as f:
+            self.quotes = json.load(f)
+
+    def get_random_quote(self):
+        """Gibt ein zufälliges Zitat zurück"""
+        return random.choice(self.quotes)
 
     def split_text(self, text):
         if "|" in text:
@@ -41,6 +48,9 @@ class MemeGenerator:
         top_text = top_text.upper()
         bottom_text = bottom_text.upper()
         
+        # Zufälliges Zitat als zusätzlichen Text
+        quote = self.get_random_quote()
+        
         # Wähle zufälliges Bild aus dem Ordner
         image_files = [f for f in os.listdir(self.image_folder) if f.endswith(('.jpg', '.jpeg', '.png'))]
         if not image_files:
@@ -54,23 +64,38 @@ class MemeGenerator:
             meme = img.copy()
             draw = ImageDraw.Draw(meme)
             
-            # Berechne die Schriftgröße basierend auf der Bildgröße
-            font_size = int(meme.width * 0.08)  # 8% der Bildbreite
-            font = ImageFont.truetype(self.font_path, font_size)
+            # Berechne die Schriftgrößen
+            title_size = int(meme.width * 0.08)  # 8% der Bildbreite für Haupt-Text
+            quote_size = int(meme.width * 0.04)  # 4% der Bildbreite für Zitat
+            
+            title_font = ImageFont.truetype(self.font_path, title_size)
+            quote_font = ImageFont.truetype(self.font_path, quote_size)
             
             # Oberer Text
             if top_text:
-                text_width, text_height = draw.textsize(top_text, font=font)
+                bbox = title_font.getbbox(top_text)
+                text_width = bbox[2] - bbox[0]
+                text_height = bbox[3] - bbox[1]
                 x = (meme.width - text_width) / 2
-                y = 10  # 10 Pixel vom oberen Rand
-                self.add_text_to_image(draw, top_text, x, y, font, text_width)
+                y = 10
+                self.add_text_to_image(draw, top_text, x, y, title_font, text_width)
             
             # Unterer Text
             if bottom_text:
-                text_width, text_height = draw.textsize(bottom_text, font=font)
+                bbox = title_font.getbbox(bottom_text)
+                text_width = bbox[2] - bbox[0]
+                text_height = bbox[3] - bbox[1]
                 x = (meme.width - text_width) / 2
-                y = meme.height - text_height - 10  # 10 Pixel vom unteren Rand
-                self.add_text_to_image(draw, bottom_text, x, y, font, text_width)
+                y = meme.height - text_height - 10
+                self.add_text_to_image(draw, bottom_text, x, y, title_font, text_width)
+            
+            # Zitat hinzufügen
+            bbox = quote_font.getbbox(quote)
+            text_width = bbox[2] - bbox[0]
+            text_height = bbox[3] - bbox[1]
+            x = (meme.width - text_width) / 2
+            y = meme.height - text_height - 60  # Etwas über dem unteren Text
+            self.add_text_to_image(draw, quote, x, y, quote_font, text_width)
             
             # Speichere das Meme
             output_path = os.path.join(self.output_folder, f"meme_{os.path.splitext(image_file)[0]}.png")
