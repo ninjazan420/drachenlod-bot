@@ -1,6 +1,4 @@
 import os
-import json
-import random
 from PIL import Image, ImageDraw, ImageFont
 
 class MemeGenerator:
@@ -8,20 +6,11 @@ class MemeGenerator:
         self.image_folder = "/app/data/imgs/drache"  
         self.font_path = "/app/data/fonts/impact.ttf" 
         self.output_folder = "/tmp"
-        self.quotes_file = "/app/data/quotes.json"
 
         # Überprüfen der Pfade
-        for path in [self.image_folder, self.font_path, self.quotes_file]:
+        for path in [self.image_folder, self.font_path]:
             if not os.path.exists(path):
                 raise RuntimeError(f"Datei/Ordner nicht gefunden: {path}")
-        
-        # Quotes laden
-        with open(self.quotes_file, 'r', encoding='utf-8') as f:
-            self.quotes = json.load(f)
-
-    def get_random_quote(self):
-        """Gibt ein zufälliges Zitat zurück"""
-        return random.choice(self.quotes)
 
     def split_text(self, text):
         if "|" in text:
@@ -43,7 +32,7 @@ class MemeGenerator:
         draw.text((x, y), text, font=font, fill='white')
 
     def generate_meme(self, text):
-        """Erstellt ein Meme und gibt den Dateipfad und ein zufälliges Zitat zurück"""
+        """Erstellt ein Meme und gibt den Dateipfad zurück"""
         # Text in oben/unten aufteilen
         top_text, bottom_text = self.split_text(text)
         top_text = top_text.upper()
@@ -88,5 +77,4 @@ class MemeGenerator:
             output_path = os.path.join(self.output_folder, f"meme_{os.path.splitext(image_file)[0]}.png")
             meme.save(output_path)
             
-            # Gib Dateipfad und zufälliges Zitat zurück
-            return output_path, self.get_random_quote()
+            return output_path
