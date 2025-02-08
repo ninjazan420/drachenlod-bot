@@ -1,15 +1,12 @@
 ![draaaaa](https://github.com/user-attachments/assets/8c0f4ec0-e1ab-42be-a0aa-a2c08841a916)
 
-# Drachenlord Discord Bot
+# Drachenlord Discord Bot v4.0.0
 
 ## [Aktueller invitelink](https://discord.com/oauth2/authorize?client_id=1329104199794954240)
 
 ## Meddl Loidde! 
 
 Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.
-
-Sobald der Suppengumbo auf deinem Server online ist, kannst du ihn mit `!lord` heraufbeschwören. Funktioniert das in allen Text- und Voice-Channels.
-Für ein Zufallszitat, einfach `!zitat` eingeben
 
 ## Features
 
@@ -26,10 +23,11 @@ Für ein Zufallszitat, einfach `!zitat` eingeben
 ## 📋 Basis-Befehle
 | Befehl | Beschreibung |
 |--------|--------------|
-| `!hilfe` | Zeigt die Hilfeseite mit allen Befehlen und der aktuellen Version an |
+| `!hilfe` | Zeigt diese Hilfe an |
 | `!mett` | Zeigt den aktuellen Mett-Level mit Mett-Meter an 🥓 |
 | `!zitat` | Der Quallemann antwortet dir mit einem zufälligen Zitat |
-| `!kontakt` | Sende eine Nachricht an den Bot-Administrator |
+| `!lordmeme <text>` | Erstellt ein Drachenlord Meme (Nutze \| für oben/unten) |
+| `!kontakt` | Sende eine Nachricht an den Admin |
 
 ## 🔊 Sound-Befehle
 | Befehl | Beschreibung |
@@ -62,5 +60,7 @@ Für ein Zufallszitat, einfach `!zitat` eingeben
 - Entscheiden, ob der Bot alle 30-60 Minuten zufällig dem größten Kanal beitreten soll (`ENABLE_RANDOM_JOINS: "False"/"True"`)
 - `docker compose build`, gefolgt von `docker compose up -d`
 - Logs können per `docker compose logs -f` abgerufen werden
+
+> **Wichtig:** Der Bot muss die Berechtigung besitzen, in den Voice zu joinen!
 
 <sup>*Wichtig: da GitHub die Sounddateien wegen DMCA runter genommen hat, sind diese nur über den Bot direkt verfügbar! Falls du den Bot selbst hosten willst und die Sounds brauchst, schreib mir eine nachricht im discord `ninjazan420`</sup>
