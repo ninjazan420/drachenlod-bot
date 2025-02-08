@@ -72,7 +72,7 @@ class MemeGenerator:
                 text_width = bbox[2] - bbox[0]
                 text_height = bbox[3] - bbox[1]
                 x = (meme.width - text_width) / 2
-                y = 10
+                y = 20  # Mehr Abstand vom oberen Rand
                 self.add_text_to_image(draw, top_text, x, y, font, text_width)
             
             # Unterer Text
@@ -81,7 +81,7 @@ class MemeGenerator:
                 text_width = bbox[2] - bbox[0]
                 text_height = bbox[3] - bbox[1]
                 x = (meme.width - text_width) / 2
-                y = meme.height - text_height - 10
+                y = meme.height - text_height - 40  # Mehr Abstand vom unteren Rand
                 self.add_text_to_image(draw, bottom_text, x, y, font, text_width)
             
             # Speichere das Meme
