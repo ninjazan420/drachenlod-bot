@@ -207,7 +207,7 @@ async def on_command_completion(ctx):
 class SoundBrowser:
     def __init__(self, clips_dir='/app/data/clips'):
         self.clips_dir = clips_dir
-        self.sounds_per_page = 15
+        self.sounds_per_page = 50  # Erhöht von 15 auf 50
         self.cached_sounds = []
         self.load_sounds()
 
@@ -241,14 +241,22 @@ class SoundBrowser:
             color=0x3498db
         )
 
-        # Erstelle eine formatierte Liste der Sounds
-        sound_list = []
-        for idx, sound in enumerate(sounds, 1):
-            sound_list.append(f"`{sound['command']}`")
-        
-        if sound_list:
-            embed.add_field(name="Sounds auf dieser Seite:", value=" • ".join(sound_list), inline=False)
-        
+        if sounds:
+            # Teile die Sounds in drei Spalten
+            columns = [[], [], []]
+            col_size = len(sounds) // 3 + (1 if len(sounds) % 3 > 0 else 0)
+            
+            for i, sound in enumerate(sounds):
+                col_index = i // col_size
+                if col_index < 3:  # Verhindere Index out of range
+                    columns[col_index].append(sound['command'])
+
+            # Formatiere die Spalten mit Monospace-Font und fester Breite
+            for i, column in enumerate(columns):
+                if column:  # Nur hinzufügen wenn die Spalte nicht leer ist
+                    col_text = '\n'.join(f'`{cmd:<20}`' for cmd in column)  # Erhöht von 15 auf 20 Zeichen Breite
+                    embed.add_field(name='​', value=col_text, inline=True)  # Unicode zero-width space als Name
+
         embed.set_footer(text=f"Seite {page}/{self.total_pages} • Navigiere mit ⬅️ ➡️")
         return embed
 
@@ -417,7 +425,30 @@ async def list_sounds(ctx):
 @client.tree.command(name="sounds", description="Zeigt eine Liste aller verfügbaren Sounds")
 async def sounds_slash(interaction: discord.Interaction):
     embed = await sound_browser.create_embed(1)
-    await interaction.response.send_message(embed=embed, ephemeral=True)
+    await interaction.response.send_message(embed=embed)
+    
+    message = await interaction.original_response()
+    await message.add_reaction("⬅️")
+    await message.add_reaction("➡️")
+
+    def check(reaction, user):
+        return user == interaction.user and str(reaction.emoji) in ["⬅️", "➡️"]
+
+    current_page = 1
+    while True:
+        try:
+            reaction, user = await client.wait_for("reaction_add", timeout=60.0, check=check)
+
+            if str(reaction.emoji) == "➡️" and current_page < sound_browser.total_pages:
+                current_page += 1
+            elif str(reaction.emoji) == "⬅️" and current_page > 1:
+                current_page -= 1
+            
+            await message.edit(embed=await sound_browser.create_embed(current_page))
+            await message.remove_reaction(reaction, user)
+
+        except asyncio.TimeoutError:
+            break
 
 @client.command(name='sound')
 @cooldown_check()
