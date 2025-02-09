@@ -1,5 +1,8 @@
 import os
 import uuid
+import random
+import discord
+from discord.ext import commands
 from PIL import Image, ImageDraw, ImageFont
 
 class MemeGenerator:
@@ -58,12 +61,86 @@ class MemeGenerator:
 
     def generate_meme(self, text):
         """Erstellt ein Meme mit dem gegebenen Text"""
-        # ...existing code for generate_meme...
+        # Wähle ein zufälliges Bild aus
         image_path = os.path.join(self.image_folder, random.choice(os.listdir(self.image_folder)))
-        # ...rest of existing generate_meme code...
+        image = Image.open(image_path)
+        draw = ImageDraw.Draw(image)
+
+        # Initiale Schriftgröße (8% der Bildbreite)
+        initial_font_size = int(image.width * 0.08)
+        
+        # Maximale Breite und Höhe für Text
+        max_width = int(image.width * 0.9)
+        max_height_top = int(image.height * 0.25)    # 25% der Bildhöhe für oberen Text
+        max_height_bottom = int(image.height * 0.25)  # 25% der Bildhöhe für unteren Text
+
+        # Text aufteilen und in Großbuchstaben umwandeln
+        if "|" in text:
+            top_text, bottom_text = text.split("|", 1)
+            top_text = top_text.strip().upper()
+            bottom_text = bottom_text.strip().upper()
+        else:
+            top_text = ""
+            bottom_text = text.strip().upper()
+
+        # Berechne optimale Schriftgrößen
+        top_font_size = self.calculate_font_size(top_text, max_width, max_height_top, 
+                                               initial_font_size, self.font_path) if top_text else initial_font_size
+        bottom_font_size = self.calculate_font_size(bottom_text, max_width, max_height_bottom, 
+                                                  initial_font_size, self.font_path)
+
+        # Margins
+        top_margin = int(image.height * 0.06)
+        bottom_margin = int(image.height * 0.12)
+
+        # Zeichne oberen Text
+        if top_text:
+            font = ImageFont.truetype(self.font_path, top_font_size)
+            lines = self.wrap_text(top_text, font, max_width)
+            bbox = font.getbbox("Ag")
+            line_height = bbox[3] - bbox[1] + 10
+            y = top_margin
+
+            for line in lines:
+                bbox = font.getbbox(line)
+                text_width = bbox[2] - bbox[0]
+                x = (image.width - text_width) / 2
+                
+                # Outline-Effekt
+                for adj in range(-3, 4):
+                    for adj2 in range(-3, 4):
+                        draw.text((x+adj, y+adj2), line, font=font, fill="black")
+                draw.text((x, y), line, font=font, fill="white")
+                y += line_height
+
+        # Zeichne unteren Text
+        if bottom_text:
+            font = ImageFont.truetype(self.font_path, bottom_font_size)
+            lines = self.wrap_text(bottom_text, font, max_width)
+            bbox = font.getbbox("Ag")
+            line_height = bbox[3] - bbox[1] + 10
+            total_height = line_height * len(lines)
+            y = image.height - bottom_margin - total_height
+
+            for line in lines:
+                bbox = font.getbbox(line)
+                text_width = bbox[2] - bbox[0]
+                x = (image.width - text_width) / 2
+                
+                # Outline-Effekt
+                for adj in range(-3, 4):
+                    for adj2 in range(-3, 4):
+                        draw.text((x+adj, y+adj2), line, font=font, fill="black")
+                draw.text((x, y), line, font=font, fill="white")
+                y += line_height
+
+        # Bild speichern
+        output_path = os.path.join(self.output_folder, f"meme_{uuid.uuid4().hex}.png")
+        image.save(output_path)
         return output_path
 
 def register_meme_commands(bot):
+    # Don't create MemeGenerator here since it's now created in main.py
     @bot.command(name='lordmeme')
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def create_meme(ctx, *, text: str):
@@ -79,5 +156,5 @@ def register_meme_commands(bot):
             await ctx.send("Ein Fehler ist aufgetreten beim Erstellen des Memes.")
 
 def setup(bot):
-    bot.meme_generator = MemeGenerator()
+    # Remove MemeGenerator creation from here
     register_meme_commands(bot)
