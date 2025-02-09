@@ -42,18 +42,35 @@ intents.message_content = True
 intents.members = True
 intents.presences = True
 
+# Initialize message history before bot creation
+message_history = defaultdict(dict)
+
 client = commands.Bot(
     command_prefix=commands.when_mentioned_or("!"),
-    description='Buttergolem Discord Bot Version: 4.0.1\nCreated by: ninjazan420',
+    description='Buttergolem Discord Bot Version: 4.2.0\nCreated by: ninjazan420',
     intents=intents
 )
 client.remove_command('help')
 
+# Make shared variables available to bot
+client.admin_user_id = admin_user_id
+client.logging_channel = logging_channel
+client.message_history = message_history
+
 # Quiz-Modul importieren und Befehle registrieren
 from quiz import register_quiz_commands
-register_quiz_commands(client)
+from hilfe import register_help_commands
+from sounds import register_sound_commands
+from admins import register_admin_commands
 
-message_history = defaultdict(dict)  # Speichert Nachrichten-IDs und zugehörige User
+# Register commands after setting up shared variables
+register_quiz_commands(client)
+register_help_commands(client)
+register_sound_commands(client)
+register_admin_commands(client)
+
+# Importiere Sound-Funktionen
+from sounds import playsound, get_random_clipname, get_random_clipname_cringe, playsound_cringe
 
 # Rate Limiting System
 user_cooldowns = {}
@@ -113,36 +130,6 @@ async def get_biggest_vc(guild):
     if logging_channel:
         await _log(logtext)
     return voice_channel_with_most_users
-
-# --- Sound Related Functions ---
-def get_random_clipname():
-    return str(random.choice(os.listdir('/app/data/clips')))
-
-def get_random_clipname_cringe():
-    return str(random.choice(os.listdir('/app/data/clips/cringe/')))
-
-async def playsound(voice_channel, soundfile):
-    vc = await voice_channel.connect()
-    vc.play(discord.FFmpegPCMAudio(f'/app/data/clips/{soundfile}'), 
-            after=lambda e: print('erledigt', e))
-    while vc.is_playing():
-        await asyncio.sleep(1)
-    await vc.disconnect()
-
-async def playsound_cringe(voice_channel, soundfile):
-    vc = await voice_channel.connect()
-    vc.play(discord.FFmpegPCMAudio(f'/app/data/clips/cringe/{soundfile}'), 
-            after=lambda e: print('erledigt', e))
-    while vc.is_playing():
-        await asyncio.sleep(1)
-    await vc.disconnect()
-
-async def voice_quote(ctx, soundname):
-    if hasattr(ctx.message.author, "voice"):
-        voice_channel = ctx.message.author.voice.channel
-        await playsound(voice_channel, soundname)
-    else:
-        await ctx.message.channel.send('Das funktioniert nur in serverchannels du scheiß HAIDER')
 
 # --- Timer Related Functions ---
 async def create_random_timer(min, max):
@@ -204,137 +191,6 @@ async def on_command_completion(ctx):
     await channel.send(f"```\n{datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')} # {ctx.author} used {ctx.command} in {server}```")
 
 # --- Basic Commands ---
-class SoundBrowser:
-    def __init__(self, clips_dir='/app/data/clips'):
-        self.clips_dir = clips_dir
-        self.sounds_per_page = 50  # Erhöht von 15 auf 50
-        self.cached_sounds = []
-        self.load_sounds()
-
-    def load_sounds(self):
-        """Lädt alle Sound-Dateien und bereitet sie für die Anzeige vor"""
-        sounds = []
-        for file in os.listdir(self.clips_dir):
-            if file.endswith('.mp3'):
-                # Entferne .mp3 und erstelle den Befehl-Namen
-                command_name = os.path.splitext(file)[0].lower()
-                sounds.append({
-                    'file': file,
-                    'command': command_name
-                })
-        self.cached_sounds = sorted(sounds, key=lambda x: x['command'])
-        self.total_pages = math.ceil(len(self.cached_sounds) / self.sounds_per_page)
-
-    def get_page(self, page):
-        """Gibt die Sounds für eine bestimmte Seite zurück"""
-        start_idx = (page - 1) * self.sounds_per_page
-        end_idx = start_idx + self.sounds_per_page
-        return self.cached_sounds[start_idx:end_idx]
-
-    async def create_embed(self, page):
-        """Erstellt ein Embed für die aktuelle Seite"""
-        sounds = self.get_page(page)
-        
-        embed = discord.Embed(
-            title="🎵 Verfügbare Sounds",
-            description="Nutze `!sound <name>` um einen Sound abzuspielen",
-            color=0x3498db
-        )
-
-        if sounds:
-            # Teile die Sounds in drei Spalten
-            columns = [[], [], []]
-            col_size = len(sounds) // 3 + (1 if len(sounds) % 3 > 0 else 0)
-            
-            for i, sound in enumerate(sounds):
-                col_index = i // col_size
-                if col_index < 3:  # Verhindere Index out of range
-                    columns[col_index].append(sound['command'])
-
-            # Formatiere die Spalten mit Monospace-Font und fester Breite
-            for i, column in enumerate(columns):
-                if column:  # Nur hinzufügen wenn die Spalte nicht leer ist
-                    col_text = '\n'.join(f'`{cmd:<20}`' for cmd in column)  # Erhöht von 15 auf 20 Zeichen Breite
-                    embed.add_field(name='​', value=col_text, inline=True)  # Unicode zero-width space als Name
-
-        embed.set_footer(text=f"Seite {page}/{self.total_pages} • Navigiere mit ⬅️ ➡️")
-        return embed
-
-# Erstelle eine globale Instanz des SoundBrowsers
-sound_browser = SoundBrowser()
-
-async def create_help_embed(is_admin: bool) -> discord.Embed:
-    """Erstellt das Help-Embed basierend auf den Berechtigungen"""
-    embed = discord.Embed(
-        title="🤖 Buttergolem Bot Hilfe",
-        description="Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.\n\nVersion: 4.0.1 | Created by: ninjazan420",
-        color=0xf1c40f
-    )
-
-    # Basis-Befehle
-    embed.add_field(
-        name="📋 Basis-Befehle",
-        value="• `!hilfe` - Zeigt diese Hilfe an\n"
-              "• `!mett` - Zeigt den aktuellen Mett-Level 🥓\n"
-              "• `!zitat` - Zufälliges Zitat\n"
-              "• `!lordmeme <text>` - Erstellt ein Drachenlord Meme (Nutze | für oben/unten)",
-        inline=False
-    )
-
-    # Sound-Befehle
-    embed.add_field(
-        name="🔊 Sound-Befehle",
-        value="• `!lord` - Zufälliges GESCHREI im Voice\n"
-              "• `!cringe` - Oh no, cringe!\n"
-              "• `!sounds` - Zeigt alle verfügbaren Sounds\n"
-              "• `!sound <name>` - Spielt einen bestimmten Sound ab\n",  # Neue Zeile
-        inline=False
-    )
-
-    # Quiz-Befehle
-    embed.add_field(
-        name="❓ Quiz-Befehle",
-        value="• `!lordquiz` - Quiz-Informationen\n"
-              "• `!lordquiz start <Anzahl Runden (1-20)>` - Startet Quiz\n"
-              "• `!lordquiz stop` - Beende Quiz",
-        inline=False
-    )
-
-    # Kontakt-Befehle
-    embed.add_field(
-        name="📧 Kontakt",
-        value="• `!kontakt <Nachricht>` - Sende eine Nachricht an den Admin\n",
-        inline=False
-    )
-
-    # Admin-Befehle nur anzeigen wenn Admin
-    if is_admin:
-        embed.add_field(
-            name="⚙️ Admin-Befehle",
-            value="• `!server` - Server-Liste\n"
-                  "• `!user` - Nutzerstatistiken\n"
-                  "• `!ping` - Bot-Latenz\n"
-                  "• `!antwort <ID> <Text>` - Auf Kontaktnachrichten antworten",
-            inline=False
-        )
-
-    embed.set_footer(text="Der Bot muss die Berechtigung besitzen, in den Voice zu joinen!")
-    return embed
-
-@client.command(name='hilfe')
-async def hilfe_command(ctx):
-    """Zeigt die Hilfe für den Buttergolem Bot"""
-    is_admin = ctx.author.guild_permissions.administrator
-    embed = await create_help_embed(is_admin)
-    await ctx.send(embed=embed)
-
-@client.tree.command(name="hilfe", description="Zeigt die Hilfe für den Buttergolem Bot")
-async def hilfe_slash(interaction: discord.Interaction):
-    """Zeigt die Hilfe für den Buttergolem Bot"""
-    is_admin = interaction.user.guild_permissions.administrator
-    embed = await create_help_embed(is_admin)
-    await interaction.response.send_message(embed=embed, ephemeral=True)
-
 @client.command(name='mett')
 @cooldown_check()
 async def mett_level(ctx):
@@ -372,248 +228,6 @@ async def id(ctx):
     if hasattr(ctx.message.author, "voice"):
         voice_channel = ctx.message.author.voice.channel
         await ctx.message.channel.send(f'Aktuelle Voicekanal ID: {voice_channel.id}')
-
-# --- Sound Commands ---
-@client.command(pass_context=True)
-@cooldown_check()
-async def lord(ctx):
-    if hasattr(ctx.message.author, "voice"):
-        voice_channel = ctx.message.author.voice.channel
-        await playsound(voice_channel, get_random_clipname())
-    else:
-        await ctx.message.channel.send('Das funktioniert nur in serverchannels du scheiß HAIDER')
-
-@client.command(pass_context=True)
-@cooldown_check()
-async def cringe(ctx):
-    if hasattr(ctx.message.author, "voice"):
-        voice_channel = ctx.message.author.voice.channel
-        await playsound_cringe(voice_channel, get_random_clipname_cringe())
-    else:
-        await ctx.message.channel.send('Das funktioniert nur in serverchannels du scheiß HAIDER')
-
-@client.command(name='sounds')
-@cooldown_check()
-async def list_sounds(ctx):
-    """Zeigt eine durchblätterbare Liste aller verfügbaren Sounds"""
-    embed = await sound_browser.create_embed(1)
-    message = await ctx.send(embed=embed)
-    
-    # Füge Reaktionen hinzu
-    await message.add_reaction("⬅️")
-    await message.add_reaction("➡️")
-
-    def check(reaction, user):
-        return user == ctx.author and str(reaction.emoji) in ["⬅️", "➡️"]
-
-    current_page = 1
-    while True:
-        try:
-            reaction, user = await client.wait_for("reaction_add", timeout=60.0, check=check)
-
-            if str(reaction.emoji) == "➡️" and current_page < sound_browser.total_pages:
-                current_page += 1
-            elif str(reaction.emoji) == "⬅️" and current_page > 1:
-                current_page -= 1
-            
-            await message.edit(embed=await sound_browser.create_embed(current_page))
-            await message.remove_reaction(reaction, user)
-
-        except asyncio.TimeoutError:
-            break
-
-@client.tree.command(name="sounds", description="Zeigt eine Liste aller verfügbaren Sounds")
-async def sounds_slash(interaction: discord.Interaction):
-    embed = await sound_browser.create_embed(1)
-    await interaction.response.send_message(embed=embed)
-    
-    message = await interaction.original_response()
-    await message.add_reaction("⬅️")
-    await message.add_reaction("➡️")
-
-    def check(reaction, user):
-        return user == interaction.user and str(reaction.emoji) in ["⬅️", "➡️"]
-
-    current_page = 1
-    while True:
-        try:
-            reaction, user = await client.wait_for("reaction_add", timeout=60.0, check=check)
-
-            if str(reaction.emoji) == "➡️" and current_page < sound_browser.total_pages:
-                current_page += 1
-            elif str(reaction.emoji) == "⬅️" and current_page > 1:
-                current_page -= 1
-            
-            await message.edit(embed=await sound_browser.create_embed(current_page))
-            await message.remove_reaction(reaction, user)
-
-        except asyncio.TimeoutError:
-            break
-
-@client.command(name='sound')
-@cooldown_check()
-async def play_sound(ctx, sound_name: str):
-    """Spielt einen bestimmten Sound ab"""
-    sound_name = sound_name.lower()
-    
-    # Suche nach dem Sound in der Cache-Liste
-    sound_file = None
-    for sound in sound_browser.cached_sounds:
-        if sound['command'] == sound_name:
-            sound_file = sound['file']
-            break
-    
-    if not sound_file:
-        await ctx.send("❌ Sound nicht gefunden! Nutze `!sounds` um alle verfügbaren Sounds zu sehen.")
-        return
-        
-    if hasattr(ctx.message.author, "voice"):
-        voice_channel = ctx.message.author.voice.channel
-        await playsound(voice_channel, sound_file)
-    else:
-        await ctx.send('Das funktioniert nur in Voice-Channels du scheiß HAIDER')
-
-@client.command()
-@cooldown_check()
-async def lordmeme(ctx, *, beschreibung=None):
-    """Erstellt ein Meme mit dem gegebenen Text"""
-    if not beschreibung:
-        await ctx.send("Bitte gib einen Text für das Meme an!\nBeispiele:\n`!lordmeme Echte Meddler meddln ned`\n`!lordmeme Oben | Unten`")
-        return
-
-    try:
-        meme_path = client.meme_generator.generate_meme(beschreibung)
-        await ctx.send(file=discord.File(meme_path))
-        os.remove(meme_path)  # Clean up after sending
-    except Exception as e:
-        await ctx.send("❌ Fehler beim Erstellen des Memes!")
-        if logging_channel:
-            await _log(f"Fehler beim Meme-Generator: {str(e)}")
-
-# --- Admin Commands ---
-@client.command(pass_context=True)
-async def server(ctx):
-    if ctx.author.id != admin_user_id:
-        await ctx.send("Du bist nicht berechtigt, diesen Befehl zu nutzen!")
-        return
-    
-    server_list = "\n".join([f"• {guild.name} (ID: {guild.id})" for guild in client.guilds])
-    await ctx.send(f"```Der Bot ist auf folgenden Servern aktiv:\n{server_list}```")
-    if logging_channel:
-        await _log(f"Admin-Befehl !server wurde von {ctx.author.name} ausgeführt")
-
-@client.command(pass_context=True)
-async def user(ctx):
-    if ctx.author.id != admin_user_id:
-        await ctx.send("Du bist nicht berechtigt, diesen Befehl zu nutzen!")
-        return
-    
-    total_users = 0
-    online_users = 0
-    server_stats = []
-    
-    for guild in client.guilds:
-        guild_total = guild.member_count
-        guild_online = len([m for m in guild.members if m.status != Status.offline and not m.bot])
-        total_users += guild_total
-        online_users += guild_online
-        server_stats.append(f"• {guild.name}: {guild_total} Nutzer ({guild_online} online)")
-    
-    stats_message = [
-        "```Nutzerstatistiken:\n",
-        f"Gesamt über alle Server: {total_users} Nutzer",
-        f"Davon online: {online_users} Nutzer\n",
-        "Details pro Server:",
-        *server_stats,
-        "```"
-    ]
-    
-    await ctx.send("\n".join(stats_message))
-    if logging_channel:
-        await _log(f"Admin-Befehl !user wurde von {ctx.author.name} ausgeführt")
-
-
-@client.command()
-@commands.has_permissions(administrator=True)
-async def ping(ctx):
-    latency = round(client.latency * 1000)
-    await ctx.send(f"🏓 Pong! Bot Latenz: {latency}ms")
-
-@client.command()
-@commands.has_permissions(administrator=True)
-async def servercount(ctx):
-    """Führt ein manuelles Servercounter-Update durch"""
-    await ctx.send("🔄 Starte manuelles Servercounter Update...")
-    success = await servercounter.single_update(client)
-    if not success:
-        await ctx.send("❌ Servercounter Update fehlgeschlagen! Überprüfe die Logs.")
-
-@client.command(name='kontakt')
-async def contact(ctx, *, message=None):
-    """Sendet eine Nachricht an den Bot-Administrator"""
-    if not message:
-        await ctx.send("Bitte gib eine Nachricht an! Beispiel: `!kontakt Hallo, ich habe eine Frage`")
-        return
-
-    admin_user = await client.fetch_user(admin_user_id)
-    if not admin_user:
-        await ctx.send("❌ Fehler: Admin konnte nicht gefunden werden!")
-        return
-
-    message_id = str(uuid.uuid4())[:8]  # Erstelle kurze eindeutige ID
-    message_history[message_id] = ctx.author.id
-
-    embed = discord.Embed(
-        title="📨 Neue Nachricht",
-        description=message,
-        color=0x3498db,
-        timestamp=datetime.datetime.now(datetime.UTC)
-    )
-    embed.add_field(name="Absender", value=f"{ctx.author} (ID: {ctx.author.id})")
-    embed.add_field(name="Server", value=ctx.guild.name if ctx.guild else "DM")
-    embed.add_field(name="Nachrichten-ID", value=message_id, inline=False)
-    embed.set_footer(text=f"Antworte mit: !antwort {message_id} <deine Antwort>")
-
-    try:
-        await admin_user.send(embed=embed)
-        await ctx.send("✅ Deine Nachricht wurde erfolgreich an den Administrator gesendet!")
-        if logging_channel:
-            await _log(f"Kontaktnachricht von {ctx.author} (ID: {message_id})")
-    except:
-        await ctx.send("❌ Fehler beim Senden der Nachricht!")
-
-@client.command(name='antwort')
-async def reply(ctx, message_id=None, *, response=None):
-    """Ermöglicht dem Admin, auf Kontaktnachrichten zu antworten"""
-    if ctx.author.id != admin_user_id:
-        await ctx.send("❌ Nur der Administrator kann diesen Befehl nutzen!")
-        return
-
-    if not message_id or not response:
-        await ctx.send("❌ Syntax: `!antwort <message_id> <deine Antwort>`")
-        return
-
-    if message_id not in message_history:
-        await ctx.send("❌ Diese Nachrichten-ID existiert nicht!")
-        return
-
-    user_id = message_history[message_id]
-    try:
-        user = await client.fetch_user(user_id)
-        embed = discord.Embed(
-            title="📩 Antwort vom Administrator",
-            description=response,
-            color=0x2ecc71,
-            timestamp=datetime.datetime.now(datetime.UTC)
-        )
-        embed.add_field(name="Bezugnehmend auf ID", value=message_id)
-        
-        await user.send(embed=embed)
-        await ctx.send("✅ Antwort wurde erfolgreich gesendet!")
-        if logging_channel:
-            await _log(f"Admin-Antwort an User {user.id} (ID: {message_id})")
-    except:
-        await ctx.send("❌ Fehler beim Senden der Antwort!")
 
 # MemeGenerator Klasse hinzufügen
 class MemeGenerator:
@@ -752,6 +366,31 @@ class MemeGenerator:
         output_path = os.path.join(self.output_folder, f"meme_{uuid.uuid4().hex}.png")
         image.save(output_path)
         return output_path
+
+# --- Meme Command ---
+@client.command(name='lordmeme')
+@cooldown_check()
+async def create_meme(ctx, *, text: str):
+    """Erstellt ein Drachenlord Meme"""
+    try:
+        # Generiere das Meme
+        output_path = client.meme_generator.generate_meme(text)
+        
+        # Sende das Meme
+        await ctx.send(file=discord.File(output_path))
+        
+        # Lösche die temporäre Datei
+        os.remove(output_path)
+    except Exception as e:
+        if logging_channel:
+            await _log(f"Error in meme command: {str(e)}")
+        await ctx.send("Ein Fehler ist aufgetreten beim Erstellen des Memes.")
+
+# Füge die Sound-Funktionen zum Bot hinzu damit sie von anderen Modulen verwendet werden können
+client.playsound = playsound
+client.get_random_clipname = get_random_clipname
+client.playsound_cringe = playsound_cringe
+client.get_random_clipname_cringe = get_random_clipname_cringe
 
 # Bot starten
 client.meme_generator = MemeGenerator()
