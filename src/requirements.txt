@@ -4,4 +4,4 @@ aiohttp>=3.8.0
 discord.py 
 python-dotenv 
 requests
-Pillow
+Pillow  # Aktualisiert für Meme-Generator
