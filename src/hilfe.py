@@ -5,7 +5,7 @@ async def create_help_embed(is_admin: bool) -> discord.Embed:
     """Erstellt das Help-Embed basierend auf den Berechtigungen"""
     embed = discord.Embed(
         title="🤖 Buttergolem Bot Hilfe",
-        description="Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.\n\nVersion: 4.2.0 | Created by: ninjazan420",
+        description="Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.\n\nVersion: 4.3.0 | Created by: ninjazan420",
         color=0xf1c40f
     )
 

@@ -2,7 +2,7 @@
 
 # [Aktueller invitelink](https://discord.com/oauth2/authorize?client_id=1329104199794954240)
 
-# Drachenlord Discord Bot v4.0.1
+# Drachenlord Discord Bot v4.3.0
 
 ## Meddl Loidde! 
 
@@ -60,6 +60,26 @@ Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschan
 - Entscheiden, ob der Bot alle 30-60 Minuten zufällig dem größten Kanal beitreten soll (`ENABLE_RANDOM_JOINS: "False"/"True"`)
 - `docker compose build`, gefolgt von `docker compose up -d`
 - Logs können per `docker compose logs -f` abgerufen werden
+
+### Modulare Struktur
+
+Der Bot ist modular aufgebaut. Jede Hauptfunktion befindet sich in einer eigenen Datei im `src/` Ordner:
+
+- `main.py` - Hauptdatei mit Bot-Setup und Basislogik
+- `hilfe.py` - Hilfe-Kommandos und Dokumentation 
+- `sounds.py` - Sound-bezogene Befehle und Funktionen
+- `quiz.py` - Quiz-System und Spiellogik
+- `admins.py` - Admin-Befehle und -Funktionen
+- `lordmeme.py` - Meme-Generator und Befehle
+- `servercounter.py` - Server-Tracking und Statistiken
+
+Um neue Funktionen hinzuzufügen:
+
+1. Erstelle eine neue Datei `src/meine_funktion.py`
+2. Implementiere deine Befehle in einer `register_commands()` Funktion
+3. Importiere und registriere das Modul in `main.py`
+
+Diese Struktur macht es einfach, den Bot zu erweitern ohne bestehenden Code ändern zu müssen.
 
 > Der Bot muss die Berechtigung besitzen, in den Voice zu joinen!
 
