@@ -5,7 +5,7 @@ async def create_help_embed(is_admin: bool) -> discord.Embed:
     """Erstellt das Help-Embed basierend auf den Berechtigungen"""
     embed = discord.Embed(
         title="🤖 Buttergolem Bot Hilfe",
-        description="Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.\n\nVersion: 4.3.0 | Created by: ninjazan420",
+        description="Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.\n\nVersion: 4.4.0 | Created by: ninjazan420",
         color=0xf1c40f
     )
 
@@ -14,8 +14,10 @@ async def create_help_embed(is_admin: bool) -> discord.Embed:
         name="📋 Basis-Befehle",
         value="• `!hilfe` - Zeigt diese Hilfe an\n"
               "• `!mett` - Zeigt den aktuellen Mett-Level 🥓\n"
+              "• `!lordstats [@user]` - Drachenstats zu einem user/sich selbst\n"
               "• `!zitat` - Zufälliges Zitat\n"
-              "• `!lordmeme <text>` - Erstellt ein Drachenlord Meme (Nutze | für oben/unten)",
+              "• `!lordmeme <text>` - Erstellt ein Drachenlord Meme (Nutze | für oben/unten)\n"
+              "• `!lordupdate` - Zeigt die letzten Bot-Updates",  # Neue Zeile
         inline=False
     )
 
@@ -52,6 +54,7 @@ async def create_help_embed(is_admin: bool) -> discord.Embed:
             value="• `!server` - Server-Liste\n"
                   "• `!user` - Nutzerstatistiken\n"
                   "• `!ping` - Bot-Latenz\n"
+                  "• `!stats` - Bot-Statistiken\n"
                   "• `!antwort <ID> <Text>` - Auf Kontaktnachrichten antworten",
             inline=False
         )
