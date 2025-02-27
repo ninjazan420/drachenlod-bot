@@ -2,7 +2,7 @@
 
 # [Aktueller invitelink](https://discord.com/oauth2/authorize?client_id=1329104199794954240)
 
-# Drachenlord Discord Bot v4.3.0
+# Drachenlord Discord Bot v4.4.2
 
 ## Meddl Loidde! 
 
@@ -27,6 +27,8 @@ Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschan
 | `!mett` | Zeigt den aktuellen Mett-Level mit Mett-Meter an 🥓 |
 | `!zitat` | Der Quallemann antwortet dir mit einem zufälligen Zitat |
 | `!lordmeme <text>` | Erstellt ein Drachenlord Meme (Nutze \| für oben/unten) |
+| `!lordstats [@user]` | Zeigt lustige Drachenlord-Statistiken für einen Benutzer |
+| `!lordupdate` | Zeigt die letzten Bot-Updates und Änderungen |
 | `!kontakt` | Sende eine Nachricht an den Admin |
 
 ## 🔊 Sound-Befehle
