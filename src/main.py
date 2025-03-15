@@ -32,8 +32,8 @@ from hilfe import register_help_commands
 from sounds import register_sound_commands, playsound, get_random_clipname, get_random_clipname_cringe, playsound_cringe
 from admins import register_admin_commands
 from lordmeme import register_meme_commands, MemeGenerator
-from lordupdate import register_update_commands
 from lordstats import register_lordstats_commands
+from updates import register_update_commands
 
 # ===== 2. CONFIGURATION AND SETUP =====
 # Environment variables

@@ -6,6 +6,50 @@ import uuid
 import servercounter
 import math
 import asyncio
+import json
+import os
+
+class StatsManager:
+    def __init__(self):
+        self.stats_file = '/app/data/stats.json'
+        self.stats = {
+            'unique_users': set(),
+            'commands_used': 0,
+            'sounds_played': 0
+        }
+        self._load_stats()
+    
+    def _load_stats(self):
+        """Lädt die Statistiken aus der Datei, falls vorhanden"""
+        try:
+            if os.path.exists(self.stats_file):
+                with open(self.stats_file, 'r') as f:
+                    data = json.load(f)
+                    # Sets können nicht direkt als JSON gespeichert werden
+                    # daher werden sie als Liste gespeichert und hier zurück konvertiert
+                    self.stats['unique_users'] = set(data.get('unique_users', []))
+                    self.stats['commands_used'] = data.get('commands_used', 0)
+                    self.stats['sounds_played'] = data.get('sounds_played', 0)
+        except Exception as e:
+            print(f"Fehler beim Laden der Statistiken: {e}")
+    
+    def _save_stats(self):
+        """Speichert die Statistiken in einer Datei"""
+        try:
+            os.makedirs(os.path.dirname(self.stats_file), exist_ok=True)
+            
+            # Sets können nicht direkt als JSON gespeichert werden,
+            # daher konvertieren wir sie in eine Liste
+            save_data = {
+                'unique_users': list(self.stats['unique_users']),
+                'commands_used': self.stats['commands_used'],
+                'sounds_played': self.stats['sounds_played']
+            }
+            
+            with open(self.stats_file, 'w') as f:
+                json.dump(save_data, f)
+        except Exception as e:
+            print(f"Fehler beim Speichern der Statistiken: {e}")
 
 def register_admin_commands(bot):
     admin_user_id = bot.admin_user_id
@@ -32,14 +76,14 @@ def register_admin_commands(bot):
             await ctx.send(f"❌ Ungültige Seite! Es gibt insgesamt {total_pages} Seiten.")
             return
         
-        # Funktion zum Erstellen der Server-Liste für eine bestimmte Seite
+        # Verbesserte Funktion zum Erstellen der Server-Liste für eine bestimmte Seite
         def create_server_page(current_page):
             start_idx = (current_page - 1) * servers_per_page
             end_idx = min(start_idx + servers_per_page, len(guilds))
             
             server_list = "\n".join([f"• {guild.name} (ID: {guild.id})" for guild in guilds[start_idx:end_idx]])
             
-            return f"```Der Bot ist auf folgenden Servern aktiv (Seite {current_page}/{total_pages}):\n{server_list}```"
+            return f"```Der Bot ist auf insgesamt {len(guilds)} Servern aktiv (Seite {current_page}/{total_pages}):\n{server_list}```"
         
         # Erste Seite senden
         message = await ctx.send(create_server_page(page))

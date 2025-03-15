@@ -11,7 +11,8 @@ RUN apt-get update && apt-get install -y \
 RUN echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
 
 COPY src/ /app
-COPY data/ /app/data
+# Erstelle den data Ordner statt ihn zu kopieren
+RUN mkdir -p /app/data
 WORKDIR /app
 
 RUN pip install -r requirements.txt
