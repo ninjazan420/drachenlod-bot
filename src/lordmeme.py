@@ -140,11 +140,16 @@ class MemeGenerator:
         return output_path
 
 def register_meme_commands(bot):
-    # Don't create MemeGenerator here since it's now created in main.py
     @bot.command(name='lordmeme')
     @commands.cooldown(1, 5, commands.BucketType.user)
-    async def create_meme(ctx, *, text: str):
+    async def create_meme(ctx, *, text: str = None):
         """Erstellt ein Drachenlord Meme"""
+        if text is None:
+            await ctx.send("❌ Du musst einen Text für das Meme angeben!\n"
+                          "Beispiel: `!lordmeme Das ist lustig`\n"
+                          "Für Text oben und unten: `!lordmeme Oben | Unten`")
+            return
+            
         try:
             output_path = bot.meme_generator.generate_meme(text)
             await ctx.send(file=discord.File(output_path))
@@ -154,6 +159,20 @@ def register_meme_commands(bot):
                 channel = bot.get_channel(bot.logging_channel)
                 await channel.send(f"Error in meme command: {str(e)}")
             await ctx.send("Ein Fehler ist aufgetreten beim Erstellen des Memes.")
+
+    @create_meme.error
+    async def meme_error(ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send("❌ Du musst einen Text für das Meme angeben!\n"
+                          "Beispiel: `!lordmeme Das ist lustig`\n"
+                          "Für Text oben und unten: `!lordmeme Oben | Unten`")
+        elif isinstance(error, commands.CommandOnCooldown):
+            await ctx.send(f"⏱️ Bitte warte noch {error.retry_after:.1f} Sekunden bis zum nächsten Meme!")
+        else:
+            await ctx.send("❌ Ein Fehler ist aufgetreten. Überprüfe deine Eingabe.")
+            if hasattr(bot, 'logging_channel'):
+                channel = bot.get_channel(bot.logging_channel)
+                await channel.send(f"Error in lordmeme command: {str(error)}")
 
 def setup(bot):
     # Remove MemeGenerator creation from here

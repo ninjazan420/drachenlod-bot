@@ -4,6 +4,8 @@ from discord import Status
 import datetime
 import uuid
 import servercounter
+import math
+import asyncio
 
 def register_admin_commands(bot):
     admin_user_id = bot.admin_user_id
@@ -16,47 +18,147 @@ def register_admin_commands(bot):
         await channel.send("```\n" + datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S # ") + str(message) + "```\n")
 
     @bot.command(pass_context=True)
-    async def server(ctx):
+    async def server(ctx, page: int = 1):
         """Zeigt eine Liste aller Server an"""
         if ctx.author.id != admin_user_id:
             await ctx.send("Du bist nicht berechtigt, diesen Befehl zu nutzen!")
             return
         
-        server_list = "\n".join([f"• {guild.name} (ID: {guild.id})" for guild in bot.guilds])
-        await ctx.send(f"```Der Bot ist auf folgenden Servern aktiv:\n{server_list}```")
-        if logging_channel:
-            await _log(f"Admin-Befehl !server wurde von {ctx.author.name} ausgeführt")
+        servers_per_page = 15
+        guilds = list(bot.guilds)
+        total_pages = math.ceil(len(guilds) / servers_per_page)
+        
+        if page < 1 or page > total_pages:
+            await ctx.send(f"❌ Ungültige Seite! Es gibt insgesamt {total_pages} Seiten.")
+            return
+        
+        # Funktion zum Erstellen der Server-Liste für eine bestimmte Seite
+        def create_server_page(current_page):
+            start_idx = (current_page - 1) * servers_per_page
+            end_idx = min(start_idx + servers_per_page, len(guilds))
+            
+            server_list = "\n".join([f"• {guild.name} (ID: {guild.id})" for guild in guilds[start_idx:end_idx]])
+            
+            return f"```Der Bot ist auf folgenden Servern aktiv (Seite {current_page}/{total_pages}):\n{server_list}```"
+        
+        # Erste Seite senden
+        message = await ctx.send(create_server_page(page))
+        
+        # Nur Reaktionen hinzufügen, wenn es mehr als eine Seite gibt
+        if total_pages > 1:
+            await message.add_reaction("⬅️")
+            await message.add_reaction("➡️")
+            
+            def check(reaction, user):
+                return user == ctx.author and str(reaction.emoji) in ["⬅️", "➡️"] and reaction.message.id == message.id
+            
+            current_page = page
+            
+            # Auf Reaktionen warten und Seiten ändern
+            while True:
+                try:
+                    reaction, user = await bot.wait_for("reaction_add", timeout=60.0, check=check)
+                    
+                    if str(reaction.emoji) == "➡️" and current_page < total_pages:
+                        current_page += 1
+                    elif str(reaction.emoji) == "⬅️" and current_page > 1:
+                        current_page -= 1
+                    
+                    await message.edit(content=create_server_page(current_page))
+                    await message.remove_reaction(reaction, user)
+                    
+                    if logging_channel:
+                        await _log(f"Admin-Befehl !server Seitenwechsel auf {current_page}/{total_pages} von {ctx.author.name}")
+                        
+                except asyncio.TimeoutError:
+                    break
+        
+        else:
+            if logging_channel:
+                await _log(f"Admin-Befehl !server wurde von {ctx.author.name} ausgeführt (Seite {page}/{total_pages})")
 
     @bot.command(pass_context=True)
-    async def user(ctx):
+    async def user(ctx, page: int = 1):
         """Zeigt Nutzerstatistiken an"""
         if ctx.author.id != admin_user_id:
             await ctx.send("Du bist nicht berechtigt, diesen Befehl zu nutzen!")
             return
         
+        servers_per_page = 15
+        guilds = list(bot.guilds)
+        total_pages = math.ceil(len(guilds) / servers_per_page)
+        
+        if page < 1 or page > total_pages:
+            await ctx.send(f"❌ Ungültige Seite! Es gibt insgesamt {total_pages} Seiten.")
+            return
+        
+        # Gesamte Nutzerzahlen berechnen (bleibt gleich für alle Seiten)
         total_users = 0
         online_users = 0
-        server_stats = []
-        
         for guild in bot.guilds:
             guild_total = guild.member_count
             guild_online = len([m for m in guild.members if m.status != Status.offline and not m.bot])
             total_users += guild_total
             online_users += guild_online
-            server_stats.append(f"• {guild.name}: {guild_total} Nutzer ({guild_online} online)")
         
-        stats_message = [
-            "```Nutzerstatistiken:\n",
-            f"Gesamt über alle Server: {total_users} Nutzer",
-            f"Davon online: {online_users} Nutzer\n",
-            "Details pro Server:",
-            *server_stats,
-            "```"
-        ]
+        # Funktion zum Erstellen der Nutzerstatistik für eine bestimmte Seite
+        def create_user_page(current_page):
+            start_idx = (current_page - 1) * servers_per_page
+            end_idx = min(start_idx + servers_per_page, len(guilds))
+            
+            # Nur Server für die aktuelle Seite anzeigen
+            server_stats = []
+            for guild in guilds[start_idx:end_idx]:
+                guild_total = guild.member_count
+                guild_online = len([m for m in guild.members if m.status != Status.offline and not m.bot])
+                server_stats.append(f"• {guild.name}: {guild_total} Nutzer ({guild_online} online)")
+            
+            stats_message = [
+                "```Nutzerstatistiken:\n",
+                f"Gesamt über alle Server: {total_users} Nutzer",
+                f"Davon online: {online_users} Nutzer\n",
+                f"Details pro Server (Seite {current_page}/{total_pages}):",
+                *server_stats,
+                "```"
+            ]
+            
+            return "\n".join(stats_message)
         
-        await ctx.send("\n".join(stats_message))
-        if logging_channel:
-            await _log(f"Admin-Befehl !user wurde von {ctx.author.name} ausgeführt")
+        # Erste Seite senden
+        message = await ctx.send(create_user_page(page))
+        
+        # Nur Reaktionen hinzufügen, wenn es mehr als eine Seite gibt
+        if total_pages > 1:
+            await message.add_reaction("⬅️")
+            await message.add_reaction("➡️")
+            
+            def check(reaction, user):
+                return user == ctx.author and str(reaction.emoji) in ["⬅️", "➡️"] and reaction.message.id == message.id
+            
+            current_page = page
+            
+            # Auf Reaktionen warten und Seiten ändern
+            while True:
+                try:
+                    reaction, user = await bot.wait_for("reaction_add", timeout=60.0, check=check)
+                    
+                    if str(reaction.emoji) == "➡️" and current_page < total_pages:
+                        current_page += 1
+                    elif str(reaction.emoji) == "⬅️" and current_page > 1:
+                        current_page -= 1
+                    
+                    await message.edit(content=create_user_page(current_page))
+                    await message.remove_reaction(reaction, user)
+                    
+                    if logging_channel:
+                        await _log(f"Admin-Befehl !user Seitenwechsel auf {current_page}/{total_pages} von {ctx.author.name}")
+                        
+                except asyncio.TimeoutError:
+                    break
+        
+        else:
+            if logging_channel:
+                await _log(f"Admin-Befehl !user wurde von {ctx.author.name} ausgeführt (Seite {page}/{total_pages})")
 
     @bot.command()
     @commands.has_permissions(administrator=True)

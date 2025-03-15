@@ -1,8 +1,11 @@
 import discord
 from discord import app_commands
 
-async def create_help_embed(is_admin: bool) -> discord.Embed:
+async def create_help_embed(user_id: int, is_server_admin: bool, admin_user_id: int) -> discord.Embed:
     """Erstellt das Help-Embed basierend auf den Berechtigungen"""
+    # Prüfe, ob der Nutzer der Haupt-Admin ist
+    is_admin = (user_id == admin_user_id)
+    
     embed = discord.Embed(
         title="🤖 Buttergolem Bot Hilfe",
         description="Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.\n\nVersion: 4.4.0 | Created by: ninjazan420",
@@ -47,7 +50,7 @@ async def create_help_embed(is_admin: bool) -> discord.Embed:
         inline=False
     )
 
-    # Admin-Befehle nur anzeigen wenn Admin
+    # Admin-Befehle nur anzeigen wenn der Nutzer der Haupt-Admin ist
     if is_admin:
         embed.add_field(
             name="⚙️ Admin-Befehle",
@@ -66,15 +69,15 @@ def register_help_commands(bot):
     @bot.command(name='hilfe')
     async def hilfe_command(ctx):
         """Zeigt die Hilfe für den Buttergolem Bot"""
-        is_admin = ctx.author.guild_permissions.administrator
-        embed = await create_help_embed(is_admin)
+        is_server_admin = ctx.author.guild_permissions.administrator
+        embed = await create_help_embed(ctx.author.id, is_server_admin, bot.admin_user_id)
         await ctx.send(embed=embed)
 
     @bot.tree.command(name="hilfe", description="Zeigt die Hilfe für den Buttergolem Bot")
     async def hilfe_slash(interaction: discord.Interaction):
         """Zeigt die Hilfe für den Buttergolem Bot"""
-        is_admin = interaction.user.guild_permissions.administrator
-        embed = await create_help_embed(is_admin)
+        is_server_admin = interaction.user.guild_permissions.administrator
+        embed = await create_help_embed(interaction.user.id, is_server_admin, bot.admin_user_id)
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
 def setup(bot):
