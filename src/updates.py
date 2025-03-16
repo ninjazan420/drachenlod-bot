@@ -30,9 +30,20 @@ def register_update_commands(bot):
             inline=False
         )
         
-        embed.set_footer(text=f"Stand: {datetime.datetime.now().strftime('%d.%m.%Y')}")
+        embed.set_footer(text=f"Stand: {datetime.datetime.now().strftime('%d.%m.%Y')} | Support-Server: discord.gg/7J4mgSyB8n")
         
         await ctx.send(embed=embed)
 
 def setup(bot):
-    register_update_commands(bot) 
+    register_update_commands(bot)
+
+async def process_command(message, command_name):
+    # ... existing code ...
+    
+    # Vor dem Senden der Logging-Nachricht überprüfen, ob der Benutzer ein Admin ist
+    if not message.author.guild_permissions.administrator:
+        logging_channel = client.get_channel(LOGGING_CHANNEL_ID)
+        if logging_channel:
+            await logging_channel.send(f"Benutzer {message.author.name} hat den Befehl `{command_name}` ausgeführt.")
+    
+    # ... existing code ... 

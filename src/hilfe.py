@@ -49,6 +49,13 @@ async def create_help_embed(user_id: int, is_server_admin: bool, admin_user_id: 
         value="• `!kontakt <Nachricht>` - Sende eine Nachricht an den Admin\n",
         inline=False
     )
+    
+    # Support-Server als eigenes Feld
+    embed.add_field(
+        name="🌐 Support-Server",
+        value="• https://discord.gg/7J4mgSyB8n",
+        inline=False
+    )
 
     # Admin-Befehle nur anzeigen wenn der Nutzer der Haupt-Admin ist
     if is_admin:

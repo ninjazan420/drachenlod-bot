@@ -128,7 +128,7 @@ def cooldown_check():
 @client.event
 async def on_ready():
     if logging_channel:
-        await _log("🟢 Bot gestartet - Version 4.4.2")
+        await _log("🟢 Bot gestartet - Version 4.4.4")
     
     await client.change_presence(activity=discord.Game(name="!hilfe du kaschber"))
     client.logging_channel = logging_channel
@@ -143,7 +143,7 @@ async def on_ready():
 
 @client.event
 async def on_command_completion(ctx):
-    if ctx.author.id == admin_user_id:
+    if ctx.author.guild_permissions.administrator:
         return
     
     channel = client.get_channel(logging_channel)
