@@ -8,6 +8,7 @@ import math
 import asyncio
 import json
 import os
+import re
 
 class StatsManager:
     def __init__(self):
@@ -62,73 +63,13 @@ def register_admin_commands(bot):
         await channel.send("```\n" + datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S # ") + str(message) + "```\n")
 
     @bot.command(pass_context=True)
-    async def server(ctx, page: int = 1):
-        """Zeigt eine Liste aller Server an"""
-        if ctx.author.id != admin_user_id:
-            await ctx.send("Du bist nicht berechtigt, diesen Befehl zu nutzen!")
-            return
-        
-        servers_per_page = 15
-        guilds = list(bot.guilds)
-        total_pages = math.ceil(len(guilds) / servers_per_page)
-        
-        if page < 1 or page > total_pages:
-            await ctx.send(f"❌ Ungültige Seite! Es gibt insgesamt {total_pages} Seiten.")
-            return
-        
-        # Verbesserte Funktion zum Erstellen der Server-Liste für eine bestimmte Seite
-        def create_server_page(current_page):
-            start_idx = (current_page - 1) * servers_per_page
-            end_idx = min(start_idx + servers_per_page, len(guilds))
-            
-            server_list = "\n".join([f"• {guild.name} (ID: {guild.id})" for guild in guilds[start_idx:end_idx]])
-            
-            return f"```Der Bot ist auf insgesamt {len(guilds)} Servern aktiv (Seite {current_page}/{total_pages}):\n{server_list}```"
-        
-        # Erste Seite senden
-        message = await ctx.send(create_server_page(page))
-        
-        # Nur Reaktionen hinzufügen, wenn es mehr als eine Seite gibt
-        if total_pages > 1:
-            await message.add_reaction("⬅️")
-            await message.add_reaction("➡️")
-            
-            def check(reaction, user):
-                return user == ctx.author and str(reaction.emoji) in ["⬅️", "➡️"] and reaction.message.id == message.id
-            
-            current_page = page
-            
-            # Auf Reaktionen warten und Seiten ändern
-            while True:
-                try:
-                    reaction, user = await bot.wait_for("reaction_add", timeout=60.0, check=check)
-                    
-                    if str(reaction.emoji) == "➡️" and current_page < total_pages:
-                        current_page += 1
-                    elif str(reaction.emoji) == "⬅️" and current_page > 1:
-                        current_page -= 1
-                    
-                    await message.edit(content=create_server_page(current_page))
-                    await message.remove_reaction(reaction, user)
-                    
-                    if logging_channel:
-                        await _log(f"Admin-Befehl !server Seitenwechsel auf {current_page}/{total_pages} von {ctx.author.name}")
-                        
-                except asyncio.TimeoutError:
-                    break
-        
-        else:
-            if logging_channel:
-                await _log(f"Admin-Befehl !server wurde von {ctx.author.name} ausgeführt (Seite {page}/{total_pages})")
-
-    @bot.command(pass_context=True)
     async def user(ctx, page: int = 1):
-        """Zeigt Nutzerstatistiken an"""
+        """Zeigt Nutzerstatistiken und Server-Informationen an"""
         if ctx.author.id != admin_user_id:
             await ctx.send("Du bist nicht berechtigt, diesen Befehl zu nutzen!")
             return
         
-        servers_per_page = 15
+        servers_per_page = 10
         guilds = list(bot.guilds)
         total_pages = math.ceil(len(guilds) / servers_per_page)
         
@@ -136,7 +77,7 @@ def register_admin_commands(bot):
             await ctx.send(f"❌ Ungültige Seite! Es gibt insgesamt {total_pages} Seiten.")
             return
         
-        # Gesamte Nutzerzahlen berechnen (bleibt gleich für alle Seiten)
+        # Gesamte Nutzerzahlen berechnen
         total_users = 0
         online_users = 0
         for guild in bot.guilds:
@@ -145,31 +86,53 @@ def register_admin_commands(bot):
             total_users += guild_total
             online_users += guild_online
         
-        # Funktion zum Erstellen der Nutzerstatistik für eine bestimmte Seite
-        def create_user_page(current_page):
+        # Funktion zum Erstellen der kombinierten Statistik für eine bestimmte Seite
+        def create_page(current_page):
             start_idx = (current_page - 1) * servers_per_page
             end_idx = min(start_idx + servers_per_page, len(guilds))
             
-            # Nur Server für die aktuelle Seite anzeigen
+            # Server-Namen mit Regex bereinigen (entferne Discord-Emojis und spezielle Zeichen)
             server_stats = []
+            server_list = []
+            
             for guild in guilds[start_idx:end_idx]:
+                # Bereinigung des Server-Namens mit Regex
+                clean_name = re.sub(r'<a?:[a-zA-Z0-9_]+:[0-9]+>', '', guild.name)  # Entfernt Discord Emojis
+                clean_name = re.sub(r'[^\w\s\-\.]', '', clean_name).strip()  # Entfernt Sonderzeichen
+                
                 guild_total = guild.member_count
                 guild_online = len([m for m in guild.members if m.status != Status.offline and not m.bot])
-                server_stats.append(f"• {guild.name}: {guild_total} Nutzer ({guild_online} online)")
+                
+                server_stats.append(f"• {clean_name}: {guild_total} Nutzer ({guild_online} online)")
+                server_list.append(f"• {clean_name} (ID: {guild.id})")
             
+            # Formatierung mit klaren Linien
             stats_message = [
-                "```Nutzerstatistiken:\n",
-                f"Gesamt über alle Server: {total_users} Nutzer",
-                f"Davon online: {online_users} Nutzer\n",
-                f"Details pro Server (Seite {current_page}/{total_pages}):",
-                *server_stats,
-                "```"
+                "╔═════════════════════════════════════╗",
+                f"║  Bot ist auf {len(guilds)} Servern aktiv       ║",
+                f"║  Gesamt: {total_users} Nutzer ({online_users} online)  ║",
+                "╠═════════════════════════════════════╣",
+                f"║  SEITE {current_page}/{total_pages}                        ║",
+                "╠═════════════════════════════════════╣"
             ]
             
-            return "\n".join(stats_message)
+            # Server-Liste
+            stats_message.append("║  SERVER-LISTE:                      ║")
+            for server in server_list:
+                stats_message.append(f"║  {server[:35]}".ljust(37) + "║")
+            
+            # Nutzerstatistiken
+            stats_message.append("╠═════════════════════════════════════╣")
+            stats_message.append("║  NUTZER-STATISTIKEN:                ║")
+            for stat in server_stats:
+                stats_message.append(f"║  {stat[:35]}".ljust(37) + "║")
+            
+            stats_message.append("╚═════════════════════════════════════╝")
+            
+            return "```\n" + "\n".join(stats_message) + "\n```"
         
         # Erste Seite senden
-        message = await ctx.send(create_user_page(page))
+        message = await ctx.send(create_page(page))
         
         # Nur Reaktionen hinzufügen, wenn es mehr als eine Seite gibt
         if total_pages > 1:
@@ -191,7 +154,7 @@ def register_admin_commands(bot):
                     elif str(reaction.emoji) == "⬅️" and current_page > 1:
                         current_page -= 1
                     
-                    await message.edit(content=create_user_page(current_page))
+                    await message.edit(content=create_page(current_page))
                     await message.remove_reaction(reaction, user)
                     
                     if logging_channel:

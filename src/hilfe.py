@@ -8,7 +8,7 @@ async def create_help_embed(user_id: int, is_server_admin: bool, admin_user_id: 
     
     embed = discord.Embed(
         title="🤖 Buttergolem Bot Hilfe",
-        description="Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.\n\nVersion: 4.4.4 (15.03.25) | Created by: ninjazan420",
+        description="Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.\n\nVersion: 4.5.0 (15.03.25) | Created by: ninjazan420",
         color=0xf1c40f
     )
 
@@ -61,8 +61,7 @@ async def create_help_embed(user_id: int, is_server_admin: bool, admin_user_id: 
     if is_admin:
         embed.add_field(
             name="⚙️ Admin-Befehle",
-            value="• `!server` - Server-Liste\n"
-                  "• `!user` - Nutzerstatistiken\n"
+            value="• `!user` - Server-Liste & Nutzerstatistiken\n"
                   "• `!ping` - Bot-Latenz\n"
                   "• `!stats` - Bot-Statistiken\n"
                   "• `!antwort <ID> <Text>` - Auf Kontaktnachrichten antworten",

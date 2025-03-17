@@ -128,7 +128,7 @@ def cooldown_check():
 @client.event
 async def on_ready():
     if logging_channel:
-        await _log("🟢 Bot gestartet - Version 4.4.4")
+        await _log("🟢 Bot gestartet - Version 4.5.0")
     
     await client.change_presence(activity=discord.Game(name="!hilfe du kaschber"))
     client.logging_channel = logging_channel
@@ -191,6 +191,43 @@ async def on_message(message):
             client.stats_manager.stats['unique_users'].add(message.author.id)
             client.stats_manager._save_stats()
     await client.process_commands(message)
+
+@client.event
+async def on_application_command_error(interaction, error):
+    try:
+        if isinstance(error, app_commands.errors.MissingPermissions):
+            await interaction.response.send_message(
+                "❌ Ich habe nicht die nötigen Berechtigungen für diesen Befehl! "
+                "Stelle sicher, dass ich die entsprechenden Rechte habe.", 
+                ephemeral=True
+            )
+        elif isinstance(error, discord.Forbidden):
+            await interaction.response.send_message(
+                "❌ Ich kann diesen Befehl nicht ausführen! "
+                "Mir fehlen die notwendigen Berechtigungen.", 
+                ephemeral=True
+            )
+        elif isinstance(error, discord.HTTPException):
+            await interaction.response.send_message(
+                "❌ Bei der Ausführung des Befehls ist ein Fehler aufgetreten. "
+                "Versuche es später erneut.", 
+                ephemeral=True
+            )
+        else:
+            await interaction.response.send_message(
+                "❌ Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es erneut oder "
+                "kontaktiere den Bot-Entwickler mit `!kontakt`.", 
+                ephemeral=True
+            )
+            
+            if logging_channel:
+                channel = client.get_channel(logging_channel)
+                await channel.send(f"```\nFehler bei Slash-Befehl: {error}\nBenutzer: {interaction.user.name} ({interaction.user.id})\nBefehl: {interaction.command.name}```")
+    except:
+        # Falls die Interaktion bereits beantwortet wurde
+        if logging_channel:
+            channel = client.get_channel(logging_channel)
+            await channel.send(f"```\nFehler bei der Fehlerbehandlung: {error}\nBenutzer: {interaction.user.name} ({interaction.user.id})```")
 
 # ===== 5. BASIC COMMANDS =====
 @client.command(name='mett')

@@ -65,7 +65,7 @@ def get_random_clipname_cringe():
 async def playsound(voice_channel, soundfile):
     vc = await voice_channel.connect()
     vc.play(discord.FFmpegPCMAudio(f'/app/data/clips/{soundfile}'), 
-            after=lambda e: print('erledigt', e))
+            after=lambda e: None)
     while vc.is_playing():
         await asyncio.sleep(1)
     await vc.disconnect()
@@ -73,7 +73,7 @@ async def playsound(voice_channel, soundfile):
 async def playsound_cringe(voice_channel, soundfile):
     vc = await voice_channel.connect()
     vc.play(discord.FFmpegPCMAudio(f'/app/data/clips/cringe/{soundfile}'), 
-            after=lambda e: print('erledigt', e))
+            after=lambda e: None)
     while vc.is_playing():
         await asyncio.sleep(1)
     await vc.disconnect()
@@ -135,31 +135,47 @@ def register_sound_commands(bot):
 
     @bot.tree.command(name="sounds", description="Zeigt eine Liste aller verfügbaren Sounds")
     async def sounds_slash(interaction: discord.Interaction):
-        embed = await sound_browser.create_embed(1)
-        await interaction.response.send_message(embed=embed)
-        
-        message = await interaction.original_response()
-        await message.add_reaction("⬅️")
-        await message.add_reaction("➡️")
+        try:
+            embed = await sound_browser.create_embed(1)
+            await interaction.response.send_message(embed=embed)
+            
+            message = await interaction.original_response()
+            await message.add_reaction("⬅️")
+            await message.add_reaction("➡️")
 
-        def check(reaction, user):
-            return user == interaction.user and str(reaction.emoji) in ["⬅️", "➡️"]
+            def check(reaction, user):
+                return user == interaction.user and str(reaction.emoji) in ["⬅️", "➡️"]
 
-        current_page = 1
-        while True:
-            try:
-                reaction, user = await bot.wait_for("reaction_add", timeout=60.0, check=check)
+            current_page = 1
+            while True:
+                try:
+                    reaction, user = await bot.wait_for("reaction_add", timeout=60.0, check=check)
 
-                if str(reaction.emoji) == "➡️" and current_page < sound_browser.total_pages:
-                    current_page += 1
-                elif str(reaction.emoji) == "⬅️" and current_page > 1:
-                    current_page -= 1
-                
-                await message.edit(embed=await sound_browser.create_embed(current_page))
-                await message.remove_reaction(reaction, user)
+                    if str(reaction.emoji) == "➡️" and current_page < sound_browser.total_pages:
+                        current_page += 1
+                    elif str(reaction.emoji) == "⬅️" and current_page > 1:
+                        current_page -= 1
+                    
+                    await message.edit(embed=await sound_browser.create_embed(current_page))
+                    await message.remove_reaction(reaction, user)
 
-            except asyncio.TimeoutError:
-                break
+                except asyncio.TimeoutError:
+                    break
+        except discord.Forbidden:
+            await interaction.response.send_message(
+                "❌ Ich habe nicht die nötigen Rechte, um dies auszuführen! "
+                "Stelle sicher, dass ich Nachrichten senden und Reaktionen hinzufügen darf.", 
+                ephemeral=True
+            )
+        except Exception as e:
+            await interaction.response.send_message(
+                "❌ Bei der Ausführung des Befehls ist ein Fehler aufgetreten.", 
+                ephemeral=True
+            )
+            if hasattr(bot, 'logging_channel'):
+                channel = bot.get_channel(bot.logging_channel)
+                if channel:
+                    await channel.send(f"```\nFehler beim Sounds-Befehl: {str(e)}```")
 
     @bot.command(name='sound')
     @commands.check(lambda ctx: hasattr(bot, 'cooldown_check') and bot.cooldown_check()(ctx))
