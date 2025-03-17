@@ -39,7 +39,7 @@ def register_update_commands(bot):
             inline=False
         )
         
-        embed.set_footer(text=f"Stand: {datetime.datetime.now().strftime('%d.%m.%Y')} | Support-Server: discord.gg/7J4mgSyB8n")
+        embed.set_footer(text=f"Stand: {datetime.datetime.now().strftime('%d.%m.%Y')} | Support-Server: https://discord.gg/7J4mgSyB8n")
         
         await ctx.send(embed=embed)
 
@@ -78,7 +78,7 @@ def register_update_commands(bot):
                 inline=False
             )
             
-            embed.set_footer(text=f"Stand: {datetime.datetime.now().strftime('%d.%m.%Y')} | Support-Server: discord.gg/7J4mgSyB8n")
+            embed.set_footer(text=f"Stand: {datetime.datetime.now().strftime('%d.%m.%Y')} | Support-Server: https://discord.gg/7J4mgSyB8n")
             
             await interaction.response.send_message(embed=embed, ephemeral=True)
         except Exception as e:

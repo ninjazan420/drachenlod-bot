@@ -2,7 +2,7 @@
 
 # [Aktueller invitelink](https://discord.com/oauth2/authorize?client_id=1329104199794954240)
 
-# Drachenlord Discord Bot v4.5.0
+# Drachenlord Discord Bot v4.5.1
 
 ## Meddl Loidde! 
 

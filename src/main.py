@@ -128,7 +128,7 @@ def cooldown_check():
 @client.event
 async def on_ready():
     if logging_channel:
-        await _log("🟢 Bot gestartet - Version 4.5.0")
+        await _log("🟢 Bot gestartet - Version 4.5.1")
     
     await client.change_presence(activity=discord.Game(name="!hilfe du kaschber"))
     client.logging_channel = logging_channel
@@ -153,6 +153,10 @@ async def on_command_completion(ctx):
 @client.event
 async def on_guild_join(guild):
     channel = client.get_channel(logging_channel)
+    
+    # Servercounter automatisch aktualisieren
+    await servercounter.single_update(client)
+    
     if channel:
         embed = discord.Embed(
             title="🎉 Neuer Server beigetreten!",

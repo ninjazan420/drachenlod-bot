@@ -69,7 +69,8 @@ def register_admin_commands(bot):
             await ctx.send("Du bist nicht berechtigt, diesen Befehl zu nutzen!")
             return
         
-        servers_per_page = 10
+        # Auf 15 Server pro Seite erhöhen
+        servers_per_page = 15
         guilds = list(bot.guilds)
         total_pages = math.ceil(len(guilds) / servers_per_page)
         
@@ -91,9 +92,8 @@ def register_admin_commands(bot):
             start_idx = (current_page - 1) * servers_per_page
             end_idx = min(start_idx + servers_per_page, len(guilds))
             
-            # Server-Namen mit Regex bereinigen (entferne Discord-Emojis und spezielle Zeichen)
+            # Server-Namen mit Regex bereinigen
             server_stats = []
-            server_list = []
             
             for guild in guilds[start_idx:end_idx]:
                 # Bereinigung des Server-Namens mit Regex
@@ -103,31 +103,45 @@ def register_admin_commands(bot):
                 guild_total = guild.member_count
                 guild_online = len([m for m in guild.members if m.status != Status.offline and not m.bot])
                 
-                server_stats.append(f"• {clean_name}: {guild_total} Nutzer ({guild_online} online)")
-                server_list.append(f"• {clean_name} (ID: {guild.id})")
+                # Berechne Prozentsatz der Online-Nutzer
+                online_percent = round((guild_online / guild_total * 100), 1) if guild_total > 0 else 0
+                
+                server_stats.append((clean_name, guild_total, guild_online, online_percent))
             
-            # Formatierung mit klaren Linien
+            # Definiere feste Spaltenbreiten
+            name_width = 18  # Name-Spaltenbreite 
+            num_width = 9    # Zahlenspaltenbreite
+            
+            # Erstelle eine kompaktere Tabelle mit konsistenten Breiten
+            header_line = f"Bot ist auf {len(guilds)} Servern aktiv | "
+            header_line += f"Gesamt: {total_users} Nutzer ({online_users} online)"
+            page_line = f"Seite {current_page}/{total_pages}"
+            
+            # Formatierung mit Tabellenlayout
             stats_message = [
-                "╔═════════════════════════════════════╗",
-                f"║  Bot ist auf {len(guilds)} Servern aktiv       ║",
-                f"║  Gesamt: {total_users} Nutzer ({online_users} online)  ║",
-                "╠═════════════════════════════════════╣",
-                f"║  SEITE {current_page}/{total_pages}                        ║",
-                "╠═════════════════════════════════════╣"
+                "┌" + "─" * (name_width + 2 + num_width*3 + 6) + "┐",
+                "│ " + header_line.ljust(name_width + 2 + num_width*3 + 4) + " │",
+                "├" + "─" * (name_width + 2 + num_width*3 + 6) + "┤",
+                "│ " + page_line.ljust(name_width + 2 + num_width*3 + 4) + " │",
+                "├" + "─" * name_width + "┬" + "─" * num_width + "┬" + "─" * num_width + "┬" + "─" * num_width + "┤",
+                "│" + "SERVER".center(name_width) + "│" + "NUTZER".center(num_width) + "│" + "ONLINE".center(num_width) + "│" + "PROZENT".center(num_width) + "│",
+                "├" + "─" * name_width + "┼" + "─" * num_width + "┼" + "─" * num_width + "┼" + "─" * num_width + "┤"
             ]
             
-            # Server-Liste
-            stats_message.append("║  SERVER-LISTE:                      ║")
-            for server in server_list:
-                stats_message.append(f"║  {server[:35]}".ljust(37) + "║")
+            # Nutzerstatistiken als Tabelle mit festen Breiten
+            for name, total, online, percent in server_stats:
+                # Kürzen des Namens wenn nötig
+                display_name = name[:name_width-3] + "..." if len(name) > name_width else name
+                
+                # Alle Spalten mit exakter Breite formatieren
+                server_col = display_name.ljust(name_width)
+                users_col = str(total).ljust(num_width)
+                online_col = str(online).ljust(num_width)
+                percent_col = f"{percent} %".ljust(num_width)
+                
+                stats_message.append(f"│{server_col}│{users_col}│{online_col}│{percent_col}│")
             
-            # Nutzerstatistiken
-            stats_message.append("╠═════════════════════════════════════╣")
-            stats_message.append("║  NUTZER-STATISTIKEN:                ║")
-            for stat in server_stats:
-                stats_message.append(f"║  {stat[:35]}".ljust(37) + "║")
-            
-            stats_message.append("╚═════════════════════════════════════╝")
+            stats_message.append("└" + "─" * name_width + "┴" + "─" * num_width + "┴" + "─" * num_width + "┴" + "─" * num_width + "┘")
             
             return "```\n" + "\n".join(stats_message) + "\n```"
         
@@ -157,9 +171,6 @@ def register_admin_commands(bot):
                     await message.edit(content=create_page(current_page))
                     await message.remove_reaction(reaction, user)
                     
-                    if logging_channel:
-                        await _log(f"Admin-Befehl !user Seitenwechsel auf {current_page}/{total_pages} von {ctx.author.name}")
-                        
                 except asyncio.TimeoutError:
                     break
         
