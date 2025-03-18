@@ -63,17 +63,24 @@ def get_random_clipname_cringe():
     return str(random.choice(os.listdir('/app/data/clips/cringe/')))
 
 async def playsound(voice_channel, soundfile):
-    vc = await voice_channel.connect()
-    vc.play(discord.FFmpegPCMAudio(f'/app/data/clips/{soundfile}'), 
-            after=lambda e: None)
-    while vc.is_playing():
-        await asyncio.sleep(1)
-    await vc.disconnect()
+    print(f"playsound aufgerufen mit: {voice_channel}, {soundfile}")
+    try:
+        vc = await voice_channel.connect()
+        print(f"Mit Voice-Channel verbunden, spiele Datei ab: /app/data/clips/{soundfile}")
+        vc.play(discord.FFmpegPCMAudio(f'/app/data/clips/{soundfile}'), 
+                after=lambda e: print('erledigt', e))
+        while vc.is_playing():
+            await asyncio.sleep(1)
+        await vc.disconnect()
+        print("Wiedergabe abgeschlossen und Voice-Channel getrennt")
+    except Exception as e:
+        print(f"Fehler in playsound: {e}")
+        raise  # Fehler weitergeben, damit er in der aufrufenden Funktion gefangen wird
 
 async def playsound_cringe(voice_channel, soundfile):
     vc = await voice_channel.connect()
     vc.play(discord.FFmpegPCMAudio(f'/app/data/clips/cringe/{soundfile}'), 
-            after=lambda e: None)
+            after=lambda e: print('erledigt', e))
     while vc.is_playing():
         await asyncio.sleep(1)
     await vc.disconnect()
@@ -105,46 +112,19 @@ def register_sound_commands(bot):
         await playsound_cringe(voice_channel, get_random_clipname_cringe())
 
     @bot.command(name='sounds')
-    @commands.cooldown(1, 5, commands.BucketType.user)  # Ersetze die alte Cooldown-Prüfung
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def list_sounds(ctx):
         """Zeigt eine durchblätterbare Liste aller verfügbaren Sounds"""
         embed = await sound_browser.create_embed(1)
         message = await ctx.send(embed=embed)
         
-        await message.add_reaction("⬅️")
-        await message.add_reaction("➡️")
-
-        def check(reaction, user):
-            return user == ctx.author and str(reaction.emoji) in ["⬅️", "➡️"]
-
-        current_page = 1
-        while True:
-            try:
-                reaction, user = await bot.wait_for("reaction_add", timeout=60.0, check=check)
-
-                if str(reaction.emoji) == "➡️" and current_page < sound_browser.total_pages:
-                    current_page += 1
-                elif str(reaction.emoji) == "⬅️" and current_page > 1:
-                    current_page -= 1
-                
-                await message.edit(embed=await sound_browser.create_embed(current_page))
-                await message.remove_reaction(reaction, user)
-
-            except asyncio.TimeoutError:
-                break
-
-    @bot.tree.command(name="sounds", description="Zeigt eine Liste aller verfügbaren Sounds")
-    async def sounds_slash(interaction: discord.Interaction):
-        try:
-            embed = await sound_browser.create_embed(1)
-            await interaction.response.send_message(embed=embed)
-            
-            message = await interaction.original_response()
+        # Keine Reaktionen in DMs hinzufügen
+        if not isinstance(ctx.channel, discord.DMChannel):
             await message.add_reaction("⬅️")
             await message.add_reaction("➡️")
 
             def check(reaction, user):
-                return user == interaction.user and str(reaction.emoji) in ["⬅️", "➡️"]
+                return user == ctx.author and str(reaction.emoji) in ["⬅️", "➡️"] and reaction.message.id == message.id
 
             current_page = 1
             while True:
@@ -157,47 +137,135 @@ def register_sound_commands(bot):
                         current_page -= 1
                     
                     await message.edit(embed=await sound_browser.create_embed(current_page))
-                    await message.remove_reaction(reaction, user)
+                    
+                    # Nur Reaktionen entfernen, wenn wir in einem Gildenkanal sind
+                    try:
+                        await message.remove_reaction(reaction, user)
+                    except discord.errors.Forbidden:
+                        pass  # Ignorieren, wenn wir keine Berechtigung haben
 
                 except asyncio.TimeoutError:
                     break
-        except discord.Forbidden:
-            await interaction.response.send_message(
-                "❌ Ich habe nicht die nötigen Rechte, um dies auszuführen! "
-                "Stelle sicher, dass ich Nachrichten senden und Reaktionen hinzufügen darf.", 
-                ephemeral=True
-            )
-        except Exception as e:
-            await interaction.response.send_message(
-                "❌ Bei der Ausführung des Befehls ist ein Fehler aufgetreten.", 
-                ephemeral=True
-            )
-            if hasattr(bot, 'logging_channel'):
-                channel = bot.get_channel(bot.logging_channel)
-                if channel:
-                    await channel.send(f"```\nFehler beim Sounds-Befehl: {str(e)}```")
+
+    @bot.tree.command(name="sounds", description="Zeigt eine Liste aller verfügbaren Sounds")
+    async def sounds_slash(interaction: discord.Interaction):
+        """Zeigt eine durchblätterbare Liste aller verfügbaren Sounds (Slash-Befehl)"""
+        embed = await sound_browser.create_embed(1)
+        await interaction.response.send_message(embed=embed)
+        
+        message = await interaction.original_response()
+        
+        # Keine Reaktionen in DMs hinzufügen
+        if not isinstance(interaction.channel, discord.DMChannel):
+            await message.add_reaction("⬅️")
+            await message.add_reaction("➡️")
+
+            def check(reaction, user):
+                return user == interaction.user and str(reaction.emoji) in ["⬅️", "➡️"] and reaction.message.id == message.id
+
+            current_page = 1
+            while True:
+                try:
+                    reaction, user = await bot.wait_for("reaction_add", timeout=60.0, check=check)
+
+                    if str(reaction.emoji) == "➡️" and current_page < sound_browser.total_pages:
+                        current_page += 1
+                    elif str(reaction.emoji) == "⬅️" and current_page > 1:
+                        current_page -= 1
+                    
+                    await message.edit(embed=await sound_browser.create_embed(current_page))
+                    
+                    # Nur Reaktionen entfernen, wenn wir in einem Gildenkanal sind
+                    try:
+                        await message.remove_reaction(reaction, user)
+                    except discord.errors.Forbidden:
+                        pass  # Ignorieren, wenn wir keine Berechtigung haben
+
+                except (asyncio.TimeoutError, discord.errors.Forbidden):
+                    break
+                except Exception as e:
+                    # Keine zweite Antwort versuchen bei Fehlern
+                    print(f"Fehler bei der Bearbeitung des sounds-Befehls: {e}")
+                    break
 
     @bot.command(name='sound')
-    @commands.check(lambda ctx: hasattr(bot, 'cooldown_check') and bot.cooldown_check()(ctx))
-    async def play_sound(ctx, sound_name: str):
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    async def play_sound(ctx, *, sound_name: str = None):
         """Spielt einen bestimmten Sound ab"""
-        sound_name = sound_name.lower()
+        print(f"!sound Befehl wurde aufgerufen von {ctx.author} mit Argument: {sound_name}")
+        
+        if sound_name is None:
+            await ctx.send("❌ Bitte gib einen Soundnamen an! Beispiel: `!sound adler`")
+            return
+            
+        sound_name = sound_name.lower().strip()
+        print(f"Sound-Befehl aufgerufen mit: '{sound_name}'")
+        
+        # Debug: Zeige alle verfügbaren Sounds
+        print(f"Verfügbare Sounds: {[s['command'] for s in sound_browser.cached_sounds[:5]]}... (und {len(sound_browser.cached_sounds)-5} weitere)")
         
         sound_file = None
         for sound in sound_browser.cached_sounds:
             if sound['command'] == sound_name:
                 sound_file = sound['file']
+                print(f"Sound gefunden: {sound_file}")
                 break
         
         if not sound_file:
-            await ctx.send("❌ Sound nicht gefunden! Nutze `!sounds` um alle verfügbaren Sounds zu sehen.")
+            await ctx.send(f"❌ Sound '{sound_name}' nicht gefunden! Nutze `!sounds` um alle verfügbaren Sounds zu sehen.")
             return
             
-        if hasattr(ctx.message.author, "voice"):
-            voice_channel = ctx.message.author.voice.channel
-            await playsound(voice_channel, sound_file)
-        else:
+        if not ctx.author.voice:
             await ctx.send('Das funktioniert nur in Voice-Channels du scheiß HAIDER')
+            return
+        
+        try:    
+            voice_channel = ctx.author.voice.channel
+            print(f"Versuche Sound abzuspielen: {sound_file} in Kanal {voice_channel}")
+            
+            # Direkter Vergleich mit der lord-Funktion, die funktioniert
+            # await playsound(voice_channel, get_random_clipname())  # Dies würde funktionieren (wie !lord)
+            await playsound(voice_channel, sound_file)  # Dies scheint nicht zu funktionieren
+            
+            print(f"Sound wurde abgespielt: {sound_file}")
+        except Exception as e:
+            print(f"Fehler beim Abspielen des Sounds: {e}")
+            await ctx.send(f"❌ Fehler beim Abspielen des Sounds: {e}")
+
+    @bot.command(name='debug_sounds')
+    @commands.is_owner()  # Nur für Bot-Besitzer
+    async def debug_sounds(ctx):
+        """Zeigt Debug-Informationen über Sound-System"""
+        sound_dir = '/app/data/clips'
+        try:
+            files = os.listdir(sound_dir)
+            sample_files = files[:10]  # Zeige nur 10 Beispieldateien
+            
+            sound_info = (
+                f"Sound-Verzeichnis: {sound_dir}\n"
+                f"Anzahl Dateien: {len(files)}\n"
+                f"Beispieldateien: {', '.join(sample_files)}...\n"
+                f"Anzahl Sounds im Cache: {len(sound_browser.cached_sounds)}\n"
+                f"Sounds pro Seite: {sound_browser.sounds_per_page}\n"
+                f"Gesamtseiten: {sound_browser.total_pages}"
+            )
+            
+            await ctx.send(f"```\n{sound_info}\n```")
+            
+            # Versuche einen bekannten Sound zu finden
+            test_sound = "adler"  # Ersetze durch einen Sound, der definitiv existieren sollte
+            found = False
+            for sound in sound_browser.cached_sounds:
+                if sound['command'] == test_sound:
+                    await ctx.send(f"Testsuche nach '{test_sound}': GEFUNDEN als {sound['file']}")
+                    found = True
+                    break
+            
+            if not found:
+                await ctx.send(f"Testsuche nach '{test_sound}': NICHT GEFUNDEN!")
+            
+        except Exception as e:
+            await ctx.send(f"Fehler bei Debug: {str(e)}")
 
 def setup(bot):
     register_sound_commands(bot)
