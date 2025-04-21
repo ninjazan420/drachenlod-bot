@@ -2,9 +2,9 @@
 
 # [Aktueller invitelink](https://discord.com/oauth2/authorize?client_id=1329104199794954240)
 
-# Drachenlord Discord Bot v4.5.1
+# Drachenlord Discord Bot v5.0.0
 
-## Meddl Loidde! 
+## Meddl Loidde!
 
 Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.
 
@@ -21,6 +21,7 @@ Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschan
 # Befehle
 
 ## 📋 Basis-Befehle
+
 | Befehl | Beschreibung |
 |--------|--------------|
 | `!hilfe` | Zeigt diese Hilfe an |
@@ -31,7 +32,15 @@ Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschan
 | `!lordupdate` | Zeigt die letzten Bot-Updates und Änderungen |
 | `!kontakt` | Sende eine Nachricht an den Admin |
 
+## 🤖 Drachenlord KI
+
+| Befehl | Beschreibung |
+|--------|--------------|
+| `@username <nachricht>` | Chatte mit dem Bot im Channel |
+| `DM` | Du kannst dem Drachenlord auch eine DM schreiben und privat chatten! |
+
 ## 🔊 Sound-Befehle
+
 | Befehl | Beschreibung |
 |--------|--------------|
 | `!lord` | Zufälliges GESCHREI im Voice-Channel |
@@ -40,6 +49,7 @@ Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschan
 | `!sound <name>` | Spielt den angegebenen Sound ab |
 
 ## ❓ Quiz-Befehle
+
 | Befehl | Beschreibung |
 |--------|--------------|
 | `!lordquiz` | Zeigt Informationen zum Quiz |
@@ -47,6 +57,7 @@ Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschan
 | `!lordquiz stop` | Beendet das aktuelle Quiz im Channel |
 
 ## ⚙️ Admin-Befehle
+
 | Befehl | Beschreibung |
 |--------|--------------|
 | `!server` | Listet alle Server auf, auf denen der Bot aktiv ist |
@@ -68,7 +79,7 @@ Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschan
 Der Bot ist modular aufgebaut. Jede Hauptfunktion befindet sich in einer eigenen Datei im `src/` Ordner:
 
 - `main.py` - Hauptdatei mit Bot-Setup und Basislogik
-- `hilfe.py` - Hilfe-Kommandos und Dokumentation 
+- `hilfe.py` - Hilfe-Kommandos und Dokumentation
 - `sounds.py` - Sound-bezogene Befehle und Funktionen
 - `quiz.py` - Quiz-System und Spiellogik
 - `admins.py` - Admin-Befehle und -Funktionen

@@ -1,10 +1,14 @@
 version: "3"
 services:
-  drachenlord:
+  drachenlord2:
     build: .
     environment:
-      DISCORD_API_TOKEN: "BOT_TOKEN" # Get your Discord API Token from https://discord.com/developers/applications
+      DISCORD_API_TOKEN: "123456" # Discord Bot-Token
       ENABLE_RANDOM_JOINS: "False/True" # Enables random joins on the biggest VC
-      LOGGING_CHANNEL: "ChannelID" # Logging Channel ID
-      BLACKLISTED_GUILDS: "123x,456y" # Comma seperated
-      ADMIN_USER_ID: "Admin UserID" # CAREFUL also able to use Admin commands
+      LOGGING_CHANNEL: "123456" # Logging Channel ID
+      BLACKLISTED_GUILDS: "123456,654321" # Comma seperated
+      ADMIN_USER_ID: "123456" # CAREFUL also able to use Admin commands
+      OPENROUTER_KEY: "sk-key-xxx" # API-Schlüssel für OpenRouter
+      DRACHE_KI_API: "123456" # KI Bot-Token
+      DRACHE_KI_CHATID: "123456" # Chat-ID für den Drachenlord-Bot
+

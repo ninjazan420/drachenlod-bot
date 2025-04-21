@@ -8,7 +8,7 @@ async def create_help_embed(user_id: int, is_server_admin: bool, admin_user_id: 
     
     embed = discord.Embed(
         title="🤖 Buttergolem Bot Hilfe",
-        description="Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.\n\nVersion: 4.5.1 (17.03.25) | Created by: ninjazan420",
+        description="Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.\n\nVersion: 5.0.0 (19.04.25) | Created by: ninjazan420",
         color=0xf1c40f
     )
 
@@ -21,6 +21,14 @@ async def create_help_embed(user_id: int, is_server_admin: bool, admin_user_id: 
               "• `!zitat` - Zufälliges Zitat\n"
               "• `!lordmeme <text>` - Erstellt ein Drachenlord Meme (Nutze | für oben/unten)\n"
               "• `!lordupdate` - Zeigt die letzten Bot-Updates",  # Neue Zeile
+        inline=False
+    )
+
+    # KI-Funktionen
+    embed.add_field(
+        name="🤖 NEU: KI-Funktionen",
+        value="• `@Bot-Erwähnung <Nachricht>` - Chatte mit dem Drachenlord\n"
+              "• `DM an Bot` - Chatte mit dem Drachenlord in Direktnachrichten\n",
         inline=False
     )
 

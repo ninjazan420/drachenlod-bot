@@ -17,7 +17,7 @@ import math
 
 # Third party imports
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord import Status
 import requests
 from bs4 import BeautifulSoup
@@ -34,6 +34,7 @@ from admins import register_admin_commands
 from lordmeme import register_meme_commands, MemeGenerator
 from lordstats import register_lordstats_commands
 from updates import register_update_commands
+from ki import register_ki_commands
 
 # ===== 2. CONFIGURATION AND SETUP =====
 # Environment variables
@@ -80,6 +81,7 @@ register_admin_commands(client)
 register_meme_commands(client)
 register_update_commands(client)
 register_lordstats_commands(client)
+register_ki_commands(client)
 
 # ===== 3. HELPER FUNCTIONS =====
 async def _log(message):
@@ -124,13 +126,35 @@ def cooldown_check():
         return True
     return commands.check(predicate)
 
+# Globale Status-Nachrichten
+STATUS_MESSAGES = [
+    "!hilfe | Meddl Loide!",
+    "an deiner Mudda | !hilfe",
+    "Donaudampfschifffahrtskapitän VR | !hilfe",
+    "3D Schach mit de Haiders | !hilfe",
+    "mit meinem Grill | !hilfe",
+    "mit deiner mudder | !hilfe",
+    "auf der Schanze | !hilfe",
+    "Meddl! | !hilfe",
+    "fakten... | !hilfe",
+    "ist etzala a ki chatter... | !hilfe",
+    "✊ gegen Haider | !hilfe",
+    "Haut isch a Organ | !hilfe"
+]
+
+@tasks.loop(minutes=10.0)
+async def change_status():
+    new_status = random.choice(STATUS_MESSAGES)
+    await client.change_presence(activity=discord.Game(name=new_status))
+
 # ===== 4. BOT EVENTS =====
 @client.event
 async def on_ready():
     if logging_channel:
-        await _log("🟢 Bot gestartet - Version 4.5.1")
+        await _log("🟢 Bot gestartet - Version 5.0.0")
     
-    await client.change_presence(activity=discord.Game(name="!hilfe du kaschber"))
+    # Status-Task starten
+    change_status.start()
     client.logging_channel = logging_channel
     
     if random_joins == "true":
@@ -189,12 +213,38 @@ async def on_command_error(ctx, error):
 
 @client.event
 async def on_message(message):
-    if not message.author.bot:
-        # Track unique users
-        if hasattr(client, 'stats_manager'):
-            client.stats_manager.stats['unique_users'].add(message.author.id)
-            client.stats_manager._save_stats()
-    await client.process_commands(message)
+    # Ignoriere Nachrichten von Bots
+    if message.author.bot:
+        return
+
+    if hasattr(client, 'stats_manager'):
+        client.stats_manager.stats['unique_users'].add(message.author.id)
+        client.stats_manager._save_stats()
+
+    # KI-Funktionalität hinzufügen
+    mentioned = client.user in message.mentions
+    is_dm = isinstance(message.channel, discord.DMChannel)
+    
+    if mentioned or is_dm:
+        can_respond, wait_time = client.session_manager.check_rate_limit(message.author.id)
+        if not can_respond:
+            return
+        
+        async with message.channel.typing():
+            prompt = message.content.replace(f'<@{client.user.id}>', '').strip()
+            response = await client.eliza_client.generate_response(
+                prompt,
+                {
+                    "user_name": message.author.display_name,
+                    "guild_name": message.guild.name if message.guild else "DM"
+                },
+                client.session_manager.get_user_context(message.author.id)
+            )
+            await message.reply(response)
+            return
+    
+    if not mentioned and not is_dm:
+        await client.process_commands(message)
 
 @client.event
 async def on_application_command_error(interaction, error):
