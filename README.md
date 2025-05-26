@@ -2,9 +2,9 @@
 
 # [Aktueller invitelink](https://discord.com/oauth2/authorize?client_id=1329104199794954240)
 
-# Drachenlord Discord Bot v4.5.1
+# Drachenlord Discord Bot v5.2.0
 
-## Meddl Loidde! 
+## Meddl Loidde!
 
 Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.
 
@@ -15,12 +15,13 @@ Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschan
   ✅ mehr als 100 Zitate
 
   ❓ Bist du ein Drachi oder ein echter Haider? Teste es im Quiz mit über 150 Fragen!
-  
+
   🎉 Überraschung alle 30-60 Minuten
 
 # Befehle
 
 ## 📋 Basis-Befehle
+
 | Befehl | Beschreibung |
 |--------|--------------|
 | `!hilfe` | Zeigt diese Hilfe an |
@@ -31,7 +32,17 @@ Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschan
 | `!lordupdate` | Zeigt die letzten Bot-Updates und Änderungen |
 | `!kontakt` | Sende eine Nachricht an den Admin |
 
+## 🤖 Drachenlord KI
+
+| Befehl | Beschreibung |
+|--------|--------------|
+| `@username <nachricht>` | Chatte mit dem Bot im Channel |
+| `DM` | Du kannst dem Drachenlord auch eine DM schreiben und privat chatten! |
+
+> **Hinweis:** Die KI-Features sind für alle Nutzer kostenlos verfügbar. Admins können den Zugriff einzelner User mit `!butteriq disable/enable <user_id>` verwalten.
+
 ## 🔊 Sound-Befehle
+
 | Befehl | Beschreibung |
 |--------|--------------|
 | `!lord` | Zufälliges GESCHREI im Voice-Channel |
@@ -40,20 +51,49 @@ Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschan
 | `!sound <name>` | Spielt den angegebenen Sound ab |
 
 ## ❓ Quiz-Befehle
+
 | Befehl | Beschreibung |
 |--------|--------------|
 | `!lordquiz` | Zeigt Informationen zum Quiz |
 | `!lordquiz start X` | Startet ein Quiz mit X Runden (1-20) |
 | `!lordquiz stop` | Beendet das aktuelle Quiz im Channel |
 
+## 🔀 Slash-Befehle
+
+Viele Befehle sind auch als Slash-Commands verfügbar! Tippe einfach `/` in Discord und wähle den gewünschten Befehl aus:
+
+| Slash-Befehl | Beschreibung |
+|--------------|--------------|
+| `/lordstats [@user]` | Zeigt lustige Drachenlord-Statistiken |
+| `/lordupdate` | Zeigt die letzten Bot-Updates |
+
 ## ⚙️ Admin-Befehle
+
+### Server-Verwaltung
 | Befehl | Beschreibung |
 |--------|--------------|
-| `!server` | Listet alle Server auf, auf denen der Bot aktiv ist |
-| `!user` | Zeigt Nutzerstatistiken aller Server |
-| `!ping` | Zeigt die Bot-Latenz |
+| `!drache server [page]` | Zeigt Server-Liste & Nutzerstatistiken mit fortlaufenden IDs |
+| `!drache leave <server_id> [message_id] [grund...]` | Bot von einem Server entfernen |
+| `!drache ban server <server_id> [grund...]` | Server bannen (ohne zu verlassen) |
+| `!drache unban server <ban_id>` | Ban für einen Server aufheben |
+| `!drache bans server` | Liste aller gebannten Server anzeigen |
+
+### User-Verwaltung
+| Befehl | Beschreibung |
+|--------|--------------|
+| `!drache ban user <user_id> [server_id] [grund...]` | User bannen (global oder serverspezifisch) |
+| `!drache unban user <ban_id>` | Ban für einen User aufheben |
+| `!drache bans user` | Liste aller gebannten User anzeigen |
+| `!antwort <message_id> <text>` | Antwortet auf Kontaktnachrichten von Nutzern |
+| `!butteriq disable/enable <user_id>` | KI-Zugriff für User verwalten |
+
+### System-Befehle
+| Befehl | Beschreibung |
+|--------|--------------|
+| `!buttergolem stats` | Bot-Statistiken mit Neofetch-Style anzeigen |
+| `!ping` | Zeigt die Bot-Latenz an |
+| `!servercount` | Manuelles Servercounter-Update durchführen |
 | `!id` | Zeigt die IDs des aktuellen Text- & Voice-Channels |
-| `!antwort` | Antwortet auf Kontaktnachrichten von Nutzern |
 
 ## Installation & Selbst hosten
 
@@ -68,11 +108,15 @@ Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschan
 Der Bot ist modular aufgebaut. Jede Hauptfunktion befindet sich in einer eigenen Datei im `src/` Ordner:
 
 - `main.py` - Hauptdatei mit Bot-Setup und Basislogik
-- `hilfe.py` - Hilfe-Kommandos und Dokumentation 
+- `hilfe.py` - Hilfe-Kommandos und Dokumentation
 - `sounds.py` - Sound-bezogene Befehle und Funktionen
 - `quiz.py` - Quiz-System und Spiellogik
-- `admins.py` - Admin-Befehle und -Funktionen
+- `admins.py` - Admin-Befehle, Ban-System und Server-Verwaltung
 - `lordmeme.py` - Meme-Generator und Befehle
+- `lordstats.py` - Lustige Drachenlord-Statistiken für User
+- `updates.py` - Update-Changelog und Versionsinformationen
+- `ki.py` - KI-Integration und Chat-Funktionen
+- `butteriq.py` - KI-Zugriffsverwaltung und Unterstützer-System
 - `servercounter.py` - Server-Tracking und Statistiken
 
 Um neue Funktionen hinzuzufügen:

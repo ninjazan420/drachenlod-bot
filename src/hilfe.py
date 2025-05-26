@@ -5,67 +5,84 @@ async def create_help_embed(user_id: int, is_server_admin: bool, admin_user_id: 
     """Erstellt das Help-Embed basierend auf den Berechtigungen"""
     # Prüfe, ob der Nutzer der Haupt-Admin ist
     is_admin = (user_id == admin_user_id)
-    
+
     embed = discord.Embed(
         title="🤖 Buttergolem Bot Hilfe",
-        description="Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.\n\nVersion: 4.5.1 (17.03.25) | Created by: ninjazan420",
+        description="Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.\n\nVersion: 5.2.0 (24.05.2025) | Created by: ninjazan420",
         color=0xf1c40f
     )
 
-    # Basis-Befehle
+    # Basis-Befehle (erste Spalte)
     embed.add_field(
         name="📋 Basis-Befehle",
         value="• `!hilfe` - Zeigt diese Hilfe an\n"
               "• `!mett` - Zeigt den aktuellen Mett-Level 🥓\n"
-              "• `!lordstats [@user]` - Drachenstats zu einem user/sich selbst\n"
+              "• `!lordstats [@user]` - Drachenstats\n"
               "• `!zitat` - Zufälliges Zitat\n"
-              "• `!lordmeme <text>` - Erstellt ein Drachenlord Meme (Nutze | für oben/unten)\n"
-              "• `!lordupdate` - Zeigt die letzten Bot-Updates",  # Neue Zeile
-        inline=False
+              "• `!lordmeme <text>` - Erstellt ein Meme\n"
+              "• `!lordupdate` - Zeigt Updates",
+        inline=True
     )
 
-    # Sound-Befehle
+    # Sound-Befehle (zweite Spalte)
     embed.add_field(
         name="🔊 Sound-Befehle",
-        value="• `!lord` - Zufälliges GESCHREI im Voice\n"
-              "• `!cringe` - Oh no, cringe!\n"
-              "• `!sounds` - Zeigt alle verfügbaren Sounds\n"
-              "• `!sound <name>` - Spielt einen bestimmten Sound ab\n",
-        inline=False
+        value="• `!lord` - Zufälliges GESCHREI\n"
+             "• `!cringe` - Oh no, cringe!\n"
+              "• `!sounds` - Zeigt alle Sounds\n"
+              "• `!sound <n>` - Spielt Sound ab\n"
+              "• `!lordquiz` - Quiz-Informationen\n"
+              "• `!lordquiz start <n>` - Startet Quiz",
+        inline=True
     )
 
-    # Quiz-Befehle
+    # KI-Funktionen (dritte Spalte)
     embed.add_field(
-        name="❓ Quiz-Befehle",
-        value="• `!lordquiz` - Quiz-Informationen\n"
-              "• `!lordquiz start <Anzahl Runden (1-20)>` - Startet Quiz\n"
-              "• `!lordquiz stop` - Beende Quiz",
-        inline=False
+        name="🤖 KI & Kontakt",
+        value="• `@Bot <Nachricht>` - KI-Chat\n"
+              "• `DM an Bot` - Privater KI-Chat\n"
+              "• `!kontakt <Nachricht>` - Admin-Kontakt\n"
+              "• Support: discord.gg/7J4mgSyB8n",
+        inline=True
     )
 
-    # Kontakt-Befehle
-    embed.add_field(
-        name="📧 Kontakt",
-        value="• `!kontakt <Nachricht>` - Sende eine Nachricht an den Admin\n",
-        inline=False
-    )
-    
-    # Support-Server als eigenes Feld
-    embed.add_field(
-        name="🌐 Support-Server",
-        value="• https://discord.gg/7J4mgSyB8n",
-        inline=False
-    )
+    # Leerzeile für bessere Übersicht
+    embed.add_field(name="\u200b", value="\u200b", inline=False)
 
     # Admin-Befehle nur anzeigen wenn der Nutzer der Haupt-Admin ist
     if is_admin:
         embed.add_field(
-            name="⚙️ Admin-Befehle",
-            value="• `!user` - Server-Liste & Nutzerstatistiken\n"
-                  "• `!ping` - Bot-Latenz\n"
-                  "• `!stats` - Bot-Statistiken\n"
-                  "• `!antwort <ID> <Text>` - Auf Kontaktnachrichten antworten",
+            name="⚙️ Server-Verwaltung",
+            value="• `!drache server [page]` - Server-Liste & Statistiken\n"
+                  "• `!drache leave <ID> [message_id] [grund...]` - Server verlassen\n"
+                  "• `!drache ban server <ID> [grund...]` - Server bannen\n"
+                  "• `!drache unban server <ban_id>` - Server-Ban aufheben\n"
+                  "• `!drache bans server` - Gebannte Server anzeigen",
+            inline=True
+        )
+
+        embed.add_field(
+            name="⚙️ User-Verwaltung",
+            value="• `!drache ban user <ID> [server_id] [grund...]` - User bannen\n"
+                  "• `!drache unban user <ban_id>` - User-Ban aufheben\n"
+                  "• `!drache bans user` - Gebannte User anzeigen\n"
+                  "• `!antwort <ID> <Text>` - Auf Kontaktnachrichten antworten\n"
+                  "• `!butteriq disable/enable <ID>` - KI-Zugriff verwalten",
+            inline=True
+        )
+
+        embed.add_field(
+            name="\u200b",
+            value="\u200b",
             inline=False
+        )
+
+        embed.add_field(
+            name="⚙️ System-Befehle",
+            value="• `!buttergolem stats` - Bot-Statistiken mit Neofetch-Style\n"
+                  "• `!ping` - Bot-Latenz anzeigen\n"
+                  "• `!servercount` - Manuelles Servercounter-Update",
+            inline=True
         )
 
     embed.set_footer(text="Der Bot muss die Berechtigung besitzen, in den Voice zu joinen!")

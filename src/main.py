@@ -17,7 +17,7 @@ import math
 
 # Third party imports
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord import Status
 import requests
 from bs4 import BeautifulSoup
@@ -34,6 +34,8 @@ from admins import register_admin_commands
 from lordmeme import register_meme_commands, MemeGenerator
 from lordstats import register_lordstats_commands
 from updates import register_update_commands
+from ki import register_ki_commands, handle_ki_message
+from butteriq import register_butteriq_commands
 
 # ===== 2. CONFIGURATION AND SETUP =====
 # Environment variables
@@ -80,6 +82,8 @@ register_admin_commands(client)
 register_meme_commands(client)
 register_update_commands(client)
 register_lordstats_commands(client)
+register_ki_commands(client)
+register_butteriq_commands(client)
 
 # ===== 3. HELPER FUNCTIONS =====
 async def _log(message):
@@ -95,7 +99,7 @@ async def get_biggest_vc(guild):
 
     voice_channel_with_most_users = guild.voice_channels[0]
     logtext = ""
-    
+
     for voice_channel in guild.voice_channels:
         logtext += f"\n    ⤷ {len(voice_channel.members)} Benutzer in {voice_channel.name}"
         if len(voice_channel.members) > len(voice_channel_with_most_users.members):
@@ -124,39 +128,122 @@ def cooldown_check():
         return True
     return commands.check(predicate)
 
+# Globale Status-Nachrichten
+STATUS_MESSAGES = [
+    "!hilfe | Meddl Loide!",
+    "Haut isch a Organ | !hilfe",
+    "Buttergolem auf Diät | !hilfe",
+    "Drachengame Speedrun | !hilfe",
+    "Mettbrötchen backen | !hilfe",
+    "Schanzenfest planen | !hilfe",
+    "Kagghaider ignorieren | !hilfe",
+    "Altschauerberg erkunden | !hilfe",
+    "Dreggiger Haider | !hilfe",
+    "Butterrezepte sammeln | !hilfe",
+    "Reiner Winkler Simulator | !hilfe",
+    "Meddl Leude! | !hilfe",
+    "Buttergolem's Rache | !hilfe",
+    "Drachenlord Simulator 2023 | !hilfe"
+]
+
+@tasks.loop(minutes=10.0)
+async def change_status():
+    new_status = random.choice(STATUS_MESSAGES)
+    await client.change_presence(activity=discord.Game(name=new_status))
+
 # ===== 4. BOT EVENTS =====
 @client.event
 async def on_ready():
     if logging_channel:
-        await _log("🟢 Bot gestartet - Version 4.5.1")
-    
-    await client.change_presence(activity=discord.Game(name="!hilfe du kaschber"))
+        await _log("🟢 Bot gestartet - Version 5.2.0")
+
+    # Status-Task starten
+    change_status.start()
     client.logging_channel = logging_channel
-    
+
     if random_joins == "true":
         if logging_channel:
             await _log(f"📛 Blacklisted Server: {', '.join(blacklisted_guilds) if blacklisted_guilds else 'Keine'}")
             await _log("⏲ Timer wird initialisiert...")
         await create_random_timer(1, 1)
-    
+
     await client.tree.sync()
 
 @client.event
 async def on_command_completion(ctx):
+    # Administratoren nicht protokollieren
     if ctx.author.guild_permissions.administrator:
         return
-    
+
     channel = client.get_channel(logging_channel)
-    server = ctx.guild.name if ctx.guild else "DM"
-    await channel.send(f"```\n{datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')} # {ctx.author} used {ctx.command} in {server}```")
+    if not channel:
+        return
+
+    # Zeitstempel für das Embed
+    timestamp = discord.utils.utcnow()
+
+    # Server-Informationen
+    if ctx.guild:
+        server_name = ctx.guild.name
+        server_id = ctx.guild.id
+        server_icon = ctx.guild.icon.url if ctx.guild.icon else None
+    else:
+        server_name = "Direktnachricht"
+        server_id = "DM"
+        server_icon = None
+
+    # Embed erstellen
+    embed = discord.Embed(
+        title="🔧 Befehl ausgeführt",
+        description=f"**Befehl:** `{ctx.command}`\n**Parameter:** `{ctx.message.content}`",
+        color=0x3498db,  # Blau
+        timestamp=timestamp
+    )
+
+    # Benutzerinformationen hinzufügen
+    embed.set_author(
+        name=f"{ctx.author.display_name} ({ctx.author.id})",
+        icon_url=ctx.author.display_avatar.url
+    )
+
+    # Server-Informationen hinzufügen
+    embed.add_field(name="Server", value=f"{server_name} ({server_id})", inline=True)
+    embed.add_field(name="Kanal", value=f"#{ctx.channel.name} ({ctx.channel.id})", inline=True)
+
+    # Server-Icon als Thumbnail hinzufügen, falls vorhanden
+    if server_icon:
+        embed.set_thumbnail(url=server_icon)
+
+    # Footer mit Zeitstempel
+    embed.set_footer(text=f"Befehl • {timestamp.strftime('%d.%m.%Y %H:%M:%S')}")
+
+    # Embed senden
+    await channel.send(embed=embed)
 
 @client.event
 async def on_guild_join(guild):
     channel = client.get_channel(logging_channel)
-    
+
+    # Prüfe, ob der Server in der statischen Blacklist ist
+    if str(guild.id) in blacklisted_guilds:
+        if channel:
+            await channel.send(f"⚠️ Der Bot wurde zu einem geblacklisteten Server hinzugefügt und verlässt diesen wieder: {guild.name} (ID: {guild.id})")
+        await guild.leave()
+        return
+
+    # Prüfe, ob der Server in der dynamischen Ban-Liste ist
+    if hasattr(client, 'ban_manager') and client.ban_manager.is_banned(guild.id):
+        ban = next((b for b in client.ban_manager.get_all_bans() if b["server_id"] == str(guild.id)), None)
+        ban_info = f" (Ban-ID: {ban['ban_id']}, Grund: {ban['reason']})" if ban else ""
+
+        if channel:
+            await channel.send(f"⚠️ Der Bot wurde zu einem gebannten Server hinzugefügt und verlässt diesen wieder: {guild.name} (ID: {guild.id}){ban_info}")
+        await guild.leave()
+        return
+
     # Servercounter automatisch aktualisieren
     await servercounter.single_update(client)
-    
+
     if channel:
         embed = discord.Embed(
             title="🎉 Neuer Server beigetreten!",
@@ -164,14 +251,14 @@ async def on_guild_join(guild):
             color=0x2ecc71,
             timestamp=datetime.datetime.now(datetime.UTC)
         )
-        
+
         embed.add_field(name="Server Name", value=guild.name, inline=True)
         embed.add_field(name="Server ID", value=guild.id, inline=True)
         embed.add_field(name="Besitzer", value=str(guild.owner), inline=True)
         embed.add_field(name="Mitglieder", value=str(guild.member_count), inline=True)
         embed.add_field(name="Text Channels", value=str(len(guild.text_channels)), inline=True)
         embed.add_field(name="Voice Channels", value=str(len(guild.voice_channels)), inline=True)
-        
+
         if guild.icon:
             embed.set_thumbnail(url=guild.icon.url)
         embed.set_footer(text=f"Jetzt auf {len(client.guilds)} Servern!")
@@ -179,59 +266,189 @@ async def on_guild_join(guild):
 
 @client.event
 async def on_command_error(ctx, error):
-    if isinstance(error, commands.CheckFailure):
-        pass
-    elif isinstance(error, commands.CommandNotFound):
-        pass
+    # Bestimmte Fehler ignorieren
+    if isinstance(error, commands.CheckFailure) or isinstance(error, commands.CommandNotFound):
+        return
+
+    # Logging-Channel abrufen
+    channel = client.get_channel(logging_channel)
+    if not channel:
+        return
+
+    # Zeitstempel für das Embed
+    timestamp = discord.utils.utcnow()
+
+    # Server-Informationen
+    if ctx.guild:
+        server_name = ctx.guild.name
+        server_id = ctx.guild.id
     else:
-        if logging_channel:
-            await _log(f"Error in {ctx.command}: {str(error)}")
+        server_name = "Direktnachricht"
+        server_id = "DM"
+
+    # Fehlertyp und Nachricht
+    error_type = type(error).__name__
+    error_message = str(error)
+
+    # Befehlsinformationen
+    command_name = ctx.command.name if ctx.command else "Unbekannt"
+    command_content = ctx.message.content if ctx.message else "Unbekannt"
+
+    # Embed erstellen
+    embed = discord.Embed(
+        title="⚠️ Befehlsfehler",
+        description=f"**Befehl:** `{command_name}`\n**Eingabe:** `{command_content}`\n\n**Fehlertyp:** `{error_type}`\n**Fehlermeldung:** ```{error_message}```",
+        color=0xe74c3c,  # Rot
+        timestamp=timestamp
+    )
+
+    # Benutzerinformationen hinzufügen
+    embed.set_author(
+        name=f"{ctx.author.display_name} ({ctx.author.id})",
+        icon_url=ctx.author.display_avatar.url
+    )
+
+    # Server- und Kanalinformationen hinzufügen
+    embed.add_field(name="Server", value=f"{server_name} ({server_id})", inline=True)
+    if hasattr(ctx.channel, 'name'):
+        embed.add_field(name="Kanal", value=f"#{ctx.channel.name} ({ctx.channel.id})", inline=True)
+
+    # Footer mit Zeitstempel
+    embed.set_footer(text=f"Fehler • {timestamp.strftime('%d.%m.%Y %H:%M:%S')}")
+
+    # Embed senden
+    await channel.send(embed=embed)
 
 @client.event
 async def on_message(message):
-    if not message.author.bot:
-        # Track unique users
-        if hasattr(client, 'stats_manager'):
-            client.stats_manager.stats['unique_users'].add(message.author.id)
-            client.stats_manager._save_stats()
+    # Ignoriere Nachrichten vom Bot selbst
+    if message.author.bot:
+        return
+
+    if hasattr(client, 'stats_manager'):
+        client.stats_manager.stats['unique_users'].add(message.author.id)
+        client.stats_manager._save_stats()
+
+    # Prüfe, ob es sich um eine KI-Anfrage handelt (Erwähnung oder DM)
+    # Wenn ja, verarbeite sie mit der KI-Funktion aus ki.py
+
+    # Versuche, die Nachricht als KI-Anfrage zu verarbeiten
+    try:
+        ki_handled = await handle_ki_message(client, message)
+        # Wenn die Nachricht als KI-Anfrage verarbeitet wurde, keine weiteren Befehle verarbeiten
+        if ki_handled:
+            return
+    except Exception as e:
+        # Bei Fehlern in der KI-Verarbeitung loggen und normal fortfahren
+        logging_channel = client.get_channel(client.logging_channel)
+        if logging_channel:
+            await logging_channel.send(f"```\nFehler bei der KI-Verarbeitung: {str(e)}```")
+
+    # Verarbeite Befehle normal weiter
     await client.process_commands(message)
 
 @client.event
 async def on_application_command_error(interaction, error):
     try:
+        # Benutzerfreundliche Fehlermeldungen für verschiedene Fehlertypen
         if isinstance(error, app_commands.errors.MissingPermissions):
             await interaction.response.send_message(
                 "❌ Ich habe nicht die nötigen Berechtigungen für diesen Befehl! "
-                "Stelle sicher, dass ich die entsprechenden Rechte habe.", 
+                "Stelle sicher, dass ich die entsprechenden Rechte habe.",
                 ephemeral=True
             )
         elif isinstance(error, discord.Forbidden):
             await interaction.response.send_message(
                 "❌ Ich kann diesen Befehl nicht ausführen! "
-                "Mir fehlen die notwendigen Berechtigungen.", 
+                "Mir fehlen die notwendigen Berechtigungen.",
                 ephemeral=True
             )
         elif isinstance(error, discord.HTTPException):
             await interaction.response.send_message(
                 "❌ Bei der Ausführung des Befehls ist ein Fehler aufgetreten. "
-                "Versuche es später erneut.", 
+                "Versuche es später erneut.",
                 ephemeral=True
             )
         else:
             await interaction.response.send_message(
                 "❌ Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es erneut oder "
-                "kontaktiere den Bot-Entwickler mit `!kontakt`.", 
+                "kontaktiere den Bot-Entwickler mit `!kontakt`.",
                 ephemeral=True
             )
-            
-            if logging_channel:
-                channel = client.get_channel(logging_channel)
-                await channel.send(f"```\nFehler bei Slash-Befehl: {error}\nBenutzer: {interaction.user.name} ({interaction.user.id})\nBefehl: {interaction.command.name}```")
-    except:
-        # Falls die Interaktion bereits beantwortet wurde
-        if logging_channel:
-            channel = client.get_channel(logging_channel)
-            await channel.send(f"```\nFehler bei der Fehlerbehandlung: {error}\nBenutzer: {interaction.user.name} ({interaction.user.id})```")
+
+        # Fehler im Logging-Channel protokollieren
+        channel = client.get_channel(logging_channel)
+        if channel:
+            # Zeitstempel für das Embed
+            timestamp = discord.utils.utcnow()
+
+            # Server-Informationen
+            if interaction.guild:
+                server_name = interaction.guild.name
+                server_id = interaction.guild.id
+                server_icon = interaction.guild.icon.url if interaction.guild.icon else None
+            else:
+                server_name = "Direktnachricht"
+                server_id = "DM"
+                server_icon = None
+
+            # Fehlertyp und Nachricht
+            error_type = type(error).__name__
+            error_message = str(error)
+
+            # Befehlsinformationen
+            command_name = interaction.command.name if interaction.command else "Unbekannt"
+
+            # Embed erstellen
+            embed = discord.Embed(
+                title="⚠️ Slash-Befehlsfehler",
+                description=f"**Befehl:** `{command_name}`\n\n**Fehlertyp:** `{error_type}`\n**Fehlermeldung:** ```{error_message}```",
+                color=0xe74c3c,  # Rot
+                timestamp=timestamp
+            )
+
+            # Benutzerinformationen hinzufügen
+            embed.set_author(
+                name=f"{interaction.user.display_name} ({interaction.user.id})",
+                icon_url=interaction.user.display_avatar.url
+            )
+
+            # Server- und Kanalinformationen hinzufügen
+            embed.add_field(name="Server", value=f"{server_name} ({server_id})", inline=True)
+            if hasattr(interaction.channel, 'name'):
+                embed.add_field(name="Kanal", value=f"#{interaction.channel.name} ({interaction.channel.id})", inline=True)
+
+            # Server-Icon als Thumbnail hinzufügen, falls vorhanden
+            if server_icon:
+                embed.set_thumbnail(url=server_icon)
+
+            # Footer mit Zeitstempel
+            embed.set_footer(text=f"Slash-Fehler • {timestamp.strftime('%d.%m.%Y %H:%M:%S')}")
+
+            # Embed senden
+            await channel.send(embed=embed)
+
+    except Exception as e:
+        # Falls die Interaktion bereits beantwortet wurde oder ein anderer Fehler auftritt
+        channel = client.get_channel(logging_channel)
+        if channel:
+            # Einfacheres Fehler-Embed für Fehler bei der Fehlerbehandlung
+            embed = discord.Embed(
+                title="⚠️ Fehler bei der Fehlerbehandlung",
+                description=f"**Ursprünglicher Fehler:** `{str(error)}`\n**Zusätzlicher Fehler:** `{str(e)}`",
+                color=0xe74c3c,  # Rot
+                timestamp=discord.utils.utcnow()
+            )
+
+            # Benutzerinformationen hinzufügen, falls verfügbar
+            if hasattr(interaction, 'user') and interaction.user:
+                embed.add_field(name="Benutzer", value=f"{interaction.user.display_name} ({interaction.user.id})", inline=True)
+
+            # Befehlsinformationen hinzufügen, falls verfügbar
+            if hasattr(interaction, 'command') and interaction.command:
+                embed.add_field(name="Befehl", value=interaction.command.name, inline=True)
+
+            await channel.send(embed=embed)
 
 # ===== 5. BASIC COMMANDS =====
 @client.command(name='mett')
@@ -275,7 +492,7 @@ async def create_random_timer(min, max):
     if logging_channel:
         endtime = datetime.datetime.now() + datetime.timedelta(minutes=minutes)
         await _log(f"⤷ Timer gesetzt! Nächster Drachenlordbesuch: {endtime.strftime('%d-%m-%Y %H:%M:%S')}")
-    
+
     await asyncio.sleep(minutes * 60)
     await on_reminder()
 
@@ -284,9 +501,16 @@ async def on_reminder():
         await _log("🟠 TIMER! Sound wird abgespielt...")
 
     for guild in client.guilds:
+        # Prüfe, ob der Server in der statischen Blacklist ist
         if str(guild.id) in blacklisted_guilds:
-            await _log(f"📛 {guild.name} ({guild.id}) wurde geblacklistet. Überspringe...")
+            await _log(f"📛 {guild.name} ({guild.id}) wurde in BLACKLISTED_GUILDS geblacklistet. Überspringe...")
             continue
+
+        # Prüfe, ob der Server in der dynamischen Ban-Liste ist
+        if hasattr(client, 'ban_manager') and client.ban_manager.is_banned(guild.id):
+            await _log(f"🚫 {guild.name} ({guild.id}) wurde über !drache leave gebannt. Überspringe...")
+            continue
+
         await playsound(await get_biggest_vc(guild), get_random_clipname())
         await playsound_cringe(await get_biggest_vc(guild), get_random_clipname_cringe())
 
