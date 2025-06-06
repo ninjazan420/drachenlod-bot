@@ -1,6 +1,6 @@
 # 📃 Nutzungsbedingungen & Datenschutz / Terms of Service & Privacy Policy
 
-_Last updated: 23. April 2025_
+_Last updated: 06 June 2025_
 
 ---
 
@@ -72,37 +72,131 @@ Contact: **drache@f0ck.org**
 
 #### Erhobene Daten
 
-Der Buttergolem-Bot sammelt keine personenbezogenen Daten. Es werden lediglich serverbezogene Informationen wie Nachrichteninhalte temporär zur Verarbeitung von Befehlen genutzt. Diese Daten werden nicht dauerhaft gespeichert.
+Der Buttergolem-Bot verarbeitet folgende Daten zur Bereitstellung seiner Funktionen:
+
+**Message Content (Nachrichteninhalte):**
+- Nachrichten werden temporär verarbeitet für:
+  - Quiz-Spiel Antworten und Befehle
+  - KI-Chat Funktionalität mit kontextuellen Antworten
+  - Sound-Board Befehle für Audio-Wiedergabe
+  - Admin-Moderations-Befehle
+  - Interaktive Spiele basierend auf Benutzereingaben
+- Nachrichteninhalte werden NICHT dauerhaft gespeichert
+- KI-Konversationen werden nur session-basiert zwischengespeichert (max. 10 Nachrichten pro Benutzer)
+
+**Server Members (Servermitglieder):**
+- Mitgliederzahlen für Statistik-Befehle
+- Server-Wachstums-Analytics für Administratoren
+- Mitglieder-basierte Features in Quiz- und Gaming-Systemen
+
+**User IDs:**
+- Discord User IDs für Befehlsverarbeitung
+- Temporäre Session-Verwaltung
+- Admin-Funktionen (Ban-Management)
 
 #### Nutzung der Daten
 
-Alle erfassten Daten dienen ausschließlich der Bereitstellung der Bot-Funktionen (z. B. Sprachfeatures). Es erfolgt keine Weitergabe an Dritte.
+Alle erfassten Daten dienen ausschließlich der Bereitstellung der Bot-Funktionen:
+- **Keine Weitergabe an Dritte**
+- **Keine Nutzung für KI-Training oder Machine Learning**
+- **Keine kommerzielle Verwertung**
+- Daten werden nur für die angegebenen Bot-Features verwendet
+
+#### Opt-Out Möglichkeiten
+
+**Message Content:** Benutzer können die Nachrichteninhalt-Verarbeitung vermeiden, indem sie:
+- Bot-Befehle nicht verwenden
+- KI-Chat-Features nicht nutzen
+- Den Bot vom Server entfernen
+
+**Server Members:** Server-Administratoren können:
+- Statistik-Befehle deaktivieren
+- Den Bot vom Server entfernen
 
 #### Zwischenspeicherung
 
-Zur Effizienz kann der Bot Daten kurzfristig in einem Cache halten. Diese werden regelmäßig verworfen oder nach Entfernen des Bots vom Server gelöscht.
+- **KI-Konversationen:** Maximal 10 Nachrichten pro Benutzer, session-basiert
+- **Befehls-Cache:** Temporär für Befehlsverarbeitung
+- **Statistiken:** Nur aggregierte, anonymisierte Daten
+- Alle Caches werden regelmäßig geleert oder bei Bot-Entfernung gelöscht
 
 #### Datenlöschung
 
-- **Automatisch:** Entfernen des Bots vom Server löscht automatisch gespeicherte Daten.
-- **Manuell:** Auf Wunsch kann die Datenlöschung per Mail an **drache@f0ck.org** beantragt werden. Ein Nachweis über die Server-Inhaberschaft ist erforderlich.
+- **Automatisch:** Entfernen des Bots vom Server löscht automatisch alle gespeicherten Daten
+- **Manuell:** Datenlöschung kann per Mail an **drache@f0ck.org** beantragt werden
+- **Session-Daten:** Werden automatisch nach Inaktivität gelöscht
+
+#### Datensicherheit
+
+- Alle Daten werden sicher verarbeitet und nicht an externe Services weitergegeben
+- Keine Speicherung sensibler Benutzerdaten außerhalb der Discord-Plattform
+- Regelmäßige Löschung temporärer Daten
 
 ---
 
 ### 🇬🇧 Privacy Policy
 
+#### Data Collection
+
+Buttergolem processes the following data to provide its functionality:
+
+**Message Content:**
+- Messages are temporarily processed for:
+  - Quiz game responses and commands
+  - AI chat functionality with contextual responses
+  - Sound board commands for audio playback
+  - Admin moderation commands
+  - Interactive games based on user input
+- Message content is NOT permanently stored
+- AI conversations are only cached session-based (max. 10 messages per user)
+
+**Server Members:**
+- Member counts for statistics commands
+- Server growth analytics for administrators
+- Member-based features in quiz and gaming systems
+
+**User IDs:**
+- Discord User IDs for command processing
+- Temporary session management
+- Admin functions (ban management)
+
 #### Usage of Data
 
-Buttergolem does not collect personal data. Only necessary Discord server information (like messages or channels) may be temporarily cached for command processing.
+All collected data serves exclusively to provide bot functionality:
+- **No sharing with third parties**
+- **No use for AI training or machine learning**
+- **No commercial exploitation**
+- Data is only used for specified bot features
+
+#### Opt-Out Options
+
+**Message Content:** Users can avoid message content processing by:
+- Not using bot commands
+- Not using AI chat features
+- Removing the bot from the server
+
+**Server Members:** Server administrators can:
+- Disable statistics commands
+- Remove the bot from the server
 
 #### Data Storage
 
-No long-term data storage is performed. Cached data is discarded after short periods or when the bot is removed from the server.
+- **AI Conversations:** Maximum 10 messages per user, session-based
+- **Command Cache:** Temporary for command processing
+- **Statistics:** Only aggregated, anonymized data
+- All caches are regularly cleared or deleted when bot is removed
 
 #### Deletion of Data
 
-- **Automatic:** Removing the bot from a server automatically deletes all stored data.
-- **Manual:** Email **drache@f0ck.org** to request deletion. Proof of server ownership is required.
+- **Automatic:** Removing the bot from a server automatically deletes all stored data
+- **Manual:** Data deletion can be requested via email to **drache@f0ck.org**
+- **Session Data:** Automatically deleted after inactivity
+
+#### Data Security
+
+- All data is processed securely and not shared with external services
+- No storage of sensitive user data outside the Discord platform
+- Regular deletion of temporary data
 
 ---
 
