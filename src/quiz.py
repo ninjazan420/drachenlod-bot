@@ -89,13 +89,26 @@ active_games = {}  # {channel_id: {user_id: QuizGame}}
 questions = load_questions()
 
 async def show_quiz_help(ctx):
-    help_text = (
-        "**🎮 Drachenlord Quiz Hilfe 🎮**\n\n"
-        "`!lordquiz start <anzahl>` - Startet ein neues Quiz mit gewünschter Rundenzahl\n"
-        "`!lordquiz stop` - Beendet das aktuelle Quiz\n\n"
-        "Beispiel: `!lordquiz start 5` für ein Quiz mit 5 Fragen"
+    embed = discord.Embed(
+        title="🎮 Drachenlord Quiz Hilfe 🎮",
+        color=0x00ff00
     )
-    await ctx.send(help_text)
+    
+    embed.add_field(
+        name="📋 Befehle",
+        value="`!lordquiz start <anzahl>` - Startet ein neues Quiz mit gewünschter Rundenzahl\n"
+              "`!lordquiz stop` - Beendet das aktuelle Quiz\n\n"
+              "Beispiel: `!lordquiz start 5` für ein Quiz mit 5 Fragen",
+        inline=False
+    )
+    
+    embed.add_field(
+        name="⚠️ Hinweis",
+        value="*Verwende zukünftig `!drache quiz` - alte Befehle werden demnächst abgeschaltet.*",
+        inline=False
+    )
+    
+    await ctx.send(embed=embed)
 
 async def collect_participants(ctx, game):
     """Sammelt Teilnehmer für das Quiz"""
@@ -332,16 +345,8 @@ async def end_game(ctx, reason):
         await ctx.send(embed=embed)
 
 def register_quiz_commands(bot):
-    @bot.command(name='lordquiz')
-    async def lordquiz(ctx, cmd: str = None, rounds: int = 5):
-        if cmd is None:
-            await show_quiz_help(ctx)
-        elif cmd.lower() == 'start':
-            await start_quiz(ctx, rounds)
-        elif cmd.lower() == 'stop':
-            await stop_quiz(ctx)
-        else:
-            await show_quiz_help(ctx)
+    # lordquiz befehl entfernt - nur !lord bleibt bestehen
+    pass
 
 def setup(bot):
     register_quiz_commands(bot)

@@ -59,7 +59,7 @@ class MemeGenerator:
             
         return font_size
 
-    def generate_meme(self, text):
+    def generate_meme(self, text, position="top"):
         """Erstellt ein Meme mit dem gegebenen Text"""
         # Wähle ein zufälliges Bild aus
         image_path = os.path.join(self.image_folder, random.choice(os.listdir(self.image_folder)))
@@ -74,14 +74,26 @@ class MemeGenerator:
         max_height_top = int(image.height * 0.25)    # 25% der Bildhöhe für oberen Text
         max_height_bottom = int(image.height * 0.25)  # 25% der Bildhöhe für unteren Text
 
-        # Text aufteilen und in Großbuchstaben umwandeln
-        if "|" in text:
-            top_text, bottom_text = text.split("|", 1)
-            top_text = top_text.strip().upper()
-            bottom_text = bottom_text.strip().upper()
-        else:
+        # Text aufteilen und in Großbuchstaben umwandeln basierend auf Position
+        if position == "both":
+            if "|" in text:
+                top_text, bottom_text = text.split("|", 1)
+                top_text = top_text.strip().upper()
+                bottom_text = bottom_text.strip().upper()
+            else:
+                # Wenn kein | vorhanden, Text auf beide Positionen
+                top_text = text.strip().upper()
+                bottom_text = ""
+        elif position == "top":
+            top_text = text.strip().upper()
+            bottom_text = ""
+        elif position == "bottom":
             top_text = ""
             bottom_text = text.strip().upper()
+        else:
+            # Fallback auf oben
+            top_text = text.strip().upper()
+            bottom_text = ""
 
         # Berechne optimale Schriftgrößen
         top_font_size = self.calculate_font_size(top_text, max_width, max_height_top, 
@@ -140,32 +152,15 @@ class MemeGenerator:
         return output_path
 
 def register_meme_commands(bot):
-    @bot.command(name='lordmeme')
-    @commands.cooldown(1, 5, commands.BucketType.user)
-    async def create_meme(ctx, *, text: str = None):
-        """Erstellt ein Drachenlord Meme"""
-        if text is None:
-            await ctx.send("❌ Du musst einen Text für das Meme angeben!\n"
-                          "Beispiel: `!lordmeme Das ist lustig`\n"
-                          "Für Text oben und unten: `!lordmeme Oben | Unten`")
-            return
-            
-        try:
-            output_path = bot.meme_generator.generate_meme(text)
-            await ctx.send(file=discord.File(output_path))
-            os.remove(output_path)
-        except Exception as e:
-            if hasattr(bot, 'logging_channel'):
-                channel = bot.get_channel(bot.logging_channel)
-                await channel.send(f"Error in meme command: {str(e)}")
-            await ctx.send("Ein Fehler ist aufgetreten beim Erstellen des Memes.")
+    # lordmeme befehl entfernt - nur !lord bleibt bestehen
 
     @create_meme.error
     async def meme_error(ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send("❌ Du musst einen Text für das Meme angeben!\n"
                           "Beispiel: `!lordmeme Das ist lustig`\n"
-                          "Für Text oben und unten: `!lordmeme Oben | Unten`")
+                          "Für Text oben und unten: `!lordmeme Oben | Unten`\n\n"
+                          "*# Hinweis: Verwende zukünftig `!drache meme` - alte Befehle werden demnächst abgeschaltet.*")
         elif isinstance(error, commands.CommandOnCooldown):
             await ctx.send(f"⏱️ Bitte warte noch {error.retry_after:.1f} Sekunden bis zum nächsten Meme!")
         else:

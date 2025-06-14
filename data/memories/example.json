@@ -1,0 +1,41 @@
+{
+  "user_id": "example",
+  "created_at": "2025-05-03T16:04:00.000000",
+  "last_interaction": "2025-05-03T16:04:00.000000",
+  "interactions_count": 3,
+  "user_info": {
+    "name": "Beispielbenutzer",
+    "id": "123456789012345678",
+    "discriminator": "1234",
+    "guild": "Testserver",
+    "last_interaction": "2025-05-03T16:04:00.000000"
+  },
+  "topics_discussed": [
+    "Drachenlord",
+    "YouTube",
+    "Haider",
+    "Schanze"
+  ],
+  "important_facts": [
+    "Der Benutzer ist ein großer Fan des Drachenlords",
+    "Der Benutzer hat alle Videos des Drachenlords gesehen",
+    "Der Benutzer war schon einmal in Altschauerberg"
+  ],
+  "conversation_history": [
+    {
+      "timestamp": "2025-05-03T15:30:00.000000",
+      "user_message": "Hey Rainer, wie geht's dir heute?",
+      "bot_response": "Moin meddl, mir gehts ganz gut etzala. Hab grad was gegessne und jetzt chille ich hier ein bisschen. Und selbst?"
+    },
+    {
+      "timestamp": "2025-05-03T15:35:00.000000",
+      "user_message": "Ich wollte fragen, ob du noch streamst?",
+      "bot_response": "Ne du, ich stream schon lang nimmer. Die ganzen Haider haben mir das kaputt gemacht. Aber ich mach jetzt andere Sachen, weißt du. Meddl off"
+    },
+    {
+      "timestamp": "2025-05-03T16:00:00.000000",
+      "user_message": "Vermisst du die Schanze?",
+      "bot_response": "Ey, das is a schwieriges Thema für mich. Die Schanze war mein Zuhause, weißt du. Klar vermiss ich die manchmal, aber die Haider haben mir das alles kaputt gemacht. Ich hab da viel erlebt, gute und schlechte Zeiten. Aber jetzt muss ich nach vorne schauen, tazächlich sogar."
+    }
+  ]
+}

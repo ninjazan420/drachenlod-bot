@@ -1,7 +1,7 @@
 discord-timers==0.1.0
 beautifulsoup4
 aiohttp>=3.8.0
-discord.py
+discord.py>=2.5.2
 python-dotenv
 requests
 Pillow  # Aktualisiert für Meme-Generator

@@ -14,11 +14,32 @@ async def create_lordstats_embed(target) -> discord.Embed:
     
     # Hater-Level als Sterne darstellen
     hater_stars = "⭐" * hater_level + "☆" * (10 - hater_level)
+    
+    # Zufälliges Zitat laden
+    import os
+    import json
+    quote = "Meddl Leude!"
+    try:
+        quotes_paths = [
+            os.path.join(os.path.dirname(__file__), 'data', 'quotes.json'),
+            'src/data/quotes.json',
+            'data/quotes.json'
+        ]
+        
+        for quotes_path in quotes_paths:
+            if os.path.exists(quotes_path):
+                with open(quotes_path, 'r', encoding='utf-8') as f:
+                    quotes = json.load(f)
+                    if quotes:
+                        quote = random.choice(quotes)
+                break
+    except Exception:
+        pass
 
     embed = discord.Embed(
         title=f"🐷 Lordstats für {target.display_name}",
-        color=0xff9900,
-        timestamp=discord.utils.utcnow()
+        description=f"*\"{quote}\"*",
+        color=0xff9900
     )
     
     embed.set_thumbnail(url=target.display_avatar.url)
@@ -33,16 +54,10 @@ async def create_lordstats_embed(target) -> discord.Embed:
     return embed
 
 def register_lordstats_commands(bot):
-    @bot.command(name='lordstats')
-    @commands.cooldown(1, 5, commands.BucketType.user)
-    async def lordstats(ctx, member: discord.Member = None):
-        """Zeigt lustige Drachenlord-Statistiken für einen Benutzer"""
-        target = member or ctx.author
-        embed = await create_lordstats_embed(target)
-        await ctx.send(embed=embed)
+    # lordstats befehl entfernt - nur !lord bleibt bestehen
 
     @bot.tree.command(name="lordstats", description="Zeigt lustige Drachenlord-Statistiken für einen Benutzer")
     async def lordstats_slash(interaction: discord.Interaction, member: discord.Member = None):
         target = member or interaction.user
         embed = await create_lordstats_embed(target)
-        await interaction.response.send_message(embed=embed) 
+        await interaction.response.send_message(embed=embed)

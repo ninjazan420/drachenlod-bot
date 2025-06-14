@@ -1,132 +1,321 @@
-![draaaaa](https://github.com/user-attachments/assets/8c0f4ec0-e1ab-42be-a0aa-a2c08841a916)
+# 🤖 ButterGolem Discord Bot v6.0.0
 
-# [Aktueller invitelink](https://discord.com/oauth2/authorize?client_id=1329104199794954240)
+[![Discord](https://img.shields.io/badge/Discord-Invite-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/oauth2/authorize?client_id=1329104199794954240)
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-Support-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/ninjazan420)
+[![Version](https://img.shields.io/badge/Version-6.0.0-brightgreen?style=for-the-badge)](https://github.com/ninjazan420/buttergolem)
 
-# Drachenlord Discord Bot v5.2.0
+## 🎉 Meddl Loide! Das große 6.0.0 Update ist da!
 
-## Meddl Loidde!
+**ButterGolem** ist zurück mit dem größten Update aller Zeiten! Komplett überarbeitet, modernisiert und mit hunderten neuen Features. Der Drachenlord Discord Bot, der dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server scheißt.
 
-Dieser Bot scheißt dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server.
+---
 
-## Features
+## 🚀 Was ist neu in Version 6.0.0?
 
-  ✅ mehr als 500 Soundclips
+### ⚡ **Komplette Modernisierung**
+- **100% Slash Commands** - Alle Befehle wurden auf moderne `/` Commands umgestellt
+- **Keine Intents mehr** - Bot funktioniert jetzt ohne privilegierte Berechtigungen
+- **Bessere Performance** - Optimiert für Server mit 100+ Mitgliedern
+- **Modulare Architektur** - Sauberer, wartbarer Code
 
-  ✅ mehr als 100 Zitate
+### 🎭 **Erweiterte Drachenlord KI**
+- **Massiv erweiterte Lore** - Hunderte neue Zitate, Ereignisse und Persönlichkeitsmerkmale
+- **2024/2025 Updates** - Aktuelle Ereignisse und Kontroversen
+- **Verbesserte Persönlichkeit** - Noch authentischere Antworten
+- **Neue Reaktionsmuster** - Dynamische Antworten basierend auf Kontext
 
-  ❓ Bist du ein Drachi oder ein echter Haider? Teste es im Quiz mit über 150 Fragen!
+### 🔊 **Sound-System Upgrade**
+- **500+ Soundclips** - Noch mehr GESCHREI und Cringe-Momente
+- **Neue Kategorien** - Bessere Organisation der Sounds
+- **Verbesserte Qualität** - Optimierte Audio-Dateien
+- **Smart Playback** - Intelligente Sound-Auswahl
 
-  🎉 Überraschung alle 30-60 Minuten
+### 📊 **Erweiterte Statistiken**
+- **Neofetch-Style Stats** - Coole ASCII-Art Statistiken
+- **Animierte Displays** - Drachenlord und Shrek Themes
+- **Detaillierte Metriken** - Server, User und Bot-Statistiken
+- **Memory-System** - Persistente Nutzer-Erinnerungen
 
-# Befehle
+### 🛡️ **Admin-Features**
+- **Server-Management** - Erweiterte Server-Verwaltung
+- **Ban-System** - User und Server Bans
+- **Debug-Tools** - Umfangreiche Debugging-Funktionen
+- **Global Messaging** - Nachrichten an alle Server
 
-## 📋 Basis-Befehle
+---
 
-| Befehl | Beschreibung |
-|--------|--------------|
-| `!hilfe` | Zeigt diese Hilfe an |
-| `!mett` | Zeigt den aktuellen Mett-Level mit Mett-Meter an 🥓 |
-| `!zitat` | Der Quallemann antwortet dir mit einem zufälligen Zitat |
-| `!lordmeme <text>` | Erstellt ein Drachenlord Meme (Nutze \| für oben/unten) |
-| `!lordstats [@user]` | Zeigt lustige Drachenlord-Statistiken für einen Benutzer |
-| `!lordupdate` | Zeigt die letzten Bot-Updates und Änderungen |
-| `!kontakt` | Sende eine Nachricht an den Admin |
+## 🎮 Slash Commands Übersicht
 
-## 🤖 Drachenlord KI
+### 👥 **Für alle Nutzer**
 
-| Befehl | Beschreibung |
-|--------|--------------|
-| `@username <nachricht>` | Chatte mit dem Bot im Channel |
-| `DM` | Du kannst dem Drachenlord auch eine DM schreiben und privat chatten! |
+| Command | Beschreibung |
+|---------|-------------|
+| `/hilfe` | Zeigt alle verfügbaren Befehle |
+| `/drache stats` | Bot-Statistiken anzeigen |
+| `/sound [name]` | Spezifischen Sound abspielen |
+| `/sounds` | Liste aller verfügbaren Sounds |
+| `/lord` | Zufälligen Drachenlord Sound abspielen |
+| `/mett` | Aktueller Mett-Level mit Meter |
+| `/zitat` | Zufälliges Drachenlord Zitat |
+| `/lordmeme [text] [position]` | Drachenlord Meme erstellen (Position: oben/unten/beide) |
+| `/lordstats [@user]` | Lustige Statistiken für User |
+| `/lordupdate` | Neueste Bot-Updates |
+| `/quiz [runden]` | Drachenlord Quiz starten |
+| `/ping` | Bot-Latenz anzeigen |
+| `/kontakt [nachricht]` | Nachricht an Admin senden |
+| `/privacy` | Datenschutzerklärung |
 
-> **Hinweis:** Die KI-Features sind für alle Nutzer kostenlos verfügbar. Admins können den Zugriff einzelner User mit `!butteriq disable/enable <user_id>` verwalten.
+### 🔧 **Admin Commands**
 
-## 🔊 Sound-Befehle
+| Command | Beschreibung |
+|---------|-------------|
+| `/drache neofetch` | Animierte Bot-Stats (neofetch-Style) |
+| `/drache drachenlord` | Stats mit Drachenlord-Zitaten |
+| `/drache shrek` | Stats mit Shrek-Theme |
+| `/memory list` | Alle Nutzer-Erinnerungen |
+| `/memory show [user]` | Spezifische Erinnerung |
+| `/memory add [user] [text]` | Neue Erinnerung hinzufügen |
+| `/memory delete [user]` | Erinnerung löschen |
+| `/servercount` | Manueller Server-Counter Update |
+| `/server [page]` | Server-Liste & Statistiken |
+| `/antwort [id] [text]` | Antwort an Nutzer |
+| `/debug_sounds` | Sound-System Debug |
+| `/butteriq [action]` | KI-Zugriff verwalten |
+| `/global [nachricht]` | Globale Nachricht senden |
 
-| Befehl | Beschreibung |
-|--------|--------------|
-| `!lord` | Zufälliges GESCHREI im Voice-Channel |
-| `!cringe` | Zufälliger Cringe-Sound wenn's mal wieder zu viel wird |
-| `!sounds` | Zeigt eine durchblätterbare Liste aller verfügbaren Sounds |
-| `!sound <name>` | Spielt den angegebenen Sound ab |
+---
 
-## ❓ Quiz-Befehle
+## 🤖 Drachenlord KI Chat
 
-| Befehl | Beschreibung |
-|--------|--------------|
-| `!lordquiz` | Zeigt Informationen zum Quiz |
-| `!lordquiz start X` | Startet ein Quiz mit X Runden (1-20) |
-| `!lordquiz stop` | Beendet das aktuelle Quiz im Channel |
+**Chatte direkt mit dem Drachenlord!**
 
-## 🔀 Slash-Befehle
+- **@ButterGolem [nachricht]** - Erwähne den Bot in einem Channel
+- **DM** - Schreibe dem Bot eine private Nachricht
 
-Viele Befehle sind auch als Slash-Commands verfügbar! Tippe einfach `/` in Discord und wähle den gewünschten Befehl aus:
+### 🧠 **KI Features:**
+- Authentische Drachenlord Persönlichkeit
+- Kontextbewusste Antworten
+- Aktuelle Ereignisse und Memes
+- Dynamische Reaktionen
+- Kostenlos für alle Nutzer
 
-| Slash-Befehl | Beschreibung |
-|--------------|--------------|
-| `/lordstats [@user]` | Zeigt lustige Drachenlord-Statistiken |
-| `/lordupdate` | Zeigt die letzten Bot-Updates |
+---
 
-## ⚙️ Admin-Befehle
+## 🔊 Sound-System
 
-### Server-Verwaltung
-| Befehl | Beschreibung |
-|--------|--------------|
-| `!drache server [page]` | Zeigt Server-Liste & Nutzerstatistiken mit fortlaufenden IDs |
-| `!drache leave <server_id> [message_id] [grund...]` | Bot von einem Server entfernen |
-| `!drache ban server <server_id> [grund...]` | Server bannen (ohne zu verlassen) |
-| `!drache unban server <ban_id>` | Ban für einen Server aufheben |
-| `!drache bans server` | Liste aller gebannten Server anzeigen |
+### 🎵 **500+ Soundclips verfügbar:**
+- **Klassisches GESCHREI** - Die besten Drachenlord Momente
+- **Cringe-Sounds** - Für besonders peinliche Momente
+- **Neue 2024 Clips** - Frische Sounds aus aktuellen Streams
+- **Kategorisiert** - Einfach zu finden und zu verwenden
 
-### User-Verwaltung
-| Befehl | Beschreibung |
-|--------|--------------|
-| `!drache ban user <user_id> [server_id] [grund...]` | User bannen (global oder serverspezifisch) |
-| `!drache unban user <ban_id>` | Ban für einen User aufheben |
-| `!drache bans user` | Liste aller gebannten User anzeigen |
-| `!antwort <message_id> <text>` | Antwortet auf Kontaktnachrichten von Nutzern |
-| `!butteriq disable/enable <user_id>` | KI-Zugriff für User verwalten |
+### 🎧 **Sound Commands:**
+- `/sounds` - Durchblätterbare Liste aller Sounds
+- `/sound [name]` - Spezifischen Sound abspielen
+- `/lord` - Zufälligen Sound abspielen
 
-### System-Befehle
-| Befehl | Beschreibung |
-|--------|--------------|
-| `!buttergolem stats` | Bot-Statistiken mit Neofetch-Style anzeigen |
-| `!ping` | Zeigt die Bot-Latenz an |
-| `!servercount` | Manuelles Servercounter-Update durchführen |
-| `!id` | Zeigt die IDs des aktuellen Text- & Voice-Channels |
+---
 
-## Installation & Selbst hosten
+## ❓ Quiz-System
 
-- [Im Discord Developer Portal Golem hinzufügen](https://discord.com/developers/)
-- in der [docker-compose.yml](https://github.com/ninjazan420/drachenlord-bot/blob/master/docker-compose.yml) den Bot-Token, Log Channel ID und Admin ID hinzufügen
-- Entscheiden, ob der Bot alle 30-60 Minuten zufällig dem größten Kanal beitreten soll (`ENABLE_RANDOM_JOINS: "False"/"True"`)
-- `docker compose build`, gefolgt von `docker compose up -d`
-- Logs können per `docker compose logs -f` abgerufen werden
+**Teste dein Drachenlord Wissen!**
 
-### Modulare Struktur
+- **150+ Fragen** über Drachenlord, Haider und die Schanze
+- **Verschiedene Schwierigkeitsgrade** 
+- **Multiplayer-Support** - Spiele mit Freunden
+- **Statistiken** - Verfolge deine Erfolge
 
-Der Bot ist modular aufgebaut. Jede Hauptfunktion befindet sich in einer eigenen Datei im `src/` Ordner:
+**Quiz starten:** `/quiz [anzahl_runden]` (1-20 Runden)
 
-- `main.py` - Hauptdatei mit Bot-Setup und Basislogik
-- `hilfe.py` - Hilfe-Kommandos und Dokumentation
-- `sounds.py` - Sound-bezogene Befehle und Funktionen
-- `quiz.py` - Quiz-System und Spiellogik
-- `admins.py` - Admin-Befehle, Ban-System und Server-Verwaltung
-- `lordmeme.py` - Meme-Generator und Befehle
-- `lordstats.py` - Lustige Drachenlord-Statistiken für User
-- `updates.py` - Update-Changelog und Versionsinformationen
-- `ki.py` - KI-Integration und Chat-Funktionen
-- `butteriq.py` - KI-Zugriffsverwaltung und Unterstützer-System
-- `servercounter.py` - Server-Tracking und Statistiken
+---
 
-Um neue Funktionen hinzuzufügen:
+## 📊 Statistiken & Neofetch
 
-1. Erstelle eine neue Datei `src/meine_funktion.py`
-2. Implementiere deine Befehle in einer `register_commands()` Funktion
-3. Importiere und registriere das Modul in `main.py`
+### 🖥️ **Neofetch-Style Displays:**
+```
+/drache neofetch     → Standard ASCII-Art Stats
+/drache drachenlord  → Mit Drachenlord Zitaten
+/drache shrek        → Shrek-Theme Stats
+```
+## 🥦 Admin Commands
+- Neu: Global um globale Nachrichten an die Join Channel zu schicken
+- Neu: Memory-System um Nutzer-Erinnerungen zu speichern
+- Neu: Server-Liste um alle Server anzuzeigen
+- Neu: Server-Statistiken um Server-Details anzuzeigen
+- Neu: Server-Counter um Serveranzahl zu aktualisieren
 
-Diese Struktur macht es einfach, den Bot zu erweitern ohne bestehenden Code ändern zu müssen.
+### 📈 **Verfügbare Metriken:**
+- Server-Anzahl und Nutzer
+- Uptime und Performance
+- Sound-Statistiken
+- Memory-Usage
+- Bot-Version und Features
 
-> Der Bot muss die Berechtigung besitzen, in den Voice zu joinen!
+---
 
-<sup>*Wichtig: da GitHub die Sounddateien wegen DMCA runter genommen hat, sind diese nur über den Bot direkt verfügbar! Falls du den Bot selbst hosten willst und die Sounds brauchst, schreib mir eine nachricht im discord `ninjazan420`</sup>
+## 🛠️ Installation & Setup
+
+### 🐳 **Docker Installation (Empfohlen)**
+
+1. **Repository klonen:**
+```bash
+git clone https://github.com/ninjazan420/buttergolem.git
+cd buttergolem
+```
+
+2. **Environment Variables setzen:**
+```env
+DISCORD_API_TOKEN=dein_bot_token
+LOGGING_CHANNEL=channel_id_für_logs
+ADMIN_USER_ID=deine_discord_user_id
+BLACKLISTED_GUILDS=server_id1,server_id2
+ENABLE_RANDOM_JOINS=False
+```
+
+3. **Bot starten:**
+```bash
+docker compose build
+docker compose up -d
+```
+
+4. **Logs anzeigen:**
+```bash
+docker compose logs -f
+```
+
+### 🐍 **Manuelle Installation**
+
+1. **Python 3.8+ installieren**
+
+2. **Dependencies installieren:**
+```bash
+pip install discord.py psutil requests aiohttp beautifulsoup4 Pillow
+```
+
+3. **Bot starten:**
+```bash
+cd src
+python main.py
+```
+
+### ⚙️ **Bot-Berechtigungen**
+
+Der Bot benötigt folgende Berechtigungen:
+- Nachrichten senden
+- Slash Commands verwenden
+- Voice Channels beitreten
+- Voice Channels sprechen
+- Dateien anhängen
+- Embeds senden
+
+---
+
+## 🏗️ Modulare Architektur
+
+Der Bot ist vollständig modular aufgebaut:
+
+```
+src/
+├── main.py              # Hauptdatei und Bot-Setup
+├── slash_commands.py    # Alle Slash Commands
+├── sounds.py           # Sound-System
+├── ki.py               # KI-Integration
+├── quiz.py             # Quiz-System
+├── lordstats.py        # User-Statistiken
+├── lordmeme.py         # Meme-Generator
+├── memory.py           # Memory-System
+├── admins/             # Admin-Funktionen
+│   ├── admin_commands.py
+│   ├── ban_manager.py
+│   ├── stats_manager.py
+│   └── server_list_view.py
+├── ki/                 # KI-Daten
+│   ├── drache.json
+│   ├── drache_lore.json
+│   ├── drache_events_2024_2025.json
+│   └── ...
+└── data/               # Bot-Daten
+    ├── sounds/
+    ├── memories/
+    └── stats.json
+```
+
+### 🔧 **Neue Module hinzufügen:**
+
+1. Erstelle `src/mein_modul.py`
+2. Implementiere `register_commands(bot)` Funktion
+3. Importiere in `main.py`
+4. Registriere mit `register_commands(client)`
+
+---
+
+## 🔄 Migration von v5.x
+
+### ⚠️ **Breaking Changes:**
+- **Alle Prefix Commands entfernt** - Nur noch Slash Commands
+- **Intents entfernt** - Bot benötigt keine privilegierten Berechtigungen
+- **Neue Command-Struktur** - Alle Commands unter `/drache` oder eigenständig
+- **Geänderte Admin-Commands** - Neue Syntax und Parameter
+
+### 📋 **Migrations-Checklist:**
+- [ ] Bot-Token aktualisieren
+- [ ] Neue Berechtigungen setzen
+- [ ] Slash Commands aktivieren
+- [ ] Admin-IDs konfigurieren
+- [ ] Logging-Channel setzen
+
+---
+
+## 💝 Support & Spenden
+
+**Unterstütze die Entwicklung:**
+
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-Support-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/buttergolem)
+[![Support](https://img.shields.io/badge/Discord-Join-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/4kHkaaS2wq)
+
+### 🐞 **Bug Reports:**
+Probleme bitte als [GitHub Issue](https://github.com/ninjazan420/buttergolem/issues) melden.
+
+- **Ko-fi Spenden** - Einmalige Unterstützung
+- **Feature Requests** - Neue Ideen und Vorschläge
+- **Bug Reports** - Hilf uns Fehler zu finden
+- **Community Support** - Hilfe von anderen Nutzern
+
+---
+
+## 📜 Datenschutz & Rechtliches
+
+- **[Datenschutzerklärung](privacy_policy.md)** - Vollständige Privacy Policy
+- **Datensammlung:** Minimal - nur notwendige Bot-Funktionen
+- **Keine Speicherung** von Nachrichten oder persönlichen Daten
+- **DSGVO-konform** - Europäische Datenschutzstandards
+
+**Datenschutz anzeigen:** `/privacy`
+
+---
+
+## 🐛 Bekannte Issues & Roadmap
+
+### 🔧 **Aktuell in Arbeit:**
+- [ ] Weitere Sound-Kategorien
+- [ ] Erweiterte Quiz-Modi
+- [ ] Custom Server-Einstellungen
+- [ ] Web-Dashboard
+
+---
+
+## 👨‍💻 Entwickler
+
+**Created by:** [ninjazan420](https://github.com/ninjazan420)
+
+---
+
+## 📄 Lizenz
+
+Dieses Projekt steht unter der [GPL v3](LICENSE).
+
+---
+
+**🎉 Viel Spaß mit ButterGolem v6.0.0! Meddl Loide! 🎉**
+
+*"Ich bin nicht der Messias, ich bin ein sehr ungezogener Junge!"* - Drachenlord, 2024

@@ -28,14 +28,21 @@ from PIL import Image, ImageDraw, ImageFont
 
 # Local imports
 from quiz import register_quiz_commands
-from hilfe import register_help_commands
+# from hilfe import register_help_commands  # Jetzt in !drache integriert
 from sounds import register_sound_commands, playsound, get_random_clipname, get_random_clipname_cringe, playsound_cringe
+from slash_commands import register_slash_commands
 from admins import register_admin_commands
 from lordmeme import register_meme_commands, MemeGenerator
 from lordstats import register_lordstats_commands
 from updates import register_update_commands
 from ki import register_ki_commands, handle_ki_message
-from butteriq import register_butteriq_commands
+# from butteriq import register_butteriq_commands  # Jetzt in !drache integriert
+# from animated_stats import register_animated_stats_commands  # Jetzt in !drache integriert
+from memory import register_memory_manager
+from memory_commands import register_memory_commands
+from mirror import setup_mirror
+from changelog import ChangelogCog
+# Premium-Funktionalität entfernt - ersetzt durch Ko-fi Spenden
 
 # ===== 2. CONFIGURATION AND SETUP =====
 # Environment variables
@@ -48,18 +55,18 @@ logging_channel = int(os.environ['LOGGING_CHANNEL'])
 admin_user_id = int(os.environ['ADMIN_USER_ID'])
 blacklisted_guilds = get_blacklisted_guilds(str(os.environ['BLACKLISTED_GUILDS']))
 
-# Bot initialization
+# Bot initialization - Ohne privileged intents für 100+ Server Support
 intents = discord.Intents.default()
-intents.message_content = True
-intents.members = True
-intents.presences = True
+intents.message_content = False  # DEAKTIVIERT für 100+ Server Support
+# intents.members = True  # Entfernt - privileged intent
+# intents.presences = True  # Entfernt - privileged intent
 
 message_history = defaultdict(dict)
 user_cooldowns = {}
 
 client = commands.Bot(
     command_prefix=commands.when_mentioned_or("!"),
-    description='Buttergolem Discord Bot Version: 4.4.2\nCreated by: ninjazan420',
+    description='Buttergolem Discord Bot Version: 5.4.0\nCreated by: ninjazan420',
     intents=intents
 )
 client.remove_command('help')
@@ -68,22 +75,36 @@ client.remove_command('help')
 from admins import StatsManager
 client.stats_manager = StatsManager()
 
+# Set start time for uptime calculation
+import datetime
+client.start_time = datetime.datetime.now()
+
 # Shared variables
 client.admin_user_id = admin_user_id
 client.logging_channel = logging_channel
 client.message_history = message_history
 client.meme_generator = MemeGenerator()
+client.server_id_map = {}
 
 # Register all commands
-register_quiz_commands(client)
-register_help_commands(client)
-register_sound_commands(client)
+# register_quiz_commands(client)  # Entfernt - nur !lord bleibt
+# register_help_commands(client)  # Jetzt in !drache integriert
+register_sound_commands(client)  # Nur für !lord befehl
+register_slash_commands(client)
 register_admin_commands(client)
-register_meme_commands(client)
-register_update_commands(client)
-register_lordstats_commands(client)
+# register_meme_commands(client)  # Entfernt - nur !lord bleibt
+# register_update_commands(client)  # Entfernt - nur !lord bleibt
+# register_lordstats_commands(client)  # Entfernt - nur !lord bleibt
 register_ki_commands(client)
-register_butteriq_commands(client)
+# register_butteriq_commands(client)  # Jetzt in !drache integriert
+# register_animated_stats_commands(client)  # Jetzt in !drache integriert
+register_memory_manager(client)
+# register_memory_commands(client)  # Deaktiviert wegen Command-Konflikten
+setup_mirror(client)
+# Premium-Befehle entfernt - Ko-fi Spenden-Link in !hilfe verfügbar
+
+# Changelog System laden
+client.add_cog(ChangelogCog(client))
 
 # ===== 3. HELPER FUNCTIONS =====
 async def _log(message):
@@ -94,20 +115,22 @@ def get_random_datetime(min, max):
     return datetime.datetime.now() + datetime.timedelta(minutes=randint(min, max))
 
 async def get_biggest_vc(guild):
+    """Gibt den ersten verfügbaren Voice Channel zurück (ohne members intent)"""
     if logging_channel:
-        await _log(f"⤷ Grössten VC herausfinden...\n    ⤷ 🏰 {guild.name} ({guild.id})")
+        await _log(f"⤷ Voice Channel auswählen...\n    ⤷ 🏰 {guild.name} ({guild.id})")
 
-    voice_channel_with_most_users = guild.voice_channels[0]
-    logtext = ""
-
-    for voice_channel in guild.voice_channels:
-        logtext += f"\n    ⤷ {len(voice_channel.members)} Benutzer in {voice_channel.name}"
-        if len(voice_channel.members) > len(voice_channel_with_most_users.members):
-            voice_channel_with_most_users = voice_channel
-
-    if logging_channel:
-        await _log(logtext)
-    return voice_channel_with_most_users
+    # Ohne members intent können wir nicht die Anzahl der Benutzer sehen
+    # Daher nehmen wir einfach den ersten verfügbaren Voice Channel
+    if guild.voice_channels:
+        selected_channel = guild.voice_channels[0]
+        if logging_channel:
+            await _log(f"\n    ⤷ Verwende Voice Channel: {selected_channel.name}")
+        return selected_channel
+    else:
+        # Fallback: Erstelle einen temporären Voice Channel falls keiner existiert
+        if logging_channel:
+            await _log("\n    ⤷ Kein Voice Channel gefunden, überspringe...")
+        return None
 
 # Rate Limiting Functions
 def is_on_cooldown(user_id: int) -> bool:
@@ -130,20 +153,23 @@ def cooldown_check():
 
 # Globale Status-Nachrichten
 STATUS_MESSAGES = [
-    "!hilfe | Meddl Loide!",
-    "Haut isch a Organ | !hilfe",
-    "Buttergolem auf Diät | !hilfe",
-    "Drachengame Speedrun | !hilfe",
-    "Mettbrötchen backen | !hilfe",
-    "Schanzenfest planen | !hilfe",
-    "Kagghaider ignorieren | !hilfe",
-    "Altschauerberg erkunden | !hilfe",
-    "Dreggiger Haider | !hilfe",
-    "Butterrezepte sammeln | !hilfe",
-    "Reiner Winkler Simulator | !hilfe",
-    "Meddl Leude! | !hilfe",
-    "Buttergolem's Rache | !hilfe",
-    "Drachenlord Simulator 2023 | !hilfe"
+        # "Meddl Loide! | /hilfe",
+        # "Auf Schanzentour | /hilfe", 
+        # "Buttergolem's Abenteuer | /hilfe",
+        # "Haiderexperte | /hilfe",
+        # "Mettbrötchen zubereiten | /hilfe",
+        # "Drachenlord Simulator 2024 | /hilfe",
+        # "Schanze bewachen | /hilfe",
+        # "Kagghaider vertreiben | /hilfe",
+        # "Buttergolem's Rückkehr | /hilfe",
+        # "Altschauerberg Guide | /hilfe",
+        # "Meddl-Meister | /hilfe",
+        # "Drachengame Pro | /hilfe",
+        # "Schanzenfestival 2024 | /hilfe",
+        # "Buttergolem's Rache | /hilfe",
+        # "Server-Lord | /hilfe",
+        # "Discord-Drache | /hilfe",
+         "Riesen update live | /hilfe",
 ]
 
 @tasks.loop(minutes=10.0)
@@ -151,14 +177,35 @@ async def change_status():
     new_status = random.choice(STATUS_MESSAGES)
     await client.change_presence(activity=discord.Game(name=new_status))
 
+@tasks.loop(minutes=5.0)
+async def update_member_counter_task():
+    """Background task für Member Counter Updates alle 5 Minuten"""
+    await servercounter.update_counter_channels(client)
+
 # ===== 4. BOT EVENTS =====
 @client.event
 async def on_ready():
+    # Slash Commands automatisch synchronisieren
+    try:
+        synced = await client.tree.sync()
+        if logging_channel:
+            await _log(f"⚙️ {len(synced)} Slash Commands synchronisiert")
+    except Exception as e:
+        if logging_channel:
+            await _log(f"❌ Fehler beim Synchronisieren der Commands: {e}")
+    
     if logging_channel:
-        await _log("🟢 Bot gestartet - Version 5.2.0")
+        await _log("🟢 Bot gestartet - Version 6.0.0")
 
     # Status-Task starten
     change_status.start()
+    
+    # Member Counter Task starten
+    update_member_counter_task.start()
+    
+    # Start time für Uptime Counter setzen
+    client.start_time = datetime.datetime.now()
+    
     client.logging_channel = logging_channel
 
     if random_joins == "true":
@@ -243,6 +290,10 @@ async def on_guild_join(guild):
 
     # Servercounter automatisch aktualisieren
     await servercounter.single_update(client)
+    
+    # Server-Join Statistik erhöhen
+    if hasattr(client, 'stats_manager'):
+        client.stats_manager.increment_servers_joined()
 
     if channel:
         embed = discord.Embed(
@@ -326,8 +377,7 @@ async def on_message(message):
         return
 
     if hasattr(client, 'stats_manager'):
-        client.stats_manager.stats['unique_users'].add(message.author.id)
-        client.stats_manager._save_stats()
+        client.stats_manager.add_unique_user(message.author.id)
 
     # Prüfe, ob es sich um eine KI-Anfrage handelt (Erwähnung oder DM)
     # Wenn ja, verarbeite sie mit der KI-Funktion aus ki.py
@@ -346,6 +396,12 @@ async def on_message(message):
 
     # Verarbeite Befehle normal weiter
     await client.process_commands(message)
+
+@client.event
+async def on_command_completion(ctx):
+    """Wird aufgerufen, wenn ein Befehl erfolgreich ausgeführt wurde"""
+    if hasattr(client, 'stats_manager'):
+        client.stats_manager.increment_commands()
 
 @client.event
 async def on_application_command_error(interaction, error):
@@ -450,33 +506,10 @@ async def on_application_command_error(interaction, error):
 
             await channel.send(embed=embed)
 
-# ===== 5. BASIC COMMANDS =====
-@client.command(name='mett')
-@cooldown_check()
-async def mett_level(ctx):
-    level = random.randint(1, 10)
-    mett_meter = "🥓" * level + "⬜" * (10 - level)
-    await ctx.send(f"Aktueller Mett-Level: {level}/10\n{mett_meter}")
-
-@client.command(pass_context=True)
-@cooldown_check()
-async def zitat(ctx):
-    try:
-        if ctx.message.author == client.user:
-            return
-
-        with open('/app/data/quotes.json', mode="r", encoding="utf-8") as quotes_file:
-            buttergolem_quotes = json.load(quotes_file)
-        with open('/app/data/names.json', mode="r", encoding="utf-8") as names_file:
-            buttergolem_names = json.load(names_file)
-
-        name = random.choice(buttergolem_names)
-        quote = random.choice(buttergolem_quotes)
-        await ctx.message.channel.send(f"{name} sagt: {quote}")
-    except Exception as e:
-        if logging_channel:
-            await _log(f"Error in zitat command: {str(e)}")
-        await ctx.send("Ein Fehler ist aufgetreten beim Ausführen des Befehls.")
+# ===== 5. PREFIX COMMAND REDIRECTS =====
+# Alle Prefix-Commands wurden zu Slash-Commands migriert
+# Diese Redirects wurden entfernt, da sie Konflikte mit den registrierten Commands verursachten
+# Die ursprünglichen Commands in den jeweiligen Modulen zeigen bereits Deprecation-Warnungen an
 
 @client.command(pass_context=True)
 async def id(ctx):
@@ -511,8 +544,14 @@ async def on_reminder():
             await _log(f"🚫 {guild.name} ({guild.id}) wurde über !drache leave gebannt. Überspringe...")
             continue
 
-        await playsound(await get_biggest_vc(guild), get_random_clipname())
-        await playsound_cringe(await get_biggest_vc(guild), get_random_clipname_cringe())
+        # Hole Voice Channel und prüfe ob verfügbar
+        voice_channel = await get_biggest_vc(guild)
+        if voice_channel:
+            await playsound(voice_channel, get_random_clipname(), client)
+            await playsound_cringe(voice_channel, get_random_clipname_cringe(), client)
+        else:
+            if logging_channel:
+                await _log(f"⚠️ Kein Voice Channel in {guild.name} verfügbar, überspringe Sound-Wiedergabe")
 
     if logging_channel:
         await _log("⤷ ⏲ Neuer Timer wird gesetzt...")
@@ -525,6 +564,14 @@ client.get_random_clipname = get_random_clipname
 client.playsound_cringe = playsound_cringe
 client.get_random_clipname_cringe = get_random_clipname_cringe
 
+# Set bot owner_id to admin_user_id for proper admin recognition
+client.owner_id = admin_user_id
+
 # Start the bot
-client.run(token)
+async def main():
+    async with client:
+        await client.start(token)
+
+if __name__ == "__main__":
+    asyncio.run(main())
 

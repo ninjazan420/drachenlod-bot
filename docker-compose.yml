@@ -1,14 +1,23 @@
-version: "3"
 services:
-  drachenlord2:
+  drachenlord_beta:
     build: .
+    ports:
+      - "5000:5000" # Port für den Ko-fi Webhook-Server
     environment:
-      DISCORD_API_TOKEN: "123456" # Discord Bot-Token
-      ENABLE_RANDOM_JOINS: "False/True" # Enables random joins on the biggest VC
-      LOGGING_CHANNEL: "123456" # Logging Channel ID
+      DISCORD_API_TOKEN: "4124124" # Discord Bot-Token
+      ENABLE_RANDOM_JOINS: "False" # Enables random joins on the biggest VC
+      LOGGING_CHANNEL: "123123414" # Logging Channel ID
       BLACKLISTED_GUILDS: "123456,654321" # Comma seperated
-      ADMIN_USER_ID: "123456" # CAREFUL also able to use Admin commands
-      OPENROUTER_KEY: "sk-key-xxx" # API-Schlüssel für OpenRouter
-      DRACHE_KI_API: "123456" # KI Bot-Token
-      DRACHE_KI_CHATID: "123456" # Chat-ID für den Drachenlord-Bot
+      ADMIN_USER_ID: "4124124124" # CAREFUL also able to use Admin commands
+      OPENROUTER_KEY: "412412412" # API-Schlüssel für OpenRouter  
+      CHAT_MIRROR_CHANNEL: "4124124"
+      MEMBER_COUNTER_SERVER: "4141241"
+      DISCORDS_KEY: "414124"
+      # Ko-fi URLs für Spenden (keine Vorteile)
+      KOFI_URL: "https://ko-fi.com/your-url" # ko-fi Spendenlink
+      KOFI_PRODUCT_URL: "https://ko-fi.com/s/your-id" # Ko-fi Product ID
+      KOFI_TIP_URL: "https://ko-fi.com/your-id/tip" # Ko-fi Tip ID
+      KOFI_MEMBERSHIP_URL: "https://ko-fi.com/your-url/10" # Ko-fi Membership ID
+      KOFI_WEBHOOK_TOKEN: "41241241" # Wird für die Verifizierung von Ko-fi Webhooks verwendet
+      KOFI_WEBHOOK_PORT: "5000" # Port für den Ko-fi Webhook-Server
 

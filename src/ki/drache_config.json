@@ -1,0 +1,12 @@
+{
+  "name": "drache",
+  "clients": ["discord"],
+  "modelProvider": "openrouter",
+  "settings": {
+    "secrets": {},
+    "voice": {
+      "model": ""
+    }
+  },
+  "plugins": ["https://github.com/elizaos-plugins/client-discord"]
+}
