@@ -77,7 +77,7 @@
 
 ---
 
-## Version 6.0.0 - Das große Update (2024)
+## Version 6.0.0 - Das große Update (2025)
 
 ### 🚀 Neue Features
 
@@ -206,7 +206,7 @@
 2. Auto-Complete für einfachere Bedienung
 3. Ephemeral Responses für private Antworten
 
-### 🔮 Ausblick v6.1.0
+### 🔮 Ausblick v6.2.0
 
 - 🔄 Web-Dashboard für Server-Einstellungen
 - 🎮 Erweiterte Quiz-Modi
