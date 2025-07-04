@@ -7,11 +7,25 @@ import json
 
 def register_slash_commands(bot):
     """Registriert zusätzliche Slash Commands"""
-    
+
     # Admin-Konfiguration aus Environment Variables
     import os
     admin_user_id = int(os.getenv('ADMIN_USER_ID'))
     logging_channel = int(os.getenv('LOGGING_CHANNEL'))
+    member_counter_server = int(os.getenv('MEMBER_COUNTER_SERVER'))
+
+    # Import Drachigotchi system
+    from drachigotchi import register_drachigotchi_commands
+    register_drachigotchi_commands(bot)
+    
+    # Admin-Check Decorator für Slash Commands
+    def admin_only():
+        """Decorator der Commands nur für Admins sichtbar macht"""
+        def predicate(interaction: discord.Interaction) -> bool:
+            return interaction.user.id == admin_user_id
+        return app_commands.check(predicate)
+    
+    # Owner-Check Decorator entfernt - alle Admin-Commands verwenden jetzt @admin_only()
     
     async def _log(message):
         """Hilfsfunktion für Logging"""
@@ -118,10 +132,14 @@ def register_slash_commands(bot):
                 ephemeral=True
             )
     
-    # Admin Slash Commands Group
+    # Admin Slash Commands Group - mit guild_only und permissions
     admin_group = app_commands.Group(name="admin", description="Admin-Befehle für Moderation")
-    
+    # Setze permissions so dass nur Administratoren die Befehle sehen können
+    admin_group.default_permissions = discord.Permissions(administrator=True)
+    admin_group.guild_only = True
+
     @admin_group.command(name="ban", description="Bannt einen Server oder User")
+    @admin_only()
     @app_commands.describe(
         typ="Server oder User bannen",
         target_id="ID des Servers oder Users",
@@ -129,10 +147,7 @@ def register_slash_commands(bot):
     )
     async def admin_ban_slash(interaction: discord.Interaction, typ: str, target_id: str, reason: str = None):
         """Admin Ban Slash Command"""
-        # Check if user is admin
-        if interaction.user.id != bot.admin_user_id:
-            await interaction.response.send_message("❌ Nur der Administrator kann diesen Befehl nutzen!", ephemeral=True)
-            return
+        # Admin-Check wird durch @admin_only() Decorator durchgeführt
         
         await interaction.response.defer(ephemeral=True)
         
@@ -188,6 +203,7 @@ def register_slash_commands(bot):
             await interaction.followup.send(f"❌ Fehler beim Bannen: {str(e)}", ephemeral=True)
     
     @admin_group.command(name="unban", description="Hebt einen Ban auf")
+    @admin_only()
     @app_commands.describe(
         typ="Server oder User unbannen",
         ban_id="Ban-ID"
@@ -195,9 +211,7 @@ def register_slash_commands(bot):
     async def admin_unban_slash(interaction: discord.Interaction, typ: str, ban_id: str):
         """Admin Unban Slash Command"""
         # Check if user is admin
-        if interaction.user.id != bot.admin_user_id:
-            await interaction.response.send_message("❌ Nur der Administrator kann diesen Befehl nutzen!", ephemeral=True)
-            return
+        # Admin-Check wird durch @admin_only() Decorator durchgeführt
         
         await interaction.response.defer(ephemeral=True)
         
@@ -234,6 +248,7 @@ def register_slash_commands(bot):
             await interaction.followup.send(f"❌ Fehler beim Aufheben des Bans: {str(e)}", ephemeral=True)
     
     @admin_group.command(name="leave", description="Verlässt einen Server")
+    @admin_only()
     @app_commands.describe(
         server_id="Server-ID",
         reason="Grund für das Verlassen (optional, führt zu Ban)"
@@ -241,9 +256,7 @@ def register_slash_commands(bot):
     async def admin_leave_slash(interaction: discord.Interaction, server_id: str, reason: str = None):
         """Admin Leave Slash Command"""
         # Check if user is admin
-        if interaction.user.id != bot.admin_user_id:
-            await interaction.response.send_message("❌ Nur der Administrator kann diesen Befehl nutzen!", ephemeral=True)
-            return
+        # Admin-Check wird durch @admin_only() Decorator durchgeführt
         
         await interaction.response.defer(ephemeral=True)
         
@@ -379,7 +392,10 @@ def register_slash_commands(bot):
                 return
 
             message_id = str(uuid.uuid4())[:8]
-            message_history[message_id] = interaction.user.id
+            message_history[message_id] = {
+                'user_id': interaction.user.id,
+                'content': nachricht
+            }
 
             embed = discord.Embed(
                 title="📨 Neue Nachricht",
@@ -494,9 +510,9 @@ def register_slash_commands(bot):
             
         elif action in ["neofetch", "drachenlord", "shrek"]:
             # Nur für Bot-Owner
-            if interaction.user.id != bot.owner_id:
+            if interaction.user.id != admin_user_id:
                 await interaction.response.send_message(
-                    "❌ Nur der Bot-Owner kann diese Funktion nutzen!", 
+                    "❌ Nur der Bot-Admin kann diese Funktion nutzen!", 
                     ephemeral=True
                 )
                 return
@@ -523,13 +539,7 @@ def register_slash_commands(bot):
             await send_animated_stats_with_color(mock_ctx, bot, stats_text, action, farbe, show_quotes=(action == "drachenlord"))
             
         elif action == "butteriq":
-            # Admin-only ButterIQ Funktion
-            if interaction.user.id != bot.admin_user_id:
-                await interaction.response.send_message(
-                    "❌ Nur der Administrator kann diese Funktion nutzen!", 
-                    ephemeral=True
-                )
-                return
+            # Admin-only ButterIQ Funktion - Check wird durch separaten butteriq command durchgeführt
             
             try:
                 from butteriq import ButterIQManager
@@ -653,8 +663,8 @@ def register_slash_commands(bot):
     @bot.tree.command(name="hilfe", description="Zeigt alle verfügbaren Befehle")
     async def hilfe_slash(interaction: discord.Interaction):
         """Hilfe Slash Command - ersetzt den alten /help Befehl"""
-        # Prüfe ob User Bot-Owner ist (nicht Server-Admin!)
-        is_bot_owner = interaction.user.id == bot.owner_id
+        # Prüfe ob User Bot-Admin ist (nicht Server-Admin!)
+        is_bot_admin = interaction.user.id == admin_user_id
         
         embed = discord.Embed(
             title="🤖 Buttergolem Bot - Hilfe",
@@ -667,7 +677,8 @@ def register_slash_commands(bot):
             value="• `/quiz` - Drachenlord Quiz\n"
                   "• `/mett` - Mett-Level anzeigen\n"
                   "• `/zitat` - Zufälliges Zitat\n"
-                  "• `/lordmeme <text> [position]` - Drachenlord Meme erstellen (oben/unten/beide)",
+                  "• `/lordmeme <text> [position]` - Drachenlord Meme erstellen\n"
+                  "• `/gotchi hilfe` - **Drachigotchi Spiel-Anleitung** (🔥 NEU: Dropdown-Menüs!)",
             inline=False
         )
         
@@ -684,11 +695,12 @@ def register_slash_commands(bot):
             value="• `/ping` - Bot-Latenz\n"
                   "• `/drache` - Bot-Statistiken mit Farbauswahl\n"
                   "• `/privacy` - Datenschutzerklärung\n"
-                  "• `/kontakt` - Kontakt zum Entwickler",
+                  "• `/kontakt` - Kontakt zum Entwickler\n"
+                  "• `/changelog [version]` - Bot-Updates & Changelog",
             inline=False
         )
         
-        if is_bot_owner:
+        if is_bot_admin:
             embed.add_field(
                 name="⚙️ Bot-Owner Befehle",
                 value="• `/server [page]` - Server-Liste & Statistiken\n"
@@ -703,7 +715,7 @@ def register_slash_commands(bot):
         embed.add_field(
             name="ℹ️ Bot-Informationen",
             value=f"**Owner:** ninjazan420\n"
-                  f"**Bot-Version:** 6.0.0\n"
+                  f"**Bot-Version:** 6.1.0\n"
                   f"**Discord.py-Version:** {discord.__version__}\n"
                   f"**Support Server:** [Hier beitreten](https://discord.gg/4kHkaaS2wq)\n"
                   f"**Spenden:** [Ko-fi unterstützen](https://ko-fi.com/buttergolem)",
@@ -713,7 +725,8 @@ def register_slash_commands(bot):
         embed.set_footer(text="Meddl Leudde! ♥️")
         await interaction.response.send_message(embed=embed, ephemeral=True)
     
-    @bot.tree.command(name="memory", description="Verwaltet die Memory-Funktionalität (Admin)")
+    @admin_group.command(name="memory", description="Verwaltet die Memory-Funktionalität (Admin)")
+    @admin_only()
     @app_commands.describe(
         action="Die Aktion (list/show/add/delete)",
         user_id="Die Benutzer-ID",
@@ -721,9 +734,9 @@ def register_slash_commands(bot):
     )
     async def memory_slash(interaction: discord.Interaction, action: str = "list", user_id: str = None, data: str = None):
         """Memory Slash Command (Admin only)"""
-        if interaction.user.id != bot.owner_id:
+        if interaction.user.id != admin_user_id:
             await interaction.response.send_message(
-                "❌ Nur der Bot-Owner kann diesen Befehl nutzen!", 
+                "❌ Nur der Bot-Admin kann diesen Befehl nutzen!", 
                 ephemeral=True
             )
             return
@@ -861,16 +874,11 @@ def register_slash_commands(bot):
     
     # ===== ADMIN SLASH COMMANDS =====
     
-    @bot.tree.command(name="servercount", description="Führt ein manuelles Servercounter-Update durch (Admin)")
+    @admin_group.command(name="servercount", description="Führt ein manuelles Servercounter-Update durch (Admin)")
+    @admin_only()
     async def servercount_slash(interaction: discord.Interaction):
         """Servercount Slash Command (Admin only)"""
-        # Admin-Check
-        if interaction.user.id != bot.owner_id:
-            await interaction.response.send_message(
-                "❌ Dieser Befehl ist nur für den Bot-Owner verfügbar!",
-                ephemeral=True
-            )
-            return
+        # Admin-Check wird durch @admin_only() Decorator durchgeführt
         
         await interaction.response.send_message(
             "🔄 Starte manuelles Servercounter Update...",
@@ -897,17 +905,12 @@ def register_slash_commands(bot):
                 ephemeral=True
             )
     
-    @bot.tree.command(name="server", description="Zeigt Server-Liste & Statistiken (Admin)")
+    @admin_group.command(name="server", description="Zeigt Server-Liste & Statistiken (Admin)")
+    @admin_only()
     @app_commands.describe(page="Seitenzahl der Server-Liste")
     async def server_slash(interaction: discord.Interaction, page: int = 1):
         """Server-Liste Slash Command (Admin only)"""
-        # Admin-Check
-        if interaction.user.id != bot.owner_id:
-            await interaction.response.send_message(
-                "❌ Dieser Befehl ist nur für den Bot-Owner verfügbar!",
-                ephemeral=True
-            )
-            return
+        # Admin-Check wird durch @admin_only() Decorator durchgeführt
         
         # Server-Liste abrufen und sortieren
         guilds = list(bot.guilds)
@@ -916,7 +919,7 @@ def register_slash_commands(bot):
         from admins.server_list_view import ServerListView
         
         # View erstellen
-        view = ServerListView(interaction, guilds, bot.owner_id, bot.logging_channel, bot.server_id_map)
+        view = ServerListView(interaction, guilds, admin_user_id, bot.logging_channel, bot.server_id_map)
         
         # Setze die aktuelle Seite, falls angegeben
         if page > 0 and page <= view.total_pages:
@@ -934,29 +937,18 @@ def register_slash_commands(bot):
             except:
                 pass
     
-    @bot.tree.command(name="antwort", description="Sendet eine Admin-Antwort (Admin)")
+    @admin_group.command(name="antwort", description="Sendet eine Admin-Antwort (Admin)")
+    @admin_only()
     @app_commands.describe(
         message_id="Message ID der ursprünglichen Nachricht",
         nachricht="Die Antwort, die gesendet werden soll"
     )
     async def antwort_slash(interaction: discord.Interaction, message_id: str, nachricht: str):
         """Antwort Slash Command (Admin only)"""
-        # Admin-Check
-        if interaction.user.id != bot.owner_id:
-            await interaction.response.send_message(
-                "❌ Dieser Befehl ist nur für den Bot-Owner verfügbar!",
-                ephemeral=True
-            )
-            return
+        # Admin-Check wird durch @admin_only() Decorator durchgeführt
         
-        try:
-            msg_id = int(message_id)
-        except ValueError:
-            await interaction.response.send_message(
-                "❌ Ungültige Message-ID! Muss eine Zahl sein.",
-                ephemeral=True
-            )
-            return
+        # Message ID ist ein String (UUID), nicht int
+        msg_id = message_id
         
         await interaction.response.send_message(
             f"📤 Admin-Antwort auf Nachricht {message_id} wird gesendet...",
@@ -964,8 +956,8 @@ def register_slash_commands(bot):
         )
         
         try:
-            # Importiere message_history aus admin_commands
-            from admins.admin_commands import message_history
+            # Verwende die message_history vom bot client
+            message_history = bot.message_history
             
             if msg_id not in message_history:
                 await interaction.followup.send(
@@ -1019,15 +1011,11 @@ def register_slash_commands(bot):
                 ephemeral=True
             )
     
-    @bot.tree.command(name="debug_sounds", description="Zeigt Debug-Informationen über das Sound-System (Admin)")
+    @admin_group.command(name="debug_sounds", description="Zeigt Debug-Informationen über das Sound-System (Admin)")
+    @admin_only()
     async def debug_sounds_slash(interaction: discord.Interaction):
         """Debug Sounds Slash Command (Admin only)"""
-        if interaction.user.id != bot.owner_id:
-            await interaction.response.send_message(
-                "❌ Dieser Befehl ist nur für den Bot-Owner verfügbar!", 
-                ephemeral=True
-            )
-            return
+        # Owner-Check wird durch @owner_only() Decorator durchgeführt
         
         await interaction.response.send_message(
             "🔧 Sound-System Debug-Informationen werden geladen...", 
@@ -1106,20 +1094,15 @@ def register_slash_commands(bot):
                 ephemeral=True
             )
     
-    @bot.tree.command(name="butteriq", description="ButterIQ Management (Admin)")
+    @admin_group.command(name="butteriq", description="ButterIQ Management (Admin)")
+    @admin_only()
     @app_commands.describe(
         action="Aktion: enable, disable, status",
         user="Benutzer für enable/disable"
     )
     async def butteriq_slash(interaction: discord.Interaction, action: str, user: discord.User = None):
         """ButterIQ Slash Command (Admin only)"""
-        # Admin-Check
-        if interaction.user.id != bot.owner_id:
-            await interaction.response.send_message(
-                "❌ Dieser Befehl ist nur für den Bot-Owner verfügbar!",
-                ephemeral=True
-            )
-            return
+        # Admin-Check wird durch @admin_only() Decorator durchgeführt
         
         try:
             from butteriq import ButterIQManager
@@ -1198,18 +1181,13 @@ def register_slash_commands(bot):
                 ephemeral=True
             )
     
-    @bot.tree.command(name="global", description="Sende eine globale Nachricht an alle Community-Update Kanäle")
+    @admin_group.command(name="global", description="Sende eine globale Nachricht an alle Community-Update Kanäle")
+    @admin_only()
     @app_commands.describe(nachricht="Die Nachricht, die an alle Server gesendet werden soll")
     async def global_message(interaction: discord.Interaction, nachricht: str):
         """Sendet eine globale Nachricht an alle Community-Update Kanäle"""
         
-        # Prüfe Admin-Berechtigung
-        if interaction.user.id != admin_user_id:
-            await interaction.response.send_message(
-                "❌ Du hast keine Berechtigung für diesen Befehl!", 
-                ephemeral=True
-            )
-            return
+        # Admin-Check wird durch @admin_only() Decorator durchgeführt
         
         await interaction.response.defer(ephemeral=True)
         
@@ -1258,6 +1236,136 @@ def register_slash_commands(bot):
         
         await interaction.followup.send(embed=result_embed, ephemeral=True)
         await _log(f"Admin {interaction.user.name} hat eine globale Nachricht an {sent_count} Server gesendet: {nachricht[:100]}...")
+    
+    @admin_group.command(name="message", description="Sende eine Nachricht an einen spezifischen Server oder Benutzer")
+    @admin_only()
+    @app_commands.describe(
+        target_id="Die ID des Servers oder Benutzers",
+        target_type="Der Typ des Ziels (Server oder User)",
+        nachricht="Die Nachricht, die gesendet werden soll"
+    )
+    @app_commands.choices(target_type=[
+        app_commands.Choice(name="Server", value="server"),
+        app_commands.Choice(name="User", value="user")
+    ])
+    async def send_message(interaction: discord.Interaction, target_id: str, target_type: str, nachricht: str):
+        """Sendet eine Nachricht an einen spezifischen Server oder Benutzer"""
+        
+        # Admin-Check wird durch @admin_only() Decorator durchgeführt
+        
+        await interaction.response.defer(ephemeral=True)
+        
+        try:
+            if not target_id.isdigit():
+                await interaction.followup.send(
+                    "❌ Ungültige ID! Muss eine Zahl sein.", 
+                    ephemeral=True
+                )
+                return
+            
+            if target_type == "server":
+                guild_id = int(target_id)
+                guild = bot.get_guild(guild_id)
+                
+                if not guild:
+                    await interaction.followup.send(
+                        f"❌ Server mit ID `{target_id}` nicht gefunden!", 
+                        ephemeral=True
+                    )
+                    return
+                
+                # Suche nach Community-Update Kanal
+                target_channel = None
+                
+                # Prüfe System-Channel für Community-Updates
+                if guild.system_channel and guild.system_channel_flags.join_notifications:
+                    target_channel = guild.system_channel
+                
+                if not target_channel:
+                    await interaction.followup.send(
+                        f"❌ Kein geeigneter Kanal in Server `{guild.name}` gefunden!\n" +
+                        "Der Server benötigt einen System-Channel mit Join-Notifications.", 
+                        ephemeral=True
+                    )
+                    return
+                
+                # Erstelle Embed für die Server-Nachricht
+                embed = discord.Embed(
+                    title="📢 Server Update",
+                    description=nachricht,
+                    color=0x3498db,
+                    timestamp=discord.utils.utcnow()
+                )
+                embed.set_footer(text="ButterGolem Server Update")
+                
+                # Sende Nachricht
+                await target_channel.send(embed=embed)
+                
+                # Bestätigungsnachricht
+                result_embed = discord.Embed(
+                    title="✅ Server-Nachricht gesendet",
+                    description=f"**Server:** {guild.name}\n**Kanal:** {target_channel.mention}",
+                    color=0x2ecc71
+                )
+                
+                await interaction.followup.send(embed=result_embed, ephemeral=True)
+                await _log(f"Admin {interaction.user.name} hat eine Nachricht an Server {guild.name} gesendet: {nachricht[:100]}...")
+                
+            elif target_type == "user":
+                user_id = int(target_id)
+                try:
+                    user = await bot.fetch_user(user_id)
+                    
+                    # Erstelle Embed für die Benutzer-Nachricht
+                    embed = discord.Embed(
+                        title="✉️ Nachricht vom Bot-Administrator",
+                        description=nachricht,
+                        color=0x3498db,
+                        timestamp=discord.utils.utcnow()
+                    )
+                    embed.set_footer(text="ButterGolem Admin Nachricht")
+                    
+                    # Sende DM an Benutzer
+                    await user.send(embed=embed)
+                    
+                    # Bestätigungsnachricht
+                    result_embed = discord.Embed(
+                        title="✅ Benutzer-Nachricht gesendet",
+                        description=f"**Benutzer:** {user.display_name} ({user.name})",
+                        color=0x2ecc71
+                    )
+                    
+                    await interaction.followup.send(embed=result_embed, ephemeral=True)
+                    await _log(f"Admin {interaction.user.name} hat eine Nachricht an Benutzer {user.display_name} gesendet: {nachricht[:100]}...")
+                    
+                except discord.Forbidden:
+                    await interaction.followup.send(
+                        f"❌ Kann keine DM an den Benutzer mit ID `{user_id}` senden (DMs deaktiviert oder Bot blockiert)", 
+                        ephemeral=True
+                    )
+                except discord.NotFound:
+                    await interaction.followup.send(
+                        f"❌ Benutzer mit ID `{user_id}` nicht gefunden!", 
+                        ephemeral=True
+                    )
+            
+        except Exception as e:
+            await interaction.followup.send(
+                f"❌ Fehler beim Senden der Nachricht: {str(e)}", 
+                ephemeral=True
+            )
+            await _log(f"Fehler beim Senden der Nachricht: {e}")
+
+    # Add the admin group to the bot's command tree - NUR für den Member Counter Server
+    # Admin commands werden nur auf dem Member Counter Server registriert
+    try:
+        # Registriere admin commands nur für den spezifischen Server
+        guild_obj = discord.Object(id=member_counter_server)
+        bot.tree.add_command(admin_group, guild=guild_obj)
+        print(f"✅ Admin command group registered for guild {member_counter_server} with {len(admin_group.commands)} commands")
+    except discord.app_commands.errors.CommandAlreadyRegistered:
+        print("⚠️ Admin command group already registered")
+        pass  # Command already exists, skip
 
 def setup(bot):
     register_slash_commands(bot)

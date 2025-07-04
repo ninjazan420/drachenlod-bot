@@ -1,16 +1,29 @@
-# 🤖 ButterGolem Discord Bot v6.0.0
+# 🤖 ButterGolem Discord Bot v6.1.0
 
 [![Discord](https://img.shields.io/badge/Discord-Invite-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/oauth2/authorize?client_id=1329104199794954240)
 [![Ko-fi](https://img.shields.io/badge/Ko--fi-Support-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/ninjazan420)
-[![Version](https://img.shields.io/badge/Version-6.0.0-brightgreen?style=for-the-badge)](https://github.com/ninjazan420/buttergolem)
+[![Version](https://img.shields.io/badge/Version-6.1.0-brightgreen?style=for-the-badge)](https://github.com/ninjazan420/buttergolem)
 
-## 🎉 Meddl Loide! Das große 6.0.0 Update ist da!
+## 🎉 Meddl Loide! Das große 6.1.0 Update ist da!
 
 **ButterGolem** ist zurück mit dem größten Update aller Zeiten! Komplett überarbeitet, modernisiert und mit hunderten neuen Features. Der Drachenlord Discord Bot, der dir zufällige Zitate vom Arschgebirge aus der Schimmelschanze direkt in deinen Discord-Server scheißt.
 
 ---
 
-## 🚀 Was ist neu in Version 6.0.0?
+## 🚀 Was ist neu in Version 6.1.0?
+
+### 🔒 **Admin Command Visibility Fix**
+- **Admin Commands versteckt** - Normale User sehen keine Admin-Commands mehr in der Slash-Command Liste
+- **Verbesserte Permissions** - Alle Admin-Commands verwenden jetzt Discord's native Permission-System
+- **Bessere UX** - Keine Verwirrung mehr durch sichtbare aber nicht ausführbare Commands
+
+### 📋 **Changelog System Wiederhergestellt**
+- **`/changelog [version]` Command** - Detaillierte Changelog-Ansicht für spezifische Versionen
+- **Vollständige Versionhistorie** - Alle Updates seit Version 6.0.0 dokumentiert
+
+---
+
+## 🚀 Was war neu in Version 6.0.0?
 
 ### ⚡ **Komplette Modernisierung**
 - **100% Slash Commands** - Alle Befehle wurden auf moderne `/` Commands umgestellt
@@ -59,8 +72,9 @@
 | `/zitat` | Zufälliges Drachenlord Zitat |
 | `/lordmeme [text] [position]` | Drachenlord Meme erstellen (Position: oben/unten/beide) |
 | `/lordstats [@user]` | Lustige Statistiken für User |
-| `/lordupdate` | Neueste Bot-Updates |
+| `/changelog [version]` | Bot-Updates & Changelog anzeigen |
 | `/quiz [runden]` | Drachenlord Quiz starten |
+| `/gotchi hilfe` | **🔥 NEU: Drachigotchi Spiel-Anleitung** |
 | `/ping` | Bot-Latenz anzeigen |
 | `/kontakt [nachricht]` | Nachricht an Admin senden |
 | `/privacy` | Datenschutzerklärung |
@@ -82,6 +96,56 @@
 | `/debug_sounds` | Sound-System Debug |
 | `/butteriq [action]` | KI-Zugriff verwalten |
 | `/global [nachricht]` | Globale Nachricht senden |
+
+---
+
+## 🐉 Drachigotchi - Das ultimative Tamagotchi-Spiel!
+
+**🔥 NEU in Version 6.1.0: Das komplette Drachigotchi-System!**
+
+Erlebe das Leben als Drachenlord in diesem epischen Tamagotchi-Style Spiel! Kümmere dich um dein virtuelles Drachigotchi, erkunde die Welt, kämpfe gegen Hater und werde zum ultimativen Drachenlord!
+
+### 🎮 **Grundlagen**
+- **`/gotchi start <name>`** - Erstelle dein persönliches Drachigotchi
+- **`/gotchi status`** - Zeige deinen aktuellen Status mit ASCII-Art
+- **`/gotchi hilfe`** - Komplette Spielanleitung mit allen Commands
+- **Persistent Storage** - Dein Fortschritt wird automatisch gespeichert
+
+### 🍕 **Überleben & Einkaufen**
+- **`/gotchi essen`** - Iss Essen aus deinem Inventar (Dropdown-Menü)
+- **`/gotchi kaufen`** - Kaufe Items in lokalen Shops (Dropdown-Menü)
+- **`/gotchi shop`** - Zeige verfügbare Items am aktuellen Ort
+- **Stat-Management** - Behalte Hunger, Gesundheit, Glück und Energie im Auge
+
+### 🗺️ **Reisen & Abenteuer**
+- **`/gotchi reisen`** - Reise zu verschiedenen Orten (Dropdown-Menü)
+  - 🏠 Die Schanze (Zuhause), 🌲 Emskirchener Wald, 🏪 Netto Markt
+  - 🍺 Gasthof Sonne, 🏛️ Nürnberg, 🚗 Autobahn A3, und mehr!
+- **`/gotchi erkunden`** - Erkunde deinen aktuellen Ort für Belohnungen
+- **`/gotchi hater_bekämpfen`** - Kämpfe gegen Hater und verdiene Ruhm
+- **`/gotchi streamen`** - Streame um Geld und Ruhm zu verdienen
+
+### 📜 **Quests & Fortschritt**
+- **`/gotchi quests`** - Zeige verfügbare und aktive Quests
+- **`/gotchi achievements`** - Schaue deine Erfolge an
+- **`/gotchi arbeiten`** - Arbeite in deinem Job um Geld zu verdienen
+- **`/gotchi craft`** - Erstelle neue Items aus Materialien
+
+### 🎯 **Erweiterte Features**
+- **Level-System** - Sammle Erfahrung und steige auf
+- **Skill-System** - Verbessere Stärke, Verteidigung, Charisma und mehr
+- **Inventar-Management** - Sammle und verwalte Items
+- **Job-System** - Arbeite als Streamer, Mett-Verkäufer oder Schanze-Wächter
+- **Equipment-System** - Rüste Waffen, Schilde und Fahrzeuge aus
+- **Random Events** - Erlebe zufällige Ereignisse während des Spiels
+
+### 🏆 **Spielziele**
+- Erreiche Level 50 und werde zum ultimativen Drachenlord
+- Sammle alle Achievements und erkunde alle Orte
+- Baue dein Imperium auf und werde berühmt
+- Überlebe die Hater und beschütze die Schanze
+
+**Starte jetzt:** `/gotchi start <dein_name>`
 
 ---
 
@@ -218,6 +282,7 @@ Der Bot ist vollständig modular aufgebaut:
 src/
 ├── main.py              # Hauptdatei und Bot-Setup
 ├── slash_commands.py    # Alle Slash Commands
+├── drachigotchi.py     # 🔥 NEU: Komplettes Tamagotchi-System
 ├── sounds.py           # Sound-System
 ├── ki.py               # KI-Integration
 ├── quiz.py             # Quiz-System
@@ -235,6 +300,7 @@ src/
 │   ├── drache_events_2024_2025.json
 │   └── ...
 └── data/               # Bot-Daten
+    ├── drachigotchis.json  # 🔥 NEU: Drachigotchi Speicherdaten
     ├── sounds/
     ├── memories/
     └── stats.json
@@ -274,7 +340,7 @@ src/
 [![Support](https://img.shields.io/badge/Discord-Join-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/4kHkaaS2wq)
 
 ### 🐞 **Bug Reports:**
-Probleme bitte als [GitHub Issue](https://github.com/ninjazan420/buttergolem/issues) melden.
+Probleme bitte als [GitHub Issue](https://github.com/ninjazan420/drachenlod-bot/issues) melden.
 
 - **Ko-fi Spenden** - Einmalige Unterstützung
 - **Feature Requests** - Neue Ideen und Vorschläge
@@ -316,6 +382,6 @@ Dieses Projekt steht unter der [GPL v3](LICENSE).
 
 ---
 
-**🎉 Viel Spaß mit ButterGolem v6.0.0! Meddl Loide! 🎉**
+**🎉 Viel Spaß mit ButterGolem v6.1.0! Meddl Loide! 🎉**
 
 *"Ich bin nicht der Messias, ich bin ein sehr ungezogener Junge!"* - Drachenlord, 2024

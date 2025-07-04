@@ -7,13 +7,13 @@ def register_update_commands(bot):
 
 
 
-    @bot.tree.command(name="lordupdate", description="Zeigt die neuesten Updates des Bots")
-    async def lordupdate_slash(interaction: discord.Interaction, version: str = None):
-        """Zeigt die neuesten Updates des Bots als Slash-Befehl mit Changelog-System"""
+    @bot.tree.command(name="changelog", description="Zeigt das Changelog für eine bestimmte Version")
+    async def changelog_slash(interaction: discord.Interaction, version: str = None):
+        """Zeigt das Changelog als Slash-Befehl"""
         # Changelog-System verwenden
         from changelog import ChangelogCog
         changelog_cog = ChangelogCog(bot)
-        
+
         if version:
             # Spezifische Version anzeigen
             await changelog_cog.send_version_changelog(interaction, version)

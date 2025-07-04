@@ -4,6 +4,7 @@ FROM gorialis/discord.py
 RUN apt-get update && apt-get install -y \
     python3-pil \
     fonts-liberation \ 
+    git \
     && \
     rm -rf /var/lib/apt/lists/*
 

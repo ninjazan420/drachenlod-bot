@@ -70,7 +70,7 @@ class ElizaOSClient:
         self.headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
-            "HTTP-Referer": "https://github.com/ninjazan420/buttergolem-bot",
+            "HTTP-Referer": "https://github.com/ninjazan420/drachenlod-bot",
             "X-Title": "Drache KI Discord Bot"
         }
 

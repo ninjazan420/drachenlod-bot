@@ -66,7 +66,7 @@ user_cooldowns = {}
 
 client = commands.Bot(
     command_prefix=commands.when_mentioned_or("!"),
-    description='Buttergolem Discord Bot Version: 5.4.0\nCreated by: ninjazan420',
+    description='Buttergolem Discord Bot Version: 6.1.0\nCreated by: ninjazan420',
     intents=intents
 )
 client.remove_command('help')
@@ -93,18 +93,20 @@ register_sound_commands(client)  # Nur für !lord befehl
 register_slash_commands(client)
 register_admin_commands(client)
 # register_meme_commands(client)  # Entfernt - nur !lord bleibt
-# register_update_commands(client)  # Entfernt - nur !lord bleibt
+register_update_commands(client)  # Changelog/Updates Commands
 # register_lordstats_commands(client)  # Entfernt - nur !lord bleibt
 register_ki_commands(client)
 # register_butteriq_commands(client)  # Jetzt in !drache integriert
 # register_animated_stats_commands(client)  # Jetzt in !drache integriert
 register_memory_manager(client)
 # register_memory_commands(client)  # Deaktiviert wegen Command-Konflikten
+
+# Register Changelog Cog
+client.add_cog(ChangelogCog(client))
 setup_mirror(client)
 # Premium-Befehle entfernt - Ko-fi Spenden-Link in !hilfe verfügbar
 
-# Changelog System laden
-client.add_cog(ChangelogCog(client))
+# Changelog System wird in on_ready geladen
 
 # ===== 3. HELPER FUNCTIONS =====
 async def _log(message):
@@ -169,7 +171,7 @@ STATUS_MESSAGES = [
         # "Buttergolem's Rache | /hilfe",
         # "Server-Lord | /hilfe",
         # "Discord-Drache | /hilfe",
-         "Riesen update live | /hilfe",
+        "NEU: /gotchi hilfe | /hilfe"
 ]
 
 @tasks.loop(minutes=10.0)
@@ -195,14 +197,30 @@ async def on_ready():
             await _log(f"❌ Fehler beim Synchronisieren der Commands: {e}")
     
     if logging_channel:
-        await _log("🟢 Bot gestartet - Version 6.0.0")
+        await _log("🟢 Bot gestartet - Version 6.1.0")
 
     # Status-Task starten
     change_status.start()
     
     # Member Counter Task starten
     update_member_counter_task.start()
-    
+
+    # Drachigotchi Background Task starten (falls verfügbar)
+    if hasattr(client, 'drachigotchi_background_task'):
+        if not client.drachigotchi_background_task.is_running():
+            client.drachigotchi_background_task.start()
+            if logging_channel:
+                await _log("🐉 Drachigotchi background task gestartet!")
+
+    # Changelog System laden
+    try:
+        await client.add_cog(ChangelogCog(client))
+        if logging_channel:
+            await _log("📋 Changelog System geladen")
+    except Exception as e:
+        if logging_channel:
+            await _log(f"❌ Fehler beim Laden des Changelog Systems: {e}")
+
     # Start time für Uptime Counter setzen
     client.start_time = datetime.datetime.now()
     
@@ -564,8 +582,7 @@ client.get_random_clipname = get_random_clipname
 client.playsound_cringe = playsound_cringe
 client.get_random_clipname_cringe = get_random_clipname_cringe
 
-# Set bot owner_id to admin_user_id for proper admin recognition
-client.owner_id = admin_user_id
+# Bot owner_id Zuweisung entfernt - alle Admin-Commands verwenden jetzt admin_user_id
 
 # Start the bot
 async def main():

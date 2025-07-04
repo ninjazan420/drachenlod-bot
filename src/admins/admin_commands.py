@@ -11,8 +11,7 @@ from .stats_manager import StatsManager
 from .ban_manager import BanManager
 from .server_list_view import ServerListView
 
-# Globale Variablen für Nachrichten-History
-message_history = {}
+# Globale Variablen für Nachrichten-History werden jetzt vom bot client verwaltet
 
 def register_admin_commands(bot):
     """Registriert alle Admin-Befehle"""
@@ -69,14 +68,15 @@ def register_admin_commands(bot):
                 return
             
             try:
-                message_id = int(server_id)
+                # Message ID ist ein String (UUID), nicht int
+                message_id = server_id
                 antwort_text = ' '.join(args)
                 
-                if message_id not in message_history:
+                if message_id not in bot.message_history:
                     await ctx.send(f"❌ Nachricht mit ID `{message_id}` nicht gefunden!")
                     return
                 
-                original_message = message_history[message_id]
+                original_message = bot.message_history[message_id]
                 user_id = original_message['user_id']
                 
                 try:
@@ -110,8 +110,8 @@ def register_admin_commands(bot):
                 except Exception as e:
                     await ctx.send(f"❌ Fehler beim Senden der Antwort: {str(e)}")
                     
-            except ValueError:
-                await ctx.send("❌ Ungültige Message-ID! Muss eine Zahl sein.")
+            except Exception as e:
+                await ctx.send(f"❌ Fehler beim Verarbeiten der Message-ID: {str(e)}")
             return
         
         # PRIVACY-Befehl (für alle Nutzer zugänglich)
@@ -298,7 +298,10 @@ def register_admin_commands(bot):
                 return
 
             message_id = str(uuid.uuid4())[:8]
-            message_history[message_id] = ctx.author.id
+            bot.message_history[message_id] = {
+                'user_id': ctx.author.id,
+                'content': message
+            }
 
             embed = discord.Embed(
                 title="📨 Neue Nachricht",

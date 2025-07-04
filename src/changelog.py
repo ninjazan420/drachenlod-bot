@@ -8,8 +8,35 @@ class ChangelogCog(commands.Cog):
         
         # Changelog data - format: version: {date, features, fixes, notes}
         self.changelog_data = {
+            "6.1.0": {
+                "date": "04 July 2025",
+                "title": "🔒 Admin Command Visibility & Changelog System Fix",
+                "features": [
+                    "Fixed admin commands visibility - normal users no longer see admin commands in slash command list",
+                    "Re-enabled changelog system with /changelog command",
+                    "Removed redundant /lordupdate command - /changelog now handles all update information",
+                    "Added proper permission checks using @app_commands.default_permissions(administrator=True)",
+                    "Improved command organization and user experience",
+                    "Updated bot version to 6.1.0 across all files"
+                ],
+                "fixes": [
+                    "Admin commands now properly hidden from non-admin users",
+                    "Changelog commands are now functional again",
+                    "Fixed command registration issues",
+                    "Improved permission handling for all admin functions",
+                    "Updated version numbers throughout the codebase"
+                ],
+                "technical": [
+                    "Added @app_commands.default_permissions(administrator=True) to all admin commands",
+                    "Re-enabled register_update_commands in main.py",
+                    "Added ChangelogCog registration in main.py",
+                    "Removed redundant /lordupdate command from updates.py",
+                    "Updated version strings in slash_commands.py and main.py",
+                    "Fixed command visibility using Discord's permission system"
+                ]
+            },
             "6.0.0": {
-                "date": "15 December 2024",
+                "date": "04 June 2025",
                 "title": "🎯 Command Restructuring & Changelog System",
                 "features": [
                     "Renamed /help command to /hilfe for German localization",
@@ -35,7 +62,7 @@ class ChangelogCog(commands.Cog):
                 ]
             },
             "5.4.0": {
-                "date": "06 June 2025",
+                "date": "02 June 2025",
                 "title": "🤖 Previous Bot Version",
                 "features": [
                     "Basic bot functionality with sound commands",
@@ -115,13 +142,20 @@ class ChangelogCog(commands.Cog):
             )
         
         embed.set_footer(text=f"FCKR Bot v{version} | Released on {data['date']}")
-        await ctx.send(embed=embed)
+
+        # Check if ctx is an Interaction or Context object
+        if hasattr(ctx, 'response'):
+            # It's an Interaction object
+            await ctx.response.send_message(embed=embed, ephemeral=True)
+        else:
+            # It's a Context object
+            await ctx.send(embed=embed)
     
     async def send_changelog_overview(self, ctx):
         """Send overview of all versions"""
         embed = discord.Embed(
             title="📋 Buttergolem Bot Changelog",
-            description="Here's the complete version history of the Buttergolem Discord Bot.\n\nUse `!drache changelog <version>` for detailed information.",
+            description="Here's the complete version history of the Buttergolem Discord Bot.\n\nUse `/changelog <version>` for detailed information.",
             color=0xf1c40f
         )
         
@@ -142,19 +176,26 @@ class ChangelogCog(commands.Cog):
                       f"📅 Released: {data['date']}\n"
                       f"✨ {feature_count} new features\n"
                       f"🔧 {fix_count} improvements\n"
-                      f"`!fckr changelog {version}` for details",
+                      f"`/changelog {version}` for details",
                 inline=True
             )
         
         embed.add_field(
             name="🔗 Links",
-            value="[GitHub Repository](https://github.com/dermo69/buttergolem)\n"
-                  "[Report Issues](https://github.com/dermo69/buttergolem/issues)",
+            value="[GitHub Repository](https://github.com/ninjazan420/drachenlod-bot)\n"
+                  "[Report Issues](https://github.com/ninjazan420/drachenlod-bot/issues)",
             inline=False
         )
         
         embed.set_footer(text="FCKR Community Bot | Made with ❤️ by ninjazan420")
-        await ctx.send(embed=embed)
+
+        # Check if ctx is an Interaction or Context object
+        if hasattr(ctx, 'response'):
+            # It's an Interaction object
+            await ctx.response.send_message(embed=embed, ephemeral=True)
+        else:
+            # It's a Context object
+            await ctx.send(embed=embed)
     
     def add_version(self, version, date, title, features=None, fixes=None, technical=None):
         """Add a new version to changelog (for future updates)"""

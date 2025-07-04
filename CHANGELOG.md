@@ -1,5 +1,82 @@
 # 📋 ButterGolem Changelog
 
+## Version 6.1.0 - Admin Command Visibility & Changelog Fix (04. Juli 2025)
+
+### 🔒 Neue Features
+
+#### **Admin Command Visibility Fix**
+- ✅ Admin Commands sind jetzt für normale User unsichtbar
+- ✅ Implementierung von `@app_commands.default_permissions(administrator=True)`
+- ✅ Verbesserte User Experience - keine Verwirrung mehr durch sichtbare aber nicht ausführbare Commands
+- ✅ Native Discord Permission System Integration
+
+#### **Changelog System Wiederhergestellt**
+- ✅ `/changelog [version]` Command funktioniert wieder
+- ✅ Entfernung des redundanten `/lordupdate` Commands
+- ✅ Vollständige Versionhistorie verfügbar
+- ✅ Detaillierte Changelog-Ansicht für spezifische Versionen
+
+#### **🐉 Drachigotchi - Das ultimative Tamagotchi-Spiel!**
+- ✅ **Komplettes Tamagotchi-System** - Virtuelles Drachenlord-Haustier
+- ✅ **Persistent Storage** - Fortschritt wird automatisch gespeichert
+- ✅ **Level & Skill System** - Sammle Erfahrung und verbessere deine Fähigkeiten
+- ✅ **Inventar & Equipment** - Sammle Items, Waffen und Ausrüstung
+- ✅ **Reise-System** - Erkunde 10+ verschiedene Orte mit Dropdown-Menüs
+- ✅ **Job-System** - Arbeite als Streamer, Mett-Verkäufer oder Schanze-Wächter
+- ✅ **Quest-System** - Erfülle Aufgaben und sammle Belohnungen
+- ✅ **Achievement-System** - Sammle Erfolge und werde zum ultimativen Drachenlord
+- ✅ **Random Events** - Erlebe zufällige Ereignisse während des Spiels
+- ✅ **Kampf-System** - Kämpfe gegen Hater und verdiene Ruhm
+- ✅ **Stream-System** - Verdiene Geld und Ruhm durch Streaming
+- ✅ **Craft-System** - Erstelle neue Items aus Materialien
+
+### 🔧 Bug Fixes
+
+#### **Permission & Visibility Issues**
+- ✅ Admin Commands werden nicht mehr in der Slash Command Liste für normale User angezeigt
+- ✅ Changelog Commands sind wieder funktional
+- ✅ Command Registration Issues behoben
+- ✅ Verbesserte Permission Handling für alle Admin-Funktionen
+
+### ⚙️ Technische Änderungen
+
+#### **Command System Updates**
+- ✅ `@app_commands.default_permissions(administrator=True)` zu allen Admin Commands hinzugefügt
+- ✅ `register_update_commands` in main.py wieder aktiviert
+- ✅ `ChangelogCog` Registration in main.py hinzugefügt
+- ✅ Redundanten `/lordupdate` Command aus updates.py entfernt
+- ✅ Version Strings in slash_commands.py und main.py auf 6.1.0 aktualisiert
+
+#### **Neue Drachigotchi Commands**
+- `/gotchi start <name>` - Erstelle dein persönliches Drachigotchi
+- `/gotchi status` - Zeige deinen aktuellen Status mit ASCII-Art
+- `/gotchi hilfe` - Komplette Spielanleitung mit allen Commands
+- `/gotchi essen` - Iss Essen aus deinem Inventar (Dropdown-Menü)
+- `/gotchi kaufen` - Kaufe Items in lokalen Shops (Dropdown-Menü)
+- `/gotchi reisen` - Reise zu verschiedenen Orten (Dropdown-Menü)
+- `/gotchi erkunden` - Erkunde deinen aktuellen Ort für Belohnungen
+- `/gotchi streamen` - Streame um Geld und Ruhm zu verdienen
+- `/gotchi arbeiten` - Arbeite in deinem Job um Geld zu verdienen
+- `/gotchi quests` - Zeige verfügbare und aktive Quests
+- `/gotchi achievements` - Schaue deine Erfolge an
+- `/gotchi craft` - Erstelle neue Items aus Materialien
+- `/gotchi inventar` - Schaue in dein Inventar
+- `/gotchi job` - Nimm Jobs an oder kündige
+- `/gotchi ausrüsten` - Rüste Ausrüstung und Items aus
+- `/gotchi freilassen` - Lass dein Drachigotchi frei (⚠️ permanent!)
+
+#### **Betroffene Admin Commands**
+- `/server` - Server-Liste & Statistiken (Admin)
+- `/servercount` - Manuelles Servercounter-Update (Admin)
+- `/antwort` - Admin-Antwort senden (Admin)
+- `/debug_sounds` - Sound-System Debug (Admin)
+- `/butteriq` - ButterIQ Management (Admin)
+- `/global` - Globale Nachrichten (Admin)
+- `/message` - Direkte Nachrichten (Admin)
+- `/memory` - Memory-System Verwaltung (Admin)
+
+---
+
 ## Version 6.0.0 - Das große Update (2024)
 
 ### 🚀 Neue Features
@@ -145,4 +222,4 @@
 
 ---
 
-**Support:** [Ko-fi](https://ko-fi.com/buttergolem) | **Issues:** [GitHub](https://github.com/drachenlord/buttergolem/issues) | **Discord:** [Support Server](https://discord.gg/buttergolem)
+**Support:** [Ko-fi](https://ko-fi.com/buttergolem) | **Issues:** [GitHub](https://github.com/ninjazan420/drachenlod-bot) | **Discord:** [Support Server](https://discord.gg/buttergolem)

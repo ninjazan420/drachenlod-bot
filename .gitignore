@@ -7,9 +7,6 @@ docker-compose.yml
 src/stealer*
 src/stealer.py
 src/mirror.py
-docs*
-docker-compose  Kopie2.yml
-docker-compose2222.yml
 docker-compose.yml
 .cursor/rules/.cursorrules
 .gitignore
