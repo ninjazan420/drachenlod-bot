@@ -1,6 +1,7 @@
 import json
 import os
 import uuid
+import logging
 from datetime import datetime
 
 class BanManager:
@@ -23,9 +24,7 @@ class BanManager:
     def save_data(self):
         """Speichert alle Ban-Daten in die JSON-Datei"""
         try:
-            # Erstelle Verzeichnis falls es nicht existiert
             os.makedirs(os.path.dirname(self.ban_file), exist_ok=True)
-            
             self.data = {
                 "server_bans": self.bans,
                 "user_bans": self.user_bans
@@ -33,8 +32,10 @@ class BanManager:
             
             with open(self.ban_file, 'w', encoding='utf-8') as f:
                 json.dump(self.data, f, indent=2, ensure_ascii=False)
+            logging.info(f"Ban-Daten erfolgreich gespeichert: {len(self.bans)} Server-Bans, {len(self.user_bans)} User-Bans")
         except Exception as e:
-            print(f"Fehler beim Speichern der Ban-Daten: {e}")
+            logging.error(f"Fehler beim Speichern der Ban-Daten: {e}", exc_info=True)
+            raise
 
     def add_ban(self, server_id, server_name, reason=None, message_id=None):
         """Fügt einen Server-Ban hinzu"""

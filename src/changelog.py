@@ -1,15 +1,77 @@
 import discord
 from discord.ext import commands
 from datetime import datetime
+import locale
+
+# Setze deutsche Locale für Datumsformatierung
+try:
+    locale.setlocale(locale.LC_TIME, 'de_DE.UTF-8')
+except locale.Error:
+    try:
+        locale.setlocale(locale.LC_TIME, 'German_Germany.1252')
+    except locale.Error:
+        try:
+            locale.setlocale(locale.LC_TIME, 'de_DE')
+        except locale.Error:
+            # Fallback auf Standard-Locale - robuste Datumsverarbeitung übernimmt
+            print("Warning: Konnte deutsche Locale nicht setzen, verwende robuste Datumsverarbeitung")
 
 class ChangelogCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        
+
+        # Monatsnamen-Mapping für robuste Datumsverarbeitung
+        self.month_mapping = {
+            # Englische Monatsnamen
+            'January': 'Januar', 'February': 'Februar', 'March': 'März',
+            'April': 'April', 'May': 'Mai', 'June': 'Juni',
+            'July': 'Juli', 'August': 'August', 'September': 'September',
+            'October': 'Oktober', 'November': 'November', 'December': 'Dezember',
+            # Deutsche Monatsnamen (für Konsistenz)
+            'Januar': 'Januar', 'Februar': 'Februar', 'März': 'März',
+            'Mai': 'Mai', 'Juni': 'Juni', 'Juli': 'Juli',
+            'Oktober': 'Oktober', 'Dezember': 'Dezember'
+        }
+
         # Changelog data - format: version: {date, features, fixes, notes}
         self.changelog_data = {
+            "6.2.0": {
+                "date": "16 August 2025",
+                "title": "🎮 Gaming Update - Hangman & Snake + AI Memory System",
+                "features": [
+                    "Neues Hangman-Spiel mit rankings /hangman und /hangman_ranking",
+                    "Snake-Spiel mit Highscore-System und verschiedenen Schwierigkeitsgraden",
+                    "AI Memory System - KI kann sich jetzt an vorherige Gespräche erinnern",
+                    "Verbesserte Stats-Anzeige mit optimierter Performance",
+                    "Neue Gaming-Kategorie in der Hilfe mit allen verfügbaren Spielen",
+                    "Persistente Speicherung von Spielständen und Highscores"
+                ],
+                "fixes": [
+                    "Stats-System Performance deutlich verbessert",
+                    "Memory-Leaks in der Statistik-Anzeige behoben",
+                    "Stabilere Datenbank-Verbindungen für Spiele-Daten",
+                    "Optimierte Embed-Generierung für bessere Ladezeiten",
+                    "Verbesserte Error-Behandlung in allen Gaming-Modulen"
+                ],
+                "technical": [
+                    "Implementierung des Hangman-Systems mit Kategorie-Management",
+                    "Snake-Game Engine mit Collision-Detection und Score-Tracking",
+                    "AI Memory Backend mit JSON-basierter Persistierung",
+                    "Refactoring der Stats-Module für bessere Performance",
+                    "Modulare Gaming-Architektur für zukünftige Spiele-Erweiterungen",
+                    "Abhängigkeiten geupdated"
+                ]
+            },
+             "6.1.1": {
+                "date": "11 Juli 2025",
+                "title": "Neues Sprachmodell",
+                "fixes": [
+                    "Das Sprachmodell von Meta: Llama 4 Maverick auf Meta: Llama 4 Scout umgestellt.",
+                    "*Es handelt sich um eine Testphase, da Maverick derzeit zu häufig down ist. Feedback zur Qualität gerne über /kontakt*"
+                ]
+            },
             "6.1.0": {
-                "date": "04 July 2025",
+                "date": "04 Juli 2025",
                 "title": "🔒 Admin Command Visibility & Changelog System Fix",
                 "features": [
                     "Fixed admin commands visibility - normal users no longer see admin commands in slash command list",
@@ -36,7 +98,7 @@ class ChangelogCog(commands.Cog):
                 ]
             },
             "6.0.0": {
-                "date": "04 June 2025",
+                "date": "04 Juni 2025",
                 "title": "🎯 Command Restructuring & Changelog System",
                 "features": [
                     "Renamed /help command to /hilfe for German localization",
@@ -62,7 +124,7 @@ class ChangelogCog(commands.Cog):
                 ]
             },
             "5.4.0": {
-                "date": "02 June 2025",
+                "date": "02 Juni 2025",
                 "title": "🤖 Previous Bot Version",
                 "features": [
                     "Basic bot functionality with sound commands",
@@ -83,11 +145,33 @@ class ChangelogCog(commands.Cog):
             },
 
         }
-    
+
+    def parse_date_robust(self, date_string):
+        """Robuste Datumsverarbeitung für deutsche und englische Monatsnamen"""
+        try:
+            # Versuche zuerst direktes Parsing
+            return datetime.strptime(date_string, "%d %B %Y")
+        except ValueError:
+            # Falls das fehlschlägt, konvertiere englische zu deutschen Monatsnamen
+            for eng_month, ger_month in self.month_mapping.items():
+                if eng_month in date_string:
+                    german_date = date_string.replace(eng_month, ger_month)
+                    try:
+                        return datetime.strptime(german_date, "%d %B %Y")
+                    except ValueError:
+                        continue
+
+            # Fallback: Versuche ISO-Format
+            try:
+                return datetime.strptime(date_string, "%Y-%m-%d")
+            except ValueError:
+                # Letzter Fallback: aktuelles Datum
+                return datetime.now()
+
     @commands.command(name='changelog')
     async def changelog_command(self, ctx, version=None):
         """Display changelog for specific version or latest versions"""
-        
+
         if version:
             # Show specific version
             if version in self.changelog_data:
@@ -102,18 +186,18 @@ class ChangelogCog(commands.Cog):
         else:
             # Show overview of all versions
             await self.send_changelog_overview(ctx)
-    
+
     async def send_version_changelog(self, ctx, version):
         """Send detailed changelog for a specific version"""
         data = self.changelog_data[version]
-        
+
         embed = discord.Embed(
             title=f"📋 Changelog - Version {version}",
             description=data["title"],
             color=0x00ff00,
-            timestamp=datetime.strptime(data["date"], "%d %B %Y")
+            timestamp=self.parse_date_robust(data["date"])
         )
-        
+
         # Features
         if data.get("features"):
             features_text = "\n".join([f"• {feature}" for feature in data["features"]])
@@ -122,7 +206,7 @@ class ChangelogCog(commands.Cog):
                 value=features_text[:1024],  # Discord field limit
                 inline=False
             )
-        
+
         # Fixes
         if data.get("fixes"):
             fixes_text = "\n".join([f"• {fix}" for fix in data["fixes"]])
@@ -131,7 +215,7 @@ class ChangelogCog(commands.Cog):
                 value=fixes_text[:1024],
                 inline=False
             )
-        
+
         # Technical
         if data.get("technical"):
             technical_text = "\n".join([f"• {tech}" for tech in data["technical"]])
@@ -140,8 +224,8 @@ class ChangelogCog(commands.Cog):
                 value=technical_text[:1024],
                 inline=False
             )
-        
-        embed.set_footer(text=f"FCKR Bot v{version} | Released on {data['date']}")
+
+        embed.set_footer(text=f"Buttergolem Bot v{version} | Released on {data['date']}")
 
         # Check if ctx is an Interaction or Context object
         if hasattr(ctx, 'response'):
@@ -150,7 +234,7 @@ class ChangelogCog(commands.Cog):
         else:
             # It's a Context object
             await ctx.send(embed=embed)
-    
+
     async def send_changelog_overview(self, ctx):
         """Send overview of all versions"""
         embed = discord.Embed(
@@ -158,18 +242,18 @@ class ChangelogCog(commands.Cog):
             description="Here's the complete version history of the Buttergolem Discord Bot.\n\nUse `/changelog <version>` for detailed information.",
             color=0xf1c40f
         )
-        
+
         # Sort versions by date (newest first)
         sorted_versions = sorted(
             self.changelog_data.items(),
-            key=lambda x: datetime.strptime(x[1]["date"], "%d %B %Y"),
+            key=lambda x: self.parse_date_robust(x[1]["date"]),
             reverse=True
         )
-        
+
         for version, data in sorted_versions:
             feature_count = len(data.get("features", []))
             fix_count = len(data.get("fixes", []))
-            
+
             embed.add_field(
                 name=f"🏷️ Version {version}",
                 value=f"**{data['title']}**\n"
@@ -179,15 +263,15 @@ class ChangelogCog(commands.Cog):
                       f"`/changelog {version}` for details",
                 inline=True
             )
-        
+
         embed.add_field(
             name="🔗 Links",
-            value="[GitHub Repository](https://github.com/ninjazan420/drachenlod-bot)\n"
-                  "[Report Issues](https://github.com/ninjazan420/drachenlod-bot/issues)",
+            value="[GitHub Repository](https://github.com/ninjazan420/buttergolem-bot)\n"
+                  "[Report Issues](https://github.com/ninjazan420/buttergolem-bot/issues)",
             inline=False
         )
-        
-        embed.set_footer(text="FCKR Community Bot | Made with ❤️ by ninjazan420")
+
+        embed.set_footer(text="Buttergolem | Made with ❤️ by ninjazan420")
 
         # Check if ctx is an Interaction or Context object
         if hasattr(ctx, 'response'):
@@ -196,7 +280,7 @@ class ChangelogCog(commands.Cog):
         else:
             # It's a Context object
             await ctx.send(embed=embed)
-    
+
     def add_version(self, version, date, title, features=None, fixes=None, technical=None):
         """Add a new version to changelog (for future updates)"""
         self.changelog_data[version] = {

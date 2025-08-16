@@ -85,7 +85,19 @@ def register_slash_commands(bot):
     async def zitat_slash(interaction: discord.Interaction):
         """Zeigt ein zufälliges Zitat"""
         quote = get_random_quote()
-        await interaction.response.send_message(quote, ephemeral=True)
+        response_msg = await interaction.response.send_message(quote, ephemeral=True)
+
+            # 15% Emoji reaction logic
+        if random.random() < 0.15:
+                emoji_data = {
+                    'drache_mozerella_headset': 1395736548917645434,
+                    'drache_zahnlücke': 1395736315521400923,
+                    'drache_meddl_loide': 1395736247258972280,
+                    'drache_suspekt': 1395736270076117032
+                }
+                selected = random.sample(list(emoji_data.items()), k=random.randint(1,3))
+                for emoji_name, emoji_id in selected:
+                    await response_msg.add_reaction(f'<:{emoji_name}:{emoji_id}>')
     
     @bot.tree.command(name="lordmeme", description="Erstellt ein Meme mit dem angegebenen Text")
     @app_commands.describe(
@@ -97,6 +109,7 @@ def register_slash_commands(bot):
         app_commands.Choice(name="Unten", value="bottom"),
         app_commands.Choice(name="Oben und Unten (Text | Text)", value="both")
     ])
+    @app_commands.checks.cooldown(1, 30.0)
     async def lordmeme_slash(interaction: discord.Interaction, text: str, position: str = "top"):
         """Lordmeme Slash Command"""
         # Defer response to prevent timeout during meme generation
@@ -470,26 +483,37 @@ def register_slash_commands(bot):
     
     @bot.tree.command(name="drache", description="Zeigt Bot-Statistiken und Admin-Funktionen")
     @app_commands.describe(
-        action="Die Aktion (stats/neofetch/drachenlord/shrek/butteriq)",
-        farbe="Farbauswahl für ASCII-Art (nur bei neofetch/drachenlord/shrek)"
+        action="Die Aktion (stats/neofetch/system/minimal/rainbow/drachenlord/shrek/butteriq)",
+        farbe="Farbauswahl für ASCII-Art (Standard/Neon/Spezial)"
     )
     @app_commands.choices(action=[
-        app_commands.Choice(name="stats", value="stats"),
-        app_commands.Choice(name="neofetch", value="neofetch"),
-        app_commands.Choice(name="drachenlord", value="drachenlord"),
-        app_commands.Choice(name="shrek", value="shrek"),
-        app_commands.Choice(name="butteriq", value="butteriq")
+        app_commands.Choice(name="📊 Stats", value="stats"),
+        app_commands.Choice(name="🖥️ Neofetch", value="neofetch"),
+        app_commands.Choice(name="⚙️ System", value="system"),
+        app_commands.Choice(name="📱 Minimal", value="minimal"),
+        app_commands.Choice(name="🌈 Rainbow", value="rainbow"),
+        app_commands.Choice(name="🐉 Drachenlord", value="drachenlord"),
+        app_commands.Choice(name="🟢 Shrek", value="shrek"),
+        app_commands.Choice(name="🧠 ButterIQ", value="butteriq")
     ])
     @app_commands.choices(farbe=[
-        app_commands.Choice(name="🔵 Blau (Standard)", value="blue"),
+        # Standard-Farben
+        app_commands.Choice(name="🔵 Blau", value="blue"),
         app_commands.Choice(name="🔴 Rot", value="red"),
         app_commands.Choice(name="🟢 Grün", value="green"),
         app_commands.Choice(name="🟡 Gelb", value="yellow"),
         app_commands.Choice(name="🟣 Magenta", value="magenta"),
         app_commands.Choice(name="🔵 Cyan", value="cyan"),
-        app_commands.Choice(name="⚪ Weiß", value="white"),
-        app_commands.Choice(name="🌈 Zufällig", value="random"),
-        app_commands.Choice(name="🎨 Gradient", value="gradient")
+        # Neon-Farben
+        app_commands.Choice(name="💖 Neon Pink", value="neon_pink"),
+        app_commands.Choice(name="💚 Neon Grün", value="neon_green"),
+        app_commands.Choice(name="💙 Neon Blau", value="neon_blue"),
+        app_commands.Choice(name="🧡 Neon Orange", value="neon_orange"),
+        app_commands.Choice(name="💜 Neon Lila", value="neon_purple"),
+        # Spezial-Effekte
+        app_commands.Choice(name="🌈 Rainbow", value="rainbow"),
+        app_commands.Choice(name="🎨 Gradient", value="gradient"),
+        app_commands.Choice(name="🎲 Zufällig", value="random")
     ])
     async def drache_slash(interaction: discord.Interaction, action: str = "stats", farbe: str = "blue"):
         """Drache Slash Command"""
@@ -508,35 +532,50 @@ def register_slash_commands(bot):
             
             await interaction.response.send_message(embed=embed, ephemeral=True)
             
-        elif action in ["neofetch", "drachenlord", "shrek"]:
+        elif action in ["neofetch", "drachenlord", "shrek", "system", "minimal", "rainbow"]:
             # Nur für Bot-Owner
             if interaction.user.id != admin_user_id:
                 await interaction.response.send_message(
-                    "❌ Nur der Bot-Admin kann diese Funktion nutzen!", 
+                    "❌ Nur der Bot-Admin kann diese Funktion nutzen!",
                     ephemeral=True
                 )
                 return
-            
+
             from animated_stats import collect_bot_stats, send_animated_stats_with_color
-            
-            # Sammle Statistiken
+
+            # Sammle LIVE Statistiken
             stats_text = collect_bot_stats(bot)
-            
+
+            # Spezielle Farb-/Style-Kombinationen
+            if action == "rainbow":
+                farbe = "rainbow"
+                action = "neofetch"
+            elif action == "system":
+                action = "neofetch"
+                if farbe == "blue":  # Default farbe
+                    farbe = "neon_blue"
+            elif action == "minimal":
+                if farbe == "blue":  # Default farbe
+                    farbe = "neon_green"
+
             await interaction.response.send_message(
-                f"🎨 Zeige Bot-Statistiken im {action}-Stil mit {farbe} Farbe...", 
+                f"🎨 Zeige LIVE Bot-Statistiken im {action}-Stil mit {farbe} Farbe...",
                 ephemeral=True
             )
-            
+
             # Erstelle einen Mock-Context für send_animated_stats
             class MockContext:
                 def __init__(self, channel):
                     self.channel = channel
-                
+
                 async def send(self, content, **kwargs):
                     return await self.channel.send(content, **kwargs)
-            
+
             mock_ctx = MockContext(interaction.channel)
-            await send_animated_stats_with_color(mock_ctx, bot, stats_text, action, farbe, show_quotes=(action == "drachenlord"))
+            await send_animated_stats_with_color(
+                mock_ctx, bot, stats_text, action, farbe,
+                show_quotes=(action == "drachenlord")
+            )
             
         elif action == "butteriq":
             # Admin-only ButterIQ Funktion - Check wird durch separaten butteriq command durchgeführt
@@ -659,7 +698,225 @@ def register_slash_commands(bot):
                 ephemeral=True
             )
     # /sounds command ist bereits in sounds.py definiert - doppelte definition entfernt
-    
+
+    @bot.tree.command(name="spende", description="Unterstütze die Entwicklung des Bots mit einer Monero-Spende")
+    async def spende_slash(interaction: discord.Interaction):
+        """Spende Slash Command - zeigt Monero Wallet und QR Code"""
+        import os
+
+        # Hole Monero Wallet ID aus Environment
+        monero_wallet = os.getenv('MONERO_SPENDEN_ID', 'Wallet nicht konfiguriert')
+
+        embed = discord.Embed(
+            title="💰 Bot mit Monero unterstützen",
+            description="Wenn dir der Bot gefällt, kannst du ihn mit einer Monero-Spende unterstützen!",
+            color=0xff6600  # Orange wie Monero
+        )
+
+        embed.add_field(
+            name="🔐 Warum Monero?",
+            value="• Privat und anonym\n"
+                  "• Keine Gebühren für Dritte\n"
+                  "• Direkte Unterstützung\n"
+                  "• **Keine Nachteile - nur Unterstützung!** ❤️",
+            inline=False
+        )
+
+        embed.add_field(
+            name="💳 Monero Wallet Adresse",
+            value=f"```{monero_wallet}```",
+            inline=False
+        )
+
+        embed.add_field(
+            name="📱 QR Code",
+            value="Siehe angehängtes Bild für einfaches Scannen",
+            inline=False
+        )
+
+        embed.add_field(
+            name="🗳️ Voting - Kostenlose Unterstützung",
+            value="Du kannst den Bot auch kostenlos unterstützen, indem du für ihn votest!\n"
+                  "Das Voting hilft anderen Nutzern, den Bot zu finden und zu nutzen.",
+            inline=False
+        )
+
+        embed.set_footer(text="Vielen Dank für deine Unterstützung! 🙏")
+
+        # Voting Buttons erstellen
+        view = discord.ui.View()
+        
+        # Top.gg Button
+        topgg_button = discord.ui.Button(
+            label="Vote auf Top.gg",
+            style=discord.ButtonStyle.link,
+            url="https://top.gg/bot/1329104199794954240",
+            emoji="🗳️"
+        )
+        view.add_item(topgg_button)
+        
+        # Discords.com Button
+        discords_button = discord.ui.Button(
+            label="Vote auf Discords.com",
+            style=discord.ButtonStyle.link,
+            url="https://discords.com/bots/bot/1329104199794954240",
+            emoji="⭐"
+        )
+        view.add_item(discords_button)
+
+        # QR Code als Datei anhängen
+        qr_path = "data/imgs/drache/buttergolemqr.png"
+        if os.path.exists(qr_path):
+            file = discord.File(qr_path, filename="monero_qr.png")
+            embed.set_image(url="attachment://monero_qr.png")
+            await interaction.response.send_message(embed=embed, file=file, view=view, ephemeral=True)
+        else:
+            await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+
+    @bot.tree.command(name="sl", description="🎮 Drachenlord springt über Fässer wie bei Donkey Kong!")
+    @app_commands.checks.cooldown(1, 30.0)  # 30 Sekunden Cooldown
+    async def sl_slash(interaction: discord.Interaction):
+        """SL Slash Command - Drachenlord Donkey Kong Animation"""
+        import asyncio
+        from ascii_art import create_drachenlord_animation
+
+        # Sofort antworten um timeout zu vermeiden
+        await interaction.response.send_message("🎮 Drachenlord startet sein Donkey Kong Abenteuer...", ephemeral=True)
+
+        try:
+            # Animation frames erstellen
+            frames = await create_drachenlord_animation()
+
+            # Erste Nachricht senden
+            message = await interaction.channel.send("🎮 **DRACHENLORD DONKEY KONG** 🎮\n" + frames[0])
+
+            # Animation für 15 Sekunden (alle 0.5 Sekunden ein neuer Frame für schnellere Animation)
+            for i in range(30):  # 30 frames * 0.5 sekunden = 15 sekunden
+                await asyncio.sleep(0.5)  # Noch schnellere Animation (0.5 Sekunden statt 1)
+                frame_index = (i + 1) % len(frames)
+
+                try:
+                    await message.edit(content="🎮 **DRACHENLORD DONKEY KONG** 🎮\n" + frames[frame_index])
+                except discord.NotFound:
+                    # Nachricht wurde gelöscht, beende animation
+                    break
+                except discord.HTTPException:
+                    # Rate limit oder anderer fehler, warte länger
+                    await asyncio.sleep(0.5)  # Kürzere Wartezeit bei Fehlern
+
+            # Finale nachricht
+            await asyncio.sleep(0.5)  # Kürzere Wartezeit vor der finalen Nachricht
+            try:
+                # Nutze das finale Endbild aus der Animation, falls vorhanden
+                if hasattr(frames, "__getitem__") and len(frames) > 0:
+                    await message.edit(content="🎮 **LEVEL GESCHAFFT!** 🎮\n" + frames[-1])
+                else:
+                    await message.edit(content="🎮 **LEVEL GESCHAFFT!** 🎮\n```\n🏆 Drachenlord hat alle Fässer übersprungen! MEDDL LEUDE! 🏆\n```")
+            except Exception as e:
+                print(f"Error updating final frame: {e}")
+                # Nutze das finale Endbild aus der Animation, falls vorhanden
+                try:
+                    if hasattr(frames, "__getitem__") and len(frames) > 0:
+                        await message.edit(content="🎮 **LEVEL GESCHAFFT!** 🎮\n" + frames[-1])
+                    else:
+                        await message.edit(content="🎮 **LEVEL GESCHAFFT!** 🎮\n```\n🏆 Drachenlord hat alle Fässer übersprungen! MEDDL LEUDE! 🏆\n```")
+                except:
+                    pass
+
+        except Exception as e:
+            print(f"Fehler in sl animation: {e}")
+            await interaction.channel.send("❌ Animation fehlgeschlagen, aber MEDDL LEUDE! 🐉")
+
+    @bot.tree.command(name="hangman", description="🎯 Spiele Hangman mit Drachenlord-Wörtern!")
+    @app_commands.checks.cooldown(1, 30.0)  # 30 Sekunden Cooldown
+    async def hangman_slash(interaction: discord.Interaction):
+        """Hangman Slash Command - Drachenlord Hangman Spiel"""
+        # Importiere Hangman-Funktionen
+        import sys
+        import os
+        sys.path.append(os.path.dirname(__file__))
+
+        try:
+            from hangman import start_hangman, active_hangman_games
+
+            # Mock Context für Kompatibilität mit bestehenden Funktionen
+            class MockContext:
+                def __init__(self, interaction):
+                    self.channel = interaction.channel
+                    self.guild = interaction.guild
+                    self.author = interaction.user
+                    self.send = interaction.channel.send
+
+            # Prüfe ob bereits ein Spiel auf diesem Server läuft
+            server_has_game = any(
+                game.thread and game.thread.guild and game.thread.guild.id == interaction.guild.id
+                for game in active_hangman_games.values()
+            )
+
+            if server_has_game:
+                await interaction.response.send_message("Es läuft bereits ein Hangman-Spiel auf diesem Server!", ephemeral=True)
+                return
+
+            if interaction.channel.id in active_hangman_games:
+                await interaction.response.send_message("Es läuft bereits ein Hangman-Spiel in diesem Kanal!", ephemeral=True)
+                return
+
+            mock_ctx = MockContext(interaction)
+
+            await interaction.response.send_message(
+                "🎯 **Hangman startet!**\n"
+                "Sammle Teilnehmer und errate Drachenlord-Wörter!\n"
+                "Das Spiel wird in einem separaten Thread gespielt um Spam zu vermeiden."
+            )
+
+            # Starte Hangman
+            await start_hangman(mock_ctx)
+
+        except Exception as e:
+            print(f"Fehler in hangman command: {e}")
+            await interaction.response.send_message("❌ Hangman konnte nicht gestartet werden!", ephemeral=True)
+
+    @bot.tree.command(name="snake", description="🐍 Spiele Snake mit Drachenlord und sammle Brötchen!")
+    @app_commands.checks.cooldown(1, 30.0)  # 30 Sekunden Cooldown
+    async def snake_slash(interaction: discord.Interaction):
+        """Snake Slash Command - Drachenlord Snake Spiel"""
+        import asyncio
+        from ascii_art import create_snake_game
+
+        # Sofort antworten um timeout zu vermeiden
+        await interaction.response.send_message("🐍 Drachenlord startet sein Snake Abenteuer...", ephemeral=True)
+
+        try:
+            # Animation frames erstellen
+            frames = await create_snake_game(max_turns=30)
+
+            # Erste Nachricht senden
+            message = await interaction.channel.send("🐍 **DRACHENLORD SNAKE** 🐍\n" + frames[0])
+
+            # Animation für 15 Sekunden (alle 0.5 Sekunden ein neuer Frame)
+            for i in range(len(frames) - 1):  # Letzter Frame ist das Endergebnis
+                await asyncio.sleep(0.5)
+
+                try:
+                    await message.edit(content="🐍 **DRACHENLORD SNAKE** 🐍\n" + frames[i])
+                except discord.NotFound:
+                    # Nachricht wurde gelöscht, beende animation
+                    break
+                except discord.HTTPException:
+                    # Rate limit oder anderer fehler, warte länger
+                    await asyncio.sleep(0.5)  # Kürzere Wartezeit bei Fehlern
+
+            # Finale nachricht
+            await asyncio.sleep(0.5)  # Kürzere Wartezeit vor der finalen Nachricht
+            try:
+                await message.edit(content="🐍 **DRACHENLORD SNAKE** 🐍\n" + frames[-1])
+            except:
+                pass
+
+        except Exception as e:
+            print(f"Fehler in snake animation: {e}")
+            await interaction.channel.send("❌ Animation fehlgeschlagen, aber MEDDL LEUDE! 🐉")
+
     @bot.tree.command(name="hilfe", description="Zeigt alle verfügbaren Befehle")
     async def hilfe_slash(interaction: discord.Interaction):
         """Hilfe Slash Command - ersetzt den alten /help Befehl"""
@@ -675,9 +932,12 @@ def register_slash_commands(bot):
         embed.add_field(
             name="🎮 Spiel-Befehle",
             value="• `/quiz` - Drachenlord Quiz\n"
+                  "• `/hangman` - 🎯 **Hangman mit Drachenlord-Wörtern** (30s Cooldown)\n"
                   "• `/mett` - Mett-Level anzeigen\n"
                   "• `/zitat` - Zufälliges Zitat\n"
                   "• `/lordmeme <text> [position]` - Drachenlord Meme erstellen\n"
+                  "• `/sl` - 🚂 **Drachenlord Donkey Kong Animation** (30s Cooldown)\n"
+                  "• `/snake` - 🐍 **Drachenlord Snake Spiel** (30s Cooldown)\n"
                   "• `/gotchi hilfe` - **Drachigotchi Spiel-Anleitung** (🔥 NEU: Dropdown-Menüs!)",
             inline=False
         )
@@ -696,7 +956,8 @@ def register_slash_commands(bot):
                   "• `/drache` - Bot-Statistiken mit Farbauswahl\n"
                   "• `/privacy` - Datenschutzerklärung\n"
                   "• `/kontakt` - Kontakt zum Entwickler\n"
-                  "• `/changelog [version]` - Bot-Updates & Changelog",
+                  "• `/changelog [version]` - Bot-Updates & Changelog\n"
+                  "• `/spende` - Bot mit Monero unterstützen & Voting",
             inline=False
         )
         
@@ -715,10 +976,10 @@ def register_slash_commands(bot):
         embed.add_field(
             name="ℹ️ Bot-Informationen",
             value=f"**Owner:** ninjazan420\n"
-                  f"**Bot-Version:** 6.1.0\n"
+                  f"**Bot-Version:** 6.2.0\n"
                   f"**Discord.py-Version:** {discord.__version__}\n"
-                  f"**Support Server:** [Hier beitreten](https://discord.gg/4kHkaaS2wq)\n"
-                  f"**Spenden:** [Ko-fi unterstützen](https://ko-fi.com/buttergolem)",
+                  f"**Support Server:** [Hier beitreten](https://support.f0ck.org)\n"
+                  f"**Unterstützung:** `/spende` für Monero & kostenlose Votes",
             inline=False
         )
         
@@ -1201,7 +1462,7 @@ def register_slash_commands(bot):
             color=0x3498db,
             timestamp=discord.utils.utcnow()
         )
-        embed.set_footer(text="ButterGolem Community Update")
+        embed.set_footer(text="Buttergolem Community Update")
         
         # Durchlaufe alle Server
         for guild in bot.guilds:
@@ -1296,7 +1557,7 @@ def register_slash_commands(bot):
                     color=0x3498db,
                     timestamp=discord.utils.utcnow()
                 )
-                embed.set_footer(text="ButterGolem Server Update")
+                embed.set_footer(text="Buttergolem Server Update")
                 
                 # Sende Nachricht
                 await target_channel.send(embed=embed)
@@ -1323,7 +1584,7 @@ def register_slash_commands(bot):
                         color=0x3498db,
                         timestamp=discord.utils.utcnow()
                     )
-                    embed.set_footer(text="ButterGolem Admin Nachricht")
+                    embed.set_footer(text="Buttergolem Admin Nachricht")
                     
                     # Sende DM an Benutzer
                     await user.send(embed=embed)

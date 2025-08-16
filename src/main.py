@@ -42,7 +42,7 @@ from memory import register_memory_manager
 from memory_commands import register_memory_commands
 from mirror import setup_mirror
 from changelog import ChangelogCog
-# Premium-Funktionalität entfernt - ersetzt durch Ko-fi Spenden
+# Premium-Funktionalität entfernt - ersetzt durch Monero Spenden
 
 # ===== 2. CONFIGURATION AND SETUP =====
 # Environment variables
@@ -66,7 +66,7 @@ user_cooldowns = {}
 
 client = commands.Bot(
     command_prefix=commands.when_mentioned_or("!"),
-    description='Buttergolem Discord Bot Version: 6.1.0\nCreated by: ninjazan420',
+    description='Buttergolem Discord Bot Version: 6.2.0\nCreated by: ninjazan420',
     intents=intents
 )
 client.remove_command('help')
@@ -102,9 +102,9 @@ register_memory_manager(client)
 # register_memory_commands(client)  # Deaktiviert wegen Command-Konflikten
 
 # Register Changelog Cog
-client.add_cog(ChangelogCog(client))
+# client.add_cog(ChangelogCog(client))
 setup_mirror(client)
-# Premium-Befehle entfernt - Ko-fi Spenden-Link in !hilfe verfügbar
+# Premium-Befehle entfernt - Monero Spenden über /spende verfügbar
 
 # Changelog System wird in on_ready geladen
 
@@ -155,23 +155,24 @@ def cooldown_check():
 
 # Globale Status-Nachrichten
 STATUS_MESSAGES = [
-        # "Meddl Loide! | /hilfe",
-        # "Auf Schanzentour | /hilfe", 
-        # "Buttergolem's Abenteuer | /hilfe",
-        # "Haiderexperte | /hilfe",
-        # "Mettbrötchen zubereiten | /hilfe",
-        # "Drachenlord Simulator 2024 | /hilfe",
-        # "Schanze bewachen | /hilfe",
-        # "Kagghaider vertreiben | /hilfe",
-        # "Buttergolem's Rückkehr | /hilfe",
-        # "Altschauerberg Guide | /hilfe",
-        # "Meddl-Meister | /hilfe",
-        # "Drachengame Pro | /hilfe",
-        # "Schanzenfestival 2024 | /hilfe",
-        # "Buttergolem's Rache | /hilfe",
-        # "Server-Lord | /hilfe",
-        # "Discord-Drache | /hilfe",
-        "NEU: /gotchi hilfe | /hilfe"
+    "Meddl Loide, Bot is am lordn! | /hilfe",
+    "Schanze brennt, Golem bleibt cool | /hilfe",
+    "Winklers Weisheiten incoming | /hilfe",
+    "Butterbrot und Metal – Priorität! | /hilfe",
+    "Haiderfreie Zone, passd scho | /hilfe",
+    "Gummibärenarmee versammelt sich | /hilfe",
+    "Livestream ausm Keller gestartet | /hilfe",
+    "Server is wie a Community, gell | /hilfe",
+    "Fettsackmodus: aktiviert | /hilfe",
+    "Bissl zocken, bissl chilln | /hilfe",
+    "KuchenTV redet, keiner hört zu | /hilfe",
+    "Drachengame im Hintergrund läuft | /hilfe",
+    "Bot rennt stabil wie mei Router | /hilfe",
+    "Lust auf a Rage? Frag Rainer | /hilfe",
+    "Schanzenkino hat offen | /hilfe",
+    "Mett, Metal und Minecraft | /hilfe",
+    "Endboss vom Altschauerberg | /hilfe",
+    "Hier wird ned g'haidet, nur g'lordet | /hilfe"
 ]
 
 @tasks.loop(minutes=10.0)
@@ -197,7 +198,14 @@ async def on_ready():
             await _log(f"❌ Fehler beim Synchronisieren der Commands: {e}")
     
     if logging_channel:
-        await _log("🟢 Bot gestartet - Version 6.1.0")
+        await _log("🟢 Bot gestartet - Version 6.2.0")
+
+        # Bereinige alte Hangman-Threads beim Start
+        try:
+            from hangman import cleanup_all_hangman_threads
+            await cleanup_all_hangman_threads(client)
+        except Exception as e:
+            print(f"Fehler beim Bereinigen alter Hangman-Threads: {e}")
 
     # Status-Task starten
     change_status.start()
@@ -212,14 +220,7 @@ async def on_ready():
             if logging_channel:
                 await _log("🐉 Drachigotchi background task gestartet!")
 
-    # Changelog System laden
-    try:
-        await client.add_cog(ChangelogCog(client))
-        if logging_channel:
-            await _log("📋 Changelog System geladen")
-    except Exception as e:
-        if logging_channel:
-            await _log(f"❌ Fehler beim Laden des Changelog Systems: {e}")
+
 
     # Start time für Uptime Counter setzen
     client.start_time = datetime.datetime.now()
@@ -396,6 +397,40 @@ async def on_message(message):
 
     if hasattr(client, 'stats_manager'):
         client.stats_manager.add_unique_user(message.author.id)
+
+    # Hangman Handler für Thread-Nachrichten
+    try:
+        from hangman import active_hangman_games, process_hangman_guess
+
+        # Prüfe ob Nachricht in einem Hangman-Thread ist
+        if isinstance(message.channel, discord.Thread):
+            # Finde das zugehörige Hangman-Spiel
+            parent_channel_id = message.channel.parent.id if message.channel.parent else None
+            if parent_channel_id and parent_channel_id in active_hangman_games:
+                game = active_hangman_games[parent_channel_id]
+                if game.thread and game.thread.id == message.channel.id:
+                    # Prüfe ob es ein einzelner Buchstabe ist
+                    content = message.content.strip().upper()
+                    if len(content) == 1 and content.isalpha():
+                        # Verarbeite den Buchstaben-Tipp
+                        success = await process_hangman_guess(game, message.author, content)
+                        if success:
+                            # Lösche die Nachricht um Spam zu vermeiden
+                            try:
+                                await message.delete()
+                            except:
+                                pass
+                        return
+                    elif len(content) > 1:
+                        # Lösche längere Nachrichten um Spam zu vermeiden
+                        try:
+                            await message.delete()
+                            await message.channel.send(f"❌ {message.author.mention}, bitte nur einzelne Buchstaben!", delete_after=3)
+                        except:
+                            pass
+                        return
+    except Exception as e:
+        print(f"Fehler im Hangman Handler: {e}")
 
     # Prüfe, ob es sich um eine KI-Anfrage handelt (Erwähnung oder DM)
     # Wenn ja, verarbeite sie mit der KI-Funktion aus ki.py

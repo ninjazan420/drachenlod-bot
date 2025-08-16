@@ -1,53 +1,130 @@
-# 📋 ButterGolem Changelog
+# 📋 Buttergolem Changelog
+
+## Version 6.2.0 - Gaming Update - Hangman & Snake + AI Memory System (16. August 2025)
+
+### 🎮 Neue Gaming Features
+
+#### **Hangman-Spiel System**
+- Hangman-Spiel 
+- Thread-basiertes Anti-Spam System für saubere Channels
+- Turn-based Gameplay mit automatischer Spieler-Rotation
+- ASCII-Art Hangman-Darstellung mit 6 Fehlversuchen
+- Automatisches Cleanup-System für inaktive Spiele
+- Pro Server nur ein Hangman-Spiel gleichzeitig möglich
+- Punktesystem für richtige Buchstaben-Tipps
+
+#### **Snake-Spiel System**
+- Snake-Spiel 
+- Drachenlord-themed Snake mit Brötchen sammeln
+- Animierte ASCII-Art Darstellung
+- Collision-Detection und Score-Tracking
+- 30 Sekunden Cooldown zwischen Spielen
+
+#### **AI Memory System**
+- Persistente KI-Erinnerungen - Bot kann sich an vorherige Gespräche erinnern
+- Kontext-bewusste Antworten basierend auf Gesprächshistorie
+- JSON-basierte Speicherung für zuverlässige Datenpersistierung
+- Memory-Management mit automatischer Bereinigung alter Einträge
+- Admin-Commands für Memory-Verwaltung
+
+#### **Gaming-Kategorie in Hilfe**
+- Neue Gaming-Sektion mit allen verfügbaren Spielen
+- Übersichtliche Kategorisierung aller Commands
+- Persistente Speicherung von Spielständen und Highscores
+
+### ⚡ Performance & Stabilität
+
+#### **Stats-System Optimierungen**
+- Stats-System Performance deutlich verbessert
+- Memory-Leaks in der Statistik-Anzeige behoben
+- Optimierte Embed-Generierung für bessere Ladezeiten
+- Stabilere Datenbank-Verbindungen für alle Bot-Features
+
+#### **Gaming-Module Verbesserungen**
+- Error-Handling in allen Gaming-Modulen verbessert
+- Robuste Fehlerbehandlung für Hangman und Snake
+- Automatische Cleanup-Systeme für inaktive Spiele
+- Verbesserte Thread-Management für Gaming-Sessions
+
+### 🛠️ Technische Änderungen
+
+#### **Gaming-Architektur Implementation**
+- Hangman-System mit Kategorie-Management implementiert
+- Snake-Game Engine mit Collision-Detection und Score-Tracking
+- Modulare Gaming-Architektur für zukünftige Spiele-Erweiterungen
+- Thread-basierte Spiel-Sessions für bessere Performance
+
+#### **AI Memory Backend**
+- AI Memory Backend mit JSON-basierter Persistierung
+- Memory-Management System für automatische Bereinigung
+- Admin-Interface für Memory-Verwaltung und Debugging
+
+#### **Version Updates**
+- Version 6.2.0 in allen Systemdateien aktualisiert
+- Changelog-System mit neuen Gaming-Features erweitert
+- Stats-Module refactored für bessere Performance
+
+### 🎯 Neue Slash Commands
+
+#### **Gaming Commands**
+- `/hangman` - Starte ein Hangman-Spiel mit Drachenlord-Wörtern
+- `/snake` - Spiele das klassische Snake-Spiel mit Drachenlord
+- `/sl` - Drachenlord Donkey Kong Animation
+
+#### **Admin Commands für Memory-System**
+- `/memory list` - Zeige alle Benutzer mit Erinnerungen
+- `/memory show <user_id>` - Zeige Erinnerungen für bestimmten User
+- `/memory add <user_id> <data>` - Füge Erinnerung hinzu
+- `/memory delete <user_id>` - Lösche alle Erinnerungen für User
 
 ## Version 6.1.0 - Admin Command Visibility & Changelog Fix (04. Juli 2025)
 
-### 🔒 Neue Features
+### Neue Features
 
 #### **Admin Command Visibility Fix**
-- ✅ Admin Commands sind jetzt für normale User unsichtbar
-- ✅ Implementierung von `@app_commands.default_permissions(administrator=True)`
-- ✅ Verbesserte User Experience - keine Verwirrung mehr durch sichtbare aber nicht ausführbare Commands
-- ✅ Native Discord Permission System Integration
+- Admin Commands sind jetzt für normale User unsichtbar
+- Implementierung von @app_commands.default_permissions(administrator=True)
+- Verbesserte User Experience - keine Verwirrung mehr durch sichtbare aber nicht ausführbare Commands
+- Native Discord Permission System Integration
 
 #### **Changelog System Wiederhergestellt**
-- ✅ `/changelog [version]` Command funktioniert wieder
-- ✅ Entfernung des redundanten `/lordupdate` Commands
-- ✅ Vollständige Versionhistorie verfügbar
-- ✅ Detaillierte Changelog-Ansicht für spezifische Versionen
+- /changelog [version] Command funktioniert wieder
+- Entfernung des redundanten /lordupdate Commands
+- Vollständige Versionhistorie verfügbar
+- Detaillierte Changelog-Ansicht für spezifische Versionen
 
-#### **🐉 Drachigotchi - Das ultimative Tamagotchi-Spiel!**
-- ✅ **Komplettes Tamagotchi-System** - Virtuelles Drachenlord-Haustier
-- ✅ **Persistent Storage** - Fortschritt wird automatisch gespeichert
-- ✅ **Level & Skill System** - Sammle Erfahrung und verbessere deine Fähigkeiten
-- ✅ **Inventar & Equipment** - Sammle Items, Waffen und Ausrüstung
-- ✅ **Reise-System** - Erkunde 10+ verschiedene Orte mit Dropdown-Menüs
-- ✅ **Job-System** - Arbeite als Streamer, Mett-Verkäufer oder Schanze-Wächter
-- ✅ **Quest-System** - Erfülle Aufgaben und sammle Belohnungen
-- ✅ **Achievement-System** - Sammle Erfolge und werde zum ultimativen Drachenlord
-- ✅ **Random Events** - Erlebe zufällige Ereignisse während des Spiels
-- ✅ **Kampf-System** - Kämpfe gegen Hater und verdiene Ruhm
-- ✅ **Stream-System** - Verdiene Geld und Ruhm durch Streaming
-- ✅ **Craft-System** - Erstelle neue Items aus Materialien
+#### **Drachigotchi - Das ultimative Tamagotchi-Spiel**
+- Komplettes Tamagotchi-System - Virtuelles Drachenlord-Haustier
+- Persistent Storage - Fortschritt wird automatisch gespeichert
+- Level & Skill System - Sammle Erfahrung und verbessere deine Fähigkeiten
+- Inventar & Equipment - Sammle Items, Waffen und Ausrüstung
+- Reise-System - Erkunde 10+ verschiedene Orte mit Dropdown-Menüs
+- Job-System - Arbeite als Streamer, Mett-Verkäufer oder Schanze-Wächter
+- Quest-System - Erfülle Aufgaben und sammle Belohnungen
+- Achievement-System - Sammle Erfolge und werde zum ultimativen Drachenlord
+- Random Events - Erlebe zufällige Ereignisse während des Spiels
+- Kampf-System - Kämpfe gegen Hater und verdiene Ruhm
+- Stream-System - Verdiene Geld und Ruhm durch Streaming
+- Craft-System - Erstelle neue Items aus Materialien
 
-### 🔧 Bug Fixes
+### Bug Fixes
 
 #### **Permission & Visibility Issues**
-- ✅ Admin Commands werden nicht mehr in der Slash Command Liste für normale User angezeigt
-- ✅ Changelog Commands sind wieder funktional
-- ✅ Command Registration Issues behoben
-- ✅ Verbesserte Permission Handling für alle Admin-Funktionen
+- Admin Commands werden nicht mehr in der Slash Command Liste für normale User angezeigt
+- Changelog Commands sind wieder funktional
+- Command Registration Issues behoben
+- Verbesserte Permission Handling für alle Admin-Funktionen
 
-### ⚙️ Technische Änderungen
+### Technische Änderungen
 
 #### **Command System Updates**
-- ✅ `@app_commands.default_permissions(administrator=True)` zu allen Admin Commands hinzugefügt
-- ✅ `register_update_commands` in main.py wieder aktiviert
-- ✅ `ChangelogCog` Registration in main.py hinzugefügt
-- ✅ Redundanten `/lordupdate` Command aus updates.py entfernt
-- ✅ Version Strings in slash_commands.py und main.py auf 6.1.0 aktualisiert
+- @app_commands.default_permissions(administrator=True) zu allen Admin Commands hinzugefügt
+- register_update_commands in main.py wieder aktiviert
+- ChangelogCog Registration in main.py hinzugefügt
+- Redundanten /lordupdate Command aus updates.py entfernt
+- Version Strings in slash_commands.py und main.py auf 6.1.0 aktualisiert
 
-#### **Neue Drachigotchi Commands**
+#### **Drachigotchi Commands**
 - `/gotchi start <name>` - Erstelle dein persönliches Drachigotchi
 - `/gotchi status` - Zeige deinen aktuellen Status mit ASCII-Art
 - `/gotchi hilfe` - Komplette Spielanleitung mit allen Commands

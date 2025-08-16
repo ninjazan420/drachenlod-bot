@@ -219,7 +219,7 @@ def register_admin_commands(bot):
                 pass
             
             embed = discord.Embed(
-                title="📊 ButterGolem Bot Statistiken",
+                title="📊 Buttergolem Bot Statistiken",
                 description=f"*\"{quote}\"*",
                 color=0x3498db
             )
@@ -270,7 +270,7 @@ def register_admin_commands(bot):
                 inline=True
             )
             
-            embed.set_footer(text="ButterGolem Bot • Neofetch-Style Stats")
+            embed.set_footer(text="Buttergolem Bot • Neofetch-Style Stats")
             await ctx.send(embed=embed)
             
             if logging_channel:

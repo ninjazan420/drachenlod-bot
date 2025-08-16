@@ -1,22 +1,26 @@
 src/data/fonts
 src/data/clips*
 src/data/imgs*
-docker-compose Kopie2.yml
-docker-compose - Kopie.yml
-docker-compose.yml
 src/stealer*
 src/stealer.py
 src/mirror.py
-docker-compose.yml
 .cursor/rules/.cursorrules
-.gitignore
-.trae/.ignore
-.trae/rules/project_rules.md
 done.txt
 .gitignore
 .vscode/settings.json
 .trae/buttergolem.md
 .trae/checklist.md
 .trae/new.md
-docker-compose.yml
-privacy_policy.md
+data/clips*
+data/drachigotchis.json
+data/drache*
+data/emojis*
+data/imgs*
+.cursor*
+.kiro*
+.trae*
+src/data*
+data*
+src/ki*
+src/ai_chatbot.py
+.gitignore

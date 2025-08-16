@@ -1,0 +1,41 @@
+version: "3"
+services:
+  buttergolem:
+    build: .
+    volumes:
+      - ./data:/app/data # Persistent storage for game data
+
+    environment:
+      DISCORD_API_TOKEN: "Discord Token API" # Discord Bot-Token
+      ENABLE_RANDOM_JOINS: "False" # Enables random joins on the biggest VC
+      BLACKLISTED_GUILDS: "123456,654321" # Comma seperated
+
+      ADMIN_USER_ID: "123123123" # CAREFUL also able to use Admin commands
+
+      # Mongodb
+
+      MONGODB_CONNECTION_STRING: "mongodb+srv://your:string@databasename.randomstring.mongodb.net/?retryWrites=true&w=majority&appName=YOURAPPNAME"
+      MONGODB_DATABASE_NAME: "Your app Name"
+      MONGODB_TIMEOUT: "5000"
+      MONGODB_POOL_SIZE: "50"
+      ENABLE_MONGODB: "false"  # Feature flag - Wenn deaktiviert wird alles in Json gerendert
+
+      # Router Keys
+
+      OPENROUTER_KEY: "Open Router Key"
+      VOID_API_KEY: "Void.ai Key"
+
+      # Channel spoecific
+
+      LOGGING_CHANNEL: "Your Logging Channel ID" # Logging Channel ID
+      CHAT_MIRROR_CHANNEL: "Chat Mirror Channel"
+      MEMBER_COUNTER_SERVER: "Membercounter Voice Channel Server"
+
+      # etc. 
+
+      DISCORDS_KEY: "Discords server counter api key" # will work without
+      TOPGG_KEY: "top.gg key" # will work without
+
+      # Monero Wallet für Spenden
+      
+      MONERO_SPENDEN_ID: "Your Monero Wallet"

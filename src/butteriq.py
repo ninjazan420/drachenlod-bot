@@ -86,35 +86,5 @@ def register_butteriq_commands(bot):
 
         # Logic moved to admins.py drache command
 
-    # Einfacher Spenden-Befehl ohne Vorteile
-    spenden_group = app_commands.Group(name="spenden", description="Unterstütze den Bot mit einer Ko-fi Spende")
-
-    @spenden_group.command(name="info", description="Zeigt Informationen zur Unterstützung des Bots an")
-    async def spenden_info(interaction: discord.Interaction):
-        """Zeigt Informationen zur Unterstützung des Bots an"""
-        embed = discord.Embed(
-            title="💖 Bot unterstützen",
-            description="Wenn dir der Bot gefällt, kannst du ihn mit einer Spende unterstützen!",
-            color=0x00ff00
-        )
-
-        embed.add_field(
-            name="Warum spenden?",
-            value="• Hilf mit, die Serverkosten zu decken\n"
-                  "• Unterstütze die Weiterentwicklung\n"
-                  "• Zeige deine Wertschätzung\n"
-                  "• **Keine Vorteile - nur Unterstützung!** ❤️",
-            inline=False
-        )
-
-        embed.add_field(
-            name="☕ Ko-fi Spende",
-            value="[Hier klicken für Ko-fi Spende](https://ko-fi.com/buttergolem)\n"
-                  "Jeder Betrag hilft und wird geschätzt!",
-            inline=False
-        )
-
-        await interaction.response.send_message(embed=embed, ephemeral=True)
-
-    # Registriere die Spenden-Gruppe
-    bot.tree.add_command(spenden_group)
+    # Spenden-Funktionalität wurde zu /spende Slash Command migriert
+    # Siehe slash_commands.py für die neue Monero-basierte Spenden-Funktionalität

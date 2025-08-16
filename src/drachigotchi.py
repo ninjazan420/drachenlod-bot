@@ -46,12 +46,30 @@ ITEMS = {
     # Food - Drachenlord-Style
     'mettbrötchen': {'type': 'food', 'name': 'Mettbrötchen', 'price': 5, 'hunger': 20, 'happiness': 5, 'description': 'Ein ordentliches Mettbrötchen.'},
     'tiefkühlpizza': {'type': 'food', 'name': 'Tiefkühlpizza', 'price': 8, 'hunger': 35, 'happiness': 10, 'description': 'Für den großen Hunger.'},
-    'energy_drink': {'type': 'food', 'name': 'Energy Drink', 'price': 3, 'hunger': 5, 'happiness': 10, 'description': 'Gibt einen schnellen Schub.'},
+    'energy_drink': {'type': 'food', 'name': 'Energy Drink', 'price': 3, 'hunger': 5, 'happiness': 10, 'energy': 15, 'description': 'Gibt einen schnellen Schub.'},
     'döner': {'type': 'food', 'name': 'Döner', 'price': 7, 'hunger': 30, 'happiness': 15, 'description': 'Mit allem und scharf!'},
     'bier': {'type': 'food', 'name': 'Bier', 'price': 4, 'hunger': 5, 'happiness': 20, 'effect': {'drunk': True}, 'description': 'Prost auf die Schanze!'},
     'schnitzel': {'type': 'food', 'name': 'Schnitzel', 'price': 12, 'hunger': 50, 'happiness': 25, 'description': 'Wie bei Muttern.'},
     'currywurst': {'type': 'food', 'name': 'Currywurst', 'price': 6, 'hunger': 25, 'happiness': 12, 'description': 'Mit Pommes natürlich.'},
     'leberkäse': {'type': 'food', 'name': 'Leberkäse', 'price': 5, 'hunger': 22, 'happiness': 8, 'description': 'Bayerische Spezialität.'},
+    'ofenkäse': {'type': 'food', 'name': 'Ofenkäse', 'price': 4, 'hunger': 18, 'happiness': 12, 'description': 'Warmer, geschmolzener Käse - ein Traum!'},
+    'pizza': {'type': 'food', 'name': 'Pizza', 'price': 9, 'hunger': 40, 'happiness': 20, 'description': 'Eine ganze Pizza nur für dich!'},
+
+    # Basic Food Items
+    'brot': {'type': 'food', 'name': 'Brot', 'price': 2, 'hunger': 15, 'description': 'Frisches Brot vom Bäcker.'},
+    'milch': {'type': 'food', 'name': 'Milch', 'price': 2, 'hunger': 8, 'health': 5, 'description': 'Frische Milch.'},
+    'eier': {'type': 'food', 'name': 'Eier', 'price': 3, 'hunger': 12, 'description': 'Frische Eier vom Bauernhof.'},
+    'wurst': {'type': 'food', 'name': 'Wurst', 'price': 4, 'hunger': 20, 'description': 'Deftige Wurst.'},
+    'käse': {'type': 'food', 'name': 'Käse', 'price': 3, 'hunger': 15, 'happiness': 5, 'description': 'Leckerer Käse.'},
+    'snacks': {'type': 'food', 'name': 'Snacks', 'price': 3, 'hunger': 10, 'happiness': 8, 'description': 'Verschiedene Snacks.'},
+    'knödel': {'type': 'food', 'name': 'Knödel', 'price': 5, 'hunger': 25, 'happiness': 10, 'description': 'Traditionelle Knödel.'},
+
+    # Drinks
+    'weißbier': {'type': 'food', 'name': 'Weißbier', 'price': 4, 'hunger': 5, 'happiness': 18, 'effect': {'drunk': True}, 'description': 'Bayerisches Weißbier.'},
+    'rauchbier': {'type': 'food', 'name': 'Rauchbier', 'price': 5, 'hunger': 5, 'happiness': 15, 'effect': {'drunk': True}, 'description': 'Bamberger Spezialität.'},
+    'frankenwein': {'type': 'food', 'name': 'Frankenwein', 'price': 8, 'hunger': 3, 'happiness': 25, 'effect': {'drunk': True}, 'description': 'Edler Wein aus Franken.'},
+    'berliner_weisse': {'type': 'food', 'name': 'Berliner Weiße', 'price': 4, 'hunger': 5, 'happiness': 12, 'effect': {'drunk': True}, 'description': 'Berliner Bier-Spezialität.'},
+    'pilsner': {'type': 'food', 'name': 'Pilsner', 'price': 3, 'hunger': 5, 'happiness': 15, 'effect': {'drunk': True}, 'description': 'Tschechisches Pilsner.'},
     
     # Tools & Gear - Drachenlord Equipment
     'meddl_hammer': {'type': 'gear', 'name': 'Meddl Hammer', 'price': 50, 'stats': {'strength': 2}, 'description': 'Ein mächtiger Hammer.'},
@@ -62,6 +80,11 @@ ITEMS = {
     'streamer_setup': {'type': 'gear', 'name': 'Streamer Setup', 'price': 800, 'stats': {'charisma': 20}, 'description': 'Professionelles Streaming-Equipment.'},
     'ford_blu': {'type': 'vehicle', 'name': 'Ford Blu', 'price': 5000, 'stats': {'speed': 50}, 'description': 'Das legendäre blaue Auto.'},
     'führerschein': {'type': 'license', 'name': 'Führerschein', 'price': 2000, 'requirement': {'ford_blu': True}, 'description': 'Endlich wieder fahren!'},
+
+    # Quest Reward Items
+    'mainstream_status': {'type': 'achievement', 'name': 'Mainstream Status', 'price': 0, 'stats': {'charisma': 20, 'fame_bonus': 50}, 'description': 'Du bist jetzt Teil der deutschen Kultur!'},
+    'bka_anerkennung': {'type': 'achievement', 'name': 'BKA Anerkennung', 'price': 0, 'stats': {'intelligence': 15, 'fame_bonus': 100}, 'description': 'Offizielle Anerkennung vom BKA.'},
+    'comeback_ticket': {'type': 'achievement', 'name': 'Comeback Ticket', 'price': 0, 'stats': {'all_stats': 10}, 'description': 'Das ultimative Comeback-Item! Erhöht alle Stats.'},
     
     # Resources - Erweitert
     'holz': {'type': 'resource', 'name': 'Holz', 'price': 10, 'description': 'Einfaches Holz, zum Bauen und Basteln.'},
@@ -87,7 +110,36 @@ ITEMS = {
     'aspirin': {'type': 'consumable', 'name': 'Aspirin', 'price': 5, 'effect': {'health': 15}, 'description': 'Gegen Kopfschmerzen.'},
     'kaffee': {'type': 'consumable', 'name': 'Kaffee', 'price': 3, 'effect': {'energy': 20}, 'description': 'Macht wach und munter.'},
     'motivationsbuch': {'type': 'consumable', 'name': 'Motivationsbuch', 'price': 20, 'effect': {'happiness': 30}, 'description': 'Für schwere Zeiten.'},
-    'hater_blocker': {'type': 'consumable', 'name': 'Hater Blocker', 'price': 50, 'effect': {'defense_buff': 24}, 'description': 'Blockiert Hater für 24h.'}
+    'hater_blocker': {'type': 'consumable', 'name': 'Hater Blocker', 'price': 50, 'effect': {'defense_buff': 24}, 'description': 'Blockiert Hater für 24h.'},
+    'survival_kit': {'type': 'food', 'name': 'Survival Kit', 'price': 5, 'hunger': 50, 'energy': 30, 'health': 20, 'happiness': 15, 'description': 'Notfall-Kit mit allem was du brauchst! Perfekt wenn du feststeckst.'},
+    'medikamente': {'type': 'consumable', 'name': 'Medikamente', 'price': 8, 'effect': {'health': 25}, 'description': 'Verschiedene Medikamente.'},
+    'benzin': {'type': 'consumable', 'name': 'Benzin', 'price': 15, 'effect': {'energy': 10}, 'description': 'Treibstoff für Fahrzeuge.'},
+
+    # Documents & Items
+    'dorfzeitung': {'type': 'item', 'name': 'Dorfzeitung', 'price': 2, 'happiness': 5, 'description': 'Lokale Nachrichten.'},
+    'zeitung': {'type': 'item', 'name': 'Zeitung', 'price': 3, 'happiness': 8, 'description': 'Aktuelle Nachrichten.'},
+    'briefmarken': {'type': 'item', 'name': 'Briefmarken', 'price': 5, 'description': 'Für wichtige Post.'},
+    'formulare': {'type': 'item', 'name': 'Formulare', 'price': 2, 'description': 'Behörden-Formulare.'},
+    'geburtsurkunde': {'type': 'item', 'name': 'Geburtsurkunde', 'price': 10, 'description': 'Wichtiges Dokument.'},
+    'bücher': {'type': 'item', 'name': 'Bücher', 'price': 12, 'happiness': 15, 'description': 'Bildung und Unterhaltung.'},
+    'politik_bücher': {'type': 'item', 'name': 'Politik Bücher', 'price': 15, 'happiness': 10, 'description': 'Politische Literatur.'},
+    'souvenirs': {'type': 'item', 'name': 'Souvenirs', 'price': 8, 'happiness': 12, 'description': 'Erinnerungsstücke.'},
+
+    # Equipment & Tech
+    'laptop': {'type': 'gear', 'name': 'Laptop', 'price': 800, 'stats': {'intelligence': 5}, 'description': 'Für Streaming und Arbeit.'},
+    'handy': {'type': 'gear', 'name': 'Handy', 'price': 300, 'stats': {'charisma': 2}, 'description': 'Smartphone für Social Media.'},
+    'gaming_stuhl': {'type': 'gear', 'name': 'Gaming Stuhl', 'price': 200, 'stats': {'happiness': 20}, 'description': 'Bequemer Stuhl fürs Gaming.'},
+    'kamera': {'type': 'gear', 'name': 'Kamera', 'price': 500, 'stats': {'charisma': 3}, 'description': 'Für professionelle Videos.'},
+    'mikrofon': {'type': 'gear', 'name': 'Mikrofon', 'price': 150, 'stats': {'charisma': 2}, 'description': 'Für klaren Sound.'},
+    'tv_equipment': {'type': 'gear', 'name': 'TV Equipment', 'price': 1000, 'stats': {'charisma': 8}, 'description': 'Professionelle TV-Ausrüstung.'},
+    'stream_equipment': {'type': 'gear', 'name': 'Stream Equipment', 'price': 600, 'stats': {'charisma': 5}, 'description': 'Alles fürs Streaming.'},
+
+    # Clothing & Special
+    'lederhose': {'type': 'gear', 'name': 'Lederhose', 'price': 80, 'stats': {'happiness': 15}, 'description': 'Traditionelle bayerische Kleidung.'},
+    'poster': {'type': 'item', 'name': 'Poster', 'price': 10, 'happiness': 8, 'description': 'Coole Poster für die Wand.'},
+    'drachenlord_merch': {'type': 'item', 'name': 'Drachenlord Merch', 'price': 25, 'happiness': 20, 'fame': 5, 'description': 'Offizielles Drachenlord Merchandise.'},
+    'premium_account': {'type': 'item', 'name': 'Premium Account', 'price': 50, 'stats': {'charisma': 3}, 'description': 'Premium-Zugang für Plattformen.'},
+    'bot_protection': {'type': 'consumable', 'name': 'Bot Protection', 'price': 30, 'effect': {'defense_buff': 12}, 'description': 'Schutz vor Bots und Spam.'}
 }
 
 # Crafting Recipes - Massiv erweitert
@@ -110,7 +162,7 @@ LOCATIONS = {
         'description': 'Dein legendäres Zuhause, die Drachenschanze in Altschauerberg. Hier fing alles an.', 
         'actions': ['schlafen', 'craften', 'streamen', 'verteidigen', 'tor_reparieren', 'bulldoghalle_aufräumen'], 
         'danger': 0,
-        'shop': ['bier', 'pizza', 'energy_drink', 'poster', 'drachenlord_merch'],
+        'shop': ['bier', 'tiefkühlpizza', 'energy_drink', 'poster', 'drachenlord_merch'],
         'special_events': ['hater_invasion', 'polizei_besuch', 'nachbar_beschwerde', 'schanzenfest']
     },
     'altschauerberg': {
@@ -126,7 +178,7 @@ LOCATIONS = {
         'description': 'Die Gemeinde die dein Haus gekauft hat. Hier ist das Rathaus und die Verwaltung.',
         'actions': ['rathaus_besuchen', 'shop', 'reden', 'quests_annehmen', 'kirche_besuchen'],
         'danger': 1,
-        'shop': ['brot', 'wurst', 'käse', 'bier', 'zeitung', 'briefmarken', 'formulare']
+        'shop': ['brot', 'wurst', 'käse', 'ofenkäse', 'bier', 'zeitung', 'briefmarken', 'formulare']
     },
     'neustadt_aisch': {
         'name': 'Neustadt an der Aisch',
@@ -212,6 +264,13 @@ LOCATIONS = {
         'actions': ['streamen', 'videos_machen', 'hater_bekämpfen', 'social_media', 'younow_streamen'],
         'danger': 5,
         'shop': ['premium_account', 'stream_equipment', 'bot_protection']
+    },
+    'rewe': {
+        'name': 'REWE Supermarkt',
+        'description': 'Der lokale Supermarkt wo du alles für den täglichen Bedarf findest. Die Kassiererin kennt dich schon!',
+        'actions': ['einkaufen', 'kassiererin_reden', 'angebote_checken', 'pfandflaschen_abgeben'],
+        'danger': 0,
+        'shop': ['mettbrötchen', 'tiefkühlpizza', 'energy_drink', 'bier', 'döner', 'schnitzel', 'currywurst', 'leberkäse', 'survival_kit']
     }
 }
 
@@ -391,9 +450,27 @@ class Drachigotchi:
 
     def get_total_stat(self, stat):
         base_stat = self.skills.get(stat, 0)
+
+        # Equipment stats
         for item_name in self.equipment.values():
             if item_name and item_name in ITEMS:
-                base_stat += ITEMS[item_name].get('stats', {}).get(stat, 0)
+                item_stats = ITEMS[item_name].get('stats', {})
+                if 'all_stats' in item_stats:
+                    base_stat += item_stats['all_stats']
+                else:
+                    base_stat += item_stats.get(stat, 0)
+
+        # Achievement items in inventory (passive bonuses)
+        for item_name, count in self.inventory.items():
+            if count > 0 and item_name in ITEMS:
+                item_info = ITEMS[item_name]
+                if item_info.get('type') == 'achievement':
+                    item_stats = item_info.get('stats', {})
+                    if 'all_stats' in item_stats:
+                        base_stat += item_stats['all_stats']
+                    else:
+                        base_stat += item_stats.get(stat, 0)
+
         # Apply buffs
         if stat in self.buffs:
             base_stat += self.buffs[stat].get('value', 0)
@@ -437,13 +514,17 @@ class Drachigotchi:
         """Prüft ob eine Aktion möglich ist"""
         if location and self.location != location:
             return False, f"Du musst in {LOCATIONS[location]['name']} sein!"
-        
+
         if action == 'fahren' and not self.has_führerschein:
             return False, "Du brauchst einen Führerschein!"
-        
+
+        # Schlafen sollte immer möglich sein, auch bei niedriger Energie
+        if action == 'schlafen':
+            return True, "OK"
+
         if self.energy < 10:
-            return False, "Du bist zu müde!"
-            
+            return False, "Du bist zu müde! Versuche zu schlafen oder kaufe ein Survival Kit im REWE."
+
         return True, "OK"
     
     def update_status(self):
@@ -657,10 +738,74 @@ def register_drachigotchi_commands(bot):
             drachi.update_status()
             drachi.last_update = now
 
+            # Check quest completion
+            completed_quests = check_quest_completion(drachi)
+            if completed_quests:
+                for quest in completed_quests:
+                    events.append(f"🎉 Quest abgeschlossen: {quest['name']}!")
+
+            # Check for critical conditions and send warnings
+            if drachi.health <= 10 or drachi.hunger <= 5 or drachi.energy <= 5:
+                # Import bot here to avoid circular imports
+                from main import bot
+                import asyncio
+                asyncio.create_task(send_critical_warning(bot, drachi.user_id, drachi))
+
             # Return events for potential display
             return events
 
         return []
+
+    async def send_critical_warning(bot, user_id, drachi):
+        """Sende kritische Warnungen per DM wenn das Drachigotchi in Gefahr ist"""
+        try:
+            user = bot.get_user(user_id)
+            if not user:
+                return
+
+            warnings = []
+
+            # Kritische Gesundheit
+            if drachi.health <= 10:
+                warnings.append("🚨 **NOTFALL**: Dein Drachigotchi stirbt! Gesundheit bei nur noch {drachi.health}%!")
+                warnings.append("Kaufe sofort Medikamente oder besuche ein Krankenhaus!")
+
+            # Kritischer Hunger
+            if drachi.hunger <= 5:
+                warnings.append("🍕 **VERHUNGERT**: Dein Drachigotchi verhungert! Hunger bei nur noch {drachi.hunger}%!")
+                warnings.append("Kaufe sofort Essen oder es stirbt!")
+
+            # Keine Energie für wichtige Aktionen
+            if drachi.energy <= 5:
+                warnings.append("😴 **ERSCHÖPFT**: Dein Drachigotchi kann keine Aktionen mehr ausführen!")
+                warnings.append("Schlafe in der Schanze um Energie zu regenerieren!")
+
+            if warnings:
+                embed = discord.Embed(
+                    title="🚨 DRACHIGOTCHI NOTFALL! 🚨",
+                    description=f"Dein Drachigotchi **{drachi.name}** braucht sofortige Hilfe!",
+                    color=0xff0000
+                )
+
+                embed.add_field(
+                    name="⚠️ Kritische Warnungen",
+                    value="\n".join(warnings),
+                    inline=False
+                )
+
+                embed.add_field(
+                    name="🎯 Sofortige Maßnahmen",
+                    value="• Nutze `/gotchi status` um den aktuellen Zustand zu sehen\n"
+                          "• Nutze `/gotchi kaufen` um Essen/Medikamente zu kaufen\n"
+                          "• Nutze `/gotchi aktion` und wähle 'Schlafen' in der Schanze\n"
+                          "• Nutze `/gotchi reisen` um zur Schanze zurückzukehren",
+                    inline=False
+                )
+
+                await user.send(embed=embed)
+
+        except Exception as e:
+            print(f"Fehler beim Senden der kritischen Warnung: {e}")
 
     # Drachigotchi Command Group
     gotchi = app_commands.Group(name="gotchi", description="Dein persönliches Drachigotchi-Abenteuer!")
@@ -689,13 +834,15 @@ def register_drachigotchi_commands(bot):
             value="• `/gotchi essen` - Iss Essen aus deinem Inventar (Dropdown-Menü)\n"
                   "• `/gotchi kaufen` - Kaufe Items in lokalen Shops (Dropdown-Menü)\n"
                   "• `/gotchi shop` - Zeige verfügbare Items am aktuellen Ort\n"
-                  "• Behalte Hunger, Gesundheit, Glück und Energie im Auge!",
+                  "• **WICHTIG:** Bei niedriger Energie gehe zum REWE und kaufe ein Survival Kit (5€)!\n"
+                  "• Schlafen geht immer in der Schanze, auch bei 0 Energie!",
             inline=False
         )
 
         embed.add_field(
             name="🗺️ Reisen & Abenteuer",
             value="• `/gotchi reisen` - Reise zu verschiedenen Orten (Dropdown-Menü)\n"
+                  "• `/gotchi aktion` - Führe spezifische Aktionen am aktuellen Ort aus\n"
                   "• `/gotchi erkunden` - Erkunde deinen aktuellen Ort für Belohnungen\n"
                   "• `/gotchi hater_bekämpfen` - Kämpfe gegen Hater\n"
                   "• `/gotchi streamen` - Streame um Geld und Ruhm zu verdienen",
@@ -756,6 +903,42 @@ def register_drachigotchi_commands(bot):
         # Update stats before showing status and get events
         events = update_drachigotchi_stats(drachi)
 
+        # Check for critical conditions and create warnings
+        warnings = []
+        suggestions = []
+
+        # Critical health warning
+        if drachi.health <= 20:
+            warnings.append("🚨 **KRITISCH: Gesundheit sehr niedrig!**")
+            suggestions.append("• Kaufe Medikamente oder besuche ein Krankenhaus")
+            suggestions.append("• Schlafe in der Schanze um Gesundheit zu regenerieren")
+
+        # Critical hunger warning
+        if drachi.hunger <= 10:
+            warnings.append("🍕 **HUNGRIG: Dein Drachigotchi verhungert!**")
+            suggestions.append("• Kaufe sofort Essen in einem Shop")
+            suggestions.append("• Nutze `/gotchi kaufen` oder `/gotchi shop`")
+
+        # Low energy warning
+        if drachi.energy <= 15:
+            warnings.append("😴 **MÜDE: Sehr wenig Energie!**")
+            suggestions.append("• Schlafe in der Schanze mit `/gotchi aktion`")
+            suggestions.append("• Trinke Energy Drinks aus deinem Inventar")
+
+        # Low happiness warning
+        if drachi.happiness <= 20:
+            warnings.append("😢 **UNGLÜCKLICH: Dein Drachigotchi ist traurig!**")
+            suggestions.append("• Erkunde interessante Orte")
+            suggestions.append("• Streame oder sammle Fame")
+            suggestions.append("• Trinke Bier oder besuche das Oktoberfest")
+
+        # No money warning
+        if drachi.money <= 10:
+            warnings.append("💸 **PLEITE: Kein Geld mehr!**")
+            suggestions.append("• Arbeite mit `/gotchi arbeiten` (braucht Job)")
+            suggestions.append("• Streame mit `/gotchi streamen`")
+            suggestions.append("• Erkunde Orte für Geld-Belohnungen")
+
         # Get ASCII art for current status
         art = DRACHIGOTCHI_ART.get(drachi.status, DRACHIGOTCHI_ART['normal'])
 
@@ -786,6 +969,29 @@ def register_drachigotchi_commands(bot):
         if events:
             events_text = "\n".join(events[:3])  # Show max 3 events
             embed.add_field(name="📰 Aktuelle Ereignisse", value=events_text, inline=False)
+
+        # Add warnings if any critical conditions exist
+        if warnings:
+            embed.add_field(name="⚠️ WARNUNGEN", value="\n".join(warnings), inline=False)
+
+        # Add suggestions if any exist
+        if suggestions:
+            embed.add_field(name="💡 Empfehlungen", value="\n".join(suggestions), inline=False)
+
+        # Add next steps suggestions
+        next_steps = []
+        if drachi.location == 'schanze':
+            next_steps.append("• Erkunde mit `/gotchi erkunden`")
+            next_steps.append("• Reise zu anderen Orten mit `/gotchi reisen`")
+        else:
+            next_steps.append("• Führe Aktionen aus mit `/gotchi aktion`")
+            next_steps.append("• Erkunde den Ort mit `/gotchi erkunden`")
+
+        if drachi.money > 20:
+            next_steps.append("• Kaufe Items mit `/gotchi kaufen`")
+
+        if next_steps:
+            embed.add_field(name="🎯 Nächste Schritte", value="\n".join(next_steps), inline=False)
 
         # Save after showing status
         drachigotchi_manager.save()
@@ -908,9 +1114,15 @@ def register_drachigotchi_commands(bot):
 
                 drachigotchi_manager.save()
 
+                # Determine if it's drinking or eating based on item name
+                drinks = ['energy_drink', 'bier', 'kaffee', 'pilsner', 'weißbier', 'berliner_weisse', 'rauchbier', 'frankenwein', 'milch']
+                action_text = "getrunken" if selected_item in drinks else "gegessen"
+                emoji = "🥤" if selected_item in drinks else "🍽️"
+                title = f"{emoji} {'Prost!' if selected_item in drinks else 'Mahlzeit!'}"
+
                 embed = discord.Embed(
-                    title="🍽️ Mahlzeit!",
-                    description=f"Du hast **{item_info.get('name', selected_item)}** gegessen!",
+                    title=title,
+                    description=f"Du hast **{item_info.get('name', selected_item)}** {action_text}!",
                     color=0x00ff00
                 )
 
@@ -1013,6 +1225,87 @@ def register_drachigotchi_commands(bot):
          embed = discord.Embed(title="📜 Quest gestartet!", description=f"**{quest['name']}**\n{quest['description']}", color=0x00ff00)
          await interaction.response.send_message(embed=embed, ephemeral=True)
 
+    def check_quest_completion(drachi):
+        """Prüft ob Quests abgeschlossen werden können"""
+        completed_quests = []
+
+        for quest_id in drachi.active_quests[:]:  # Copy to avoid modification during iteration
+            if quest_id not in QUESTS:
+                continue
+
+            quest = QUESTS[quest_id]
+            requirement = quest.get('requirement', {})
+
+            quest_completed = False
+
+            # Check different requirement types
+            if 'item' in requirement:
+                item_name = requirement['item']
+                required_amount = requirement.get('amount', 1)
+                if drachi.inventory.get(item_name, 0) >= required_amount:
+                    quest_completed = True
+
+            elif 'items' in requirement:
+                # Check if player has all required items
+                has_all_items = True
+                for item_name in requirement['items']:
+                    if drachi.inventory.get(item_name, 0) < 1:
+                        has_all_items = False
+                        break
+                if has_all_items:
+                    quest_completed = True
+
+            elif 'fame' in requirement:
+                if drachi.fame >= requirement['fame']:
+                    quest_completed = True
+
+            elif 'kill' in requirement:
+                target = requirement['kill']
+                amount = requirement.get('amount', 1)
+                if target == 'hater' and drachi.total_haters_defeated >= amount:
+                    quest_completed = True
+
+            elif 'materials' in requirement:
+                # Check if player has all required materials
+                has_all_materials = True
+                for material, amount in requirement['materials'].items():
+                    if drachi.inventory.get(material, 0) < amount:
+                        has_all_materials = False
+                        break
+                if has_all_materials:
+                    quest_completed = True
+
+            elif 'action' in requirement:
+                action = requirement['action']
+                if action == 'mpu_bestehen' and drachi.mpu_passed:
+                    quest_completed = True
+                elif action == 'bka_besuchen' and drachi.location == 'berlin':
+                    quest_completed = True
+
+            if quest_completed:
+                # Complete the quest
+                drachi.active_quests.remove(quest_id)
+                drachi.completed_quests.append(quest_id)
+
+                # Give rewards
+                reward = quest.get('reward', {})
+                if 'exp' in reward:
+                    drachi.gain_exp(reward['exp'])
+                if 'money' in reward:
+                    drachi.money += reward['money']
+                if 'fame' in reward:
+                    drachi.fame += reward['fame']
+                if 'happiness' in reward:
+                    drachi.happiness = min(drachi.get_max_happiness(), drachi.happiness + reward['happiness'])
+                if 'item' in reward:
+                    drachi.inventory[reward['item']] = drachi.inventory.get(reward['item'], 0) + 1
+                if 'schanze_level' in reward:
+                    drachi.schanze_level += reward['schanze_level']
+
+                completed_quests.append(quest)
+
+        return completed_quests
+
     @gotchi.command(name="achievements", description="Zeigt deine Erfolge")
     async def achievements(interaction: discord.Interaction):
          drachi = drachigotchi_manager.get_drachigotchi(interaction.user.id)
@@ -1039,7 +1332,7 @@ def register_drachigotchi_commands(bot):
              return await interaction.response.send_message("Starte erst mit `/gotchi start`.", ephemeral=True)
 
          if drachi.energy < stunden * 10:
-             return await interaction.response.send_message(f"Du brauchst {stunden * 10} Energie zum Streamen!", ephemeral=True)
+             return await interaction.response.send_message(f"Du brauchst {stunden * 10} Energie zum Streamen! 💡 **Tipp:** Gehe zur Schanze und schlafe oder kaufe ein Survival Kit im REWE für 5€.", ephemeral=True)
 
          if stunden > 8:
              return await interaction.response.send_message("Du kannst maximal 8 Stunden am Stück streamen!", ephemeral=True)
@@ -1088,7 +1381,7 @@ def register_drachigotchi_commands(bot):
              return await interaction.response.send_message("Starte erst mit `/gotchi start`.", ephemeral=True)
 
          if drachi.energy < 20:
-             return await interaction.response.send_message("Du brauchst mindestens 20 Energie zum Kämpfen!", ephemeral=True)
+             return await interaction.response.send_message("Du brauchst mindestens 20 Energie zum Kämpfen! 💡 **Tipp:** Gehe zur Schanze und schlafe oder kaufe ein Survival Kit im REWE für 5€.", ephemeral=True)
 
          # Combat calculation
          player_power = drachi.get_total_stat('strength') + drachi.get_total_stat('charisma')
@@ -1115,6 +1408,14 @@ def register_drachigotchi_commands(bot):
              if drachi.total_haters_defeated == 10 and "Hater-Schreck" not in drachi.achievements:
                  drachi.achievements.append("Hater-Schreck")
                  embed.add_field(name="🏆 Neuer Erfolg!", value="Hater-Schreck: 10 Hater besiegt!", inline=False)
+
+             # Check quest completion
+             completed_quests = check_quest_completion(drachi)
+             if completed_quests:
+                 quest_text = []
+                 for quest in completed_quests:
+                     quest_text.append(f"🎉 {quest['name']}")
+                 embed.add_field(name="📜 Quests abgeschlossen!", value="\n".join(quest_text), inline=False)
          else:
              # Defeat
              health_loss = random.randint(10, 25)
@@ -1134,14 +1435,19 @@ def register_drachigotchi_commands(bot):
     @app_commands.describe(ort="Wähle dein Reiseziel")
     @app_commands.choices(ort=[
         app_commands.Choice(name="🏠 Die Schanze (Zuhause)", value="schanze"),
-        app_commands.Choice(name="🌲 Emskirchener Wald", value="emskirchener_wald"),
-        app_commands.Choice(name="🏪 Netto Markt", value="netto"),
-        app_commands.Choice(name="🍺 Gasthof Sonne", value="gasthof_sonne"),
+        app_commands.Choice(name="🏘️ Altschauerberg Dorf", value="altschauerberg"),
+        app_commands.Choice(name="🏛️ Emskirchen", value="emskirchen"),
+        app_commands.Choice(name="🏥 Neustadt a.d. Aisch", value="neustadt_aisch"),
         app_commands.Choice(name="🏛️ Nürnberg", value="nürnberg"),
+        app_commands.Choice(name="🛒 REWE Supermarkt", value="rewe"),
+        app_commands.Choice(name="🌲 Fränkischer Wald", value="wald"),
+        app_commands.Choice(name="⛏️ Verlassene Mine", value="mine"),
+        app_commands.Choice(name="💀 Haider-Lager", value="haider_lager"),
         app_commands.Choice(name="🚗 Autobahn A3", value="autobahn_a3"),
         app_commands.Choice(name="🍺 Bamberg", value="bamberg"),
         app_commands.Choice(name="🍷 Würzburg", value="würzburg"),
         app_commands.Choice(name="🏰 München", value="münchen"),
+        app_commands.Choice(name="🏛️ Berlin", value="berlin"),
         app_commands.Choice(name="🌍 Tschechien", value="tschechei"),
         app_commands.Choice(name="💻 Internet", value="internet")
     ])
@@ -1158,13 +1464,13 @@ def register_drachigotchi_commands(bot):
         # Check requirements
         if 'requirement' in location_info:
             req = location_info['requirement']
-            if req == 'führerschein' and 'führerschein' not in drachi.inventory:
+            if req == 'führerschein' and not drachi.has_führerschein:
                 return await interaction.response.send_message(f"❌ Du brauchst einen Führerschein um nach {location_info['name']} zu reisen!", ephemeral=True)
 
         # Travel costs energy
         travel_cost = 5 if ort != 'schanze' else 0
         if drachi.energy < travel_cost:
-            return await interaction.response.send_message(f"❌ Du brauchst {travel_cost} Energie zum Reisen!", ephemeral=True)
+            return await interaction.response.send_message(f"❌ Du brauchst {travel_cost} Energie zum Reisen! 💡 **Tipp:** Gehe zur Schanze und schlafe oder kaufe ein Survival Kit im REWE für 5€.", ephemeral=True)
 
         old_location = LOCATIONS[drachi.location]['name']
         drachi.location = ort
@@ -1181,6 +1487,12 @@ def register_drachigotchi_commands(bot):
         embed.add_field(name="⚡ Energiekosten", value=f"-{travel_cost} Energie", inline=True)
         embed.add_field(name="🎯 Verfügbare Aktionen", value=", ".join(location_info['actions']), inline=False)
 
+        # Add helpful tips for specific locations
+        if ort == 'rewe':
+            embed.add_field(name="💡 Tipp", value="Hier findest du das **Survival Kit** für 5€ - perfekt wenn du feststeckst!", inline=False)
+        elif ort == 'schanze':
+            embed.add_field(name="💡 Tipp", value="Hier kannst du **schlafen** um Energie zu regenerieren - geht immer, auch bei 0 Energie!", inline=False)
+
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @gotchi.command(name="erkunden", description="Erkunde deinen aktuellen Ort und finde Abenteuer!")
@@ -1190,7 +1502,7 @@ def register_drachigotchi_commands(bot):
             return await interaction.response.send_message("Starte erst mit `/gotchi start`.", ephemeral=True)
 
         if drachi.energy < 10:
-            return await interaction.response.send_message("❌ Du brauchst mindestens 10 Energie zum Erkunden!", ephemeral=True)
+            return await interaction.response.send_message("❌ Du brauchst mindestens 10 Energie zum Erkunden! 💡 **Tipp:** Gehe zur Schanze und schlafe oder kaufe ein Survival Kit im REWE für 5€.", ephemeral=True)
 
         location_info = LOCATIONS[drachi.location]
         drachi.energy -= 10
@@ -1213,7 +1525,7 @@ def register_drachigotchi_commands(bot):
             if random.random() < 0.2:
                 rewards['money'] = random.randint(5, 15)
 
-        elif drachi.location == 'emskirchener_wald':
+        elif drachi.location == 'wald':
             events = [
                 "Du findest Pilze die bei den Bäumen wachsen!",
                 "Ein friedlicher Spaziergang durch die Natur stellt dein Glück wieder her.",
@@ -1226,7 +1538,7 @@ def register_drachigotchi_commands(bot):
             if random.random() < 0.3:
                 drachi.happiness += 10
 
-        elif drachi.location == 'netto':
+        elif drachi.location == 'rewe':
             events = [
                 "Du durchstöberst die Gänge und findest gute Angebote!",
                 "Die Kassiererin erkennt dich - lokaler Promi-Status!",
@@ -1323,8 +1635,19 @@ def register_drachigotchi_commands(bot):
             drachi.inventory[material] -= amount
         drachi.inventory[gegenstand] = drachi.inventory.get(gegenstand, 0) + 1
         drachi.gain_exp(25)
+        drachi.total_items_crafted += 1
+
+        # Check quest completion
+        completed_quests = check_quest_completion(drachi)
+
         drachigotchi_manager.save()
-        await interaction.response.send_message(f"Du hast erfolgreich 1x {gegenstand} hergestellt!", ephemeral=True)
+
+        response_text = f"Du hast erfolgreich 1x {gegenstand} hergestellt!"
+        if completed_quests:
+            quest_names = [quest['name'] for quest in completed_quests]
+            response_text += f"\n\n🎉 Quests abgeschlossen: {', '.join(quest_names)}"
+
+        await interaction.response.send_message(response_text, ephemeral=True)
 
     # --- Economy Commands ---
     @gotchi.command(name="job", description="Nimm einen Job an oder kündige ihn.")
@@ -1349,7 +1672,7 @@ def register_drachigotchi_commands(bot):
     async def arbeiten(interaction: discord.Interaction):
         drachi = drachigotchi_manager.get_drachigotchi(interaction.user.id)
         if not drachi or not drachi.job:
-            return await interaction.response.send_message("Du hast keinen Job.", ephemeral=True)
+            return await interaction.response.send_message("Du hast keinen Job. 💡 **Tipp:** Nutze `/gotchi job annehmen <job_name>` um einen Job zu bekommen!", ephemeral=True)
 
         job_data = JOBS[drachi.job]
         skill_level = drachi.skills.get(job_data['skill'], 1)
@@ -1362,9 +1685,479 @@ def register_drachigotchi_commands(bot):
         drachigotchi_manager.save()
         await interaction.response.send_message(f"Du hast 2 Stunden gearbeitet und {earnings}€ verdient.", ephemeral=True)
 
+    # --- Specific Action Commands ---
+    @gotchi.command(name="aktion", description="Führe eine spezifische Aktion an deinem aktuellen Ort aus")
+    async def aktion(interaction: discord.Interaction):
+        """Führe eine Aktion an deinem aktuellen Ort aus"""
+        drachi = drachigotchi_manager.get_drachigotchi(interaction.user.id)
+        if not drachi:
+            return await interaction.response.send_message("❌ Du hast noch kein Drachigotchi! Nutze `/gotchi start`", ephemeral=True)
 
+        if drachi.status == 'dead':
+            return await interaction.response.send_message("💀 Dein Drachigotchi ist tot!", ephemeral=True)
 
-    
+        location_info = LOCATIONS.get(drachi.location, {})
+        available_actions = location_info.get('actions', [])
+
+        if not available_actions:
+            return await interaction.response.send_message(f"❌ Keine Aktionen verfügbar in {location_info.get('name', drachi.location)}!", ephemeral=True)
+
+        # Create dropdown for actions
+        class ActionSelect(discord.ui.Select):
+            def __init__(self):
+                # Create options for each available action
+                options = []
+                for action in available_actions[:25]:  # Discord limit
+                    # Create readable names for actions
+                    action_names = {
+                        'radio_z_besuchen': '📻 Radio Z besuchen',
+                        'gericht_besuchen': '⚖️ Gericht besuchen',
+                        'mpu_machen': '🚗 MPU machen',
+                        'fame_sammeln': '⭐ Fame sammeln',
+                        'schlafen': '😴 Schlafen',
+                        'craften': '🔨 Craften',
+                        'streamen': '📺 Streamen',
+                        'verteidigen': '🛡️ Schanze verteidigen',
+                        'tor_reparieren': '🚪 Tor reparieren',
+                        'bulldoghalle_aufräumen': '🧹 Bulldoghalle aufräumen',
+                        'arbeiten': '💼 Arbeiten',
+                        'sammeln_holz': '🪵 Holz sammeln',
+                        'pilze_sammeln': '🍄 Pilze sammeln',
+                        'jagen': '🏹 Jagen',
+                        'verstecken': '🫥 Verstecken',
+                        'entspannen': '😌 Entspannen',
+                        'oktoberfest': '🍺 Oktoberfest besuchen',
+                        'tv_auftritte': '📺 TV-Auftritte',
+                        'bier_trinken': '🍺 Bier trinken',
+                        'studieren': '📚 Studieren',
+                        'kultur_erleben': '🎭 Kultur erleben',
+                        'schätze_suchen': '💎 Schätze suchen',
+                        'bergbau_lernen': '⛏️ Bergbau lernen',
+                        'krankenhaus_besuchen': '🏥 Krankenhaus besuchen',
+                        'amt_besuchen': '🏛️ Amt besuchen',
+                        'geburtshaus_besuchen': '🏠 Geburtshaus besuchen',
+                        'spazieren': '🚶 Spazieren gehen',
+                        'nachbarn_besuchen': '👥 Nachbarn besuchen',
+                        'burgruine_erkunden': '🏰 Burgruine erkunden',
+                        'dorfklatsch': '💬 Dorfklatsch',
+                        'rathaus_besuchen': '🏛️ Rathaus besuchen',
+                        'reden': '💬 Mit Leuten reden',
+                        'quests_annehmen': '📜 Quests annehmen',
+                        'kirche_besuchen': '⛪ Kirche besuchen',
+                        'tor_reparieren': '🚪 Tor reparieren',
+                        'bulldoghalle_aufräumen': '🧹 Bulldoghalle aufräumen',
+                        'bka_besuchen': '🏛️ BKA besuchen',
+                        'bundestag_besuchen': '🏛️ Bundestag besuchen',
+                        'mainstream_werden': '📺 Mainstream werden',
+                        'tv_shows': '📺 TV-Shows',
+                        'verstecken': '🫥 Verstecken',
+                        'entspannen': '😌 Entspannen'
+                    }
+
+                    display_name = action_names.get(action, action.replace('_', ' ').title())
+                    options.append(discord.SelectOption(
+                        label=display_name,
+                        value=action,
+                        description=f"Führe '{display_name}' aus"
+                    ))
+
+                super().__init__(placeholder="Wähle eine Aktion...", options=options)
+
+            async def callback(self, select_interaction: discord.Interaction):
+                if select_interaction.user.id != interaction.user.id:
+                    return await select_interaction.response.send_message("❌ Das ist nicht deine Aktion!", ephemeral=True)
+
+                selected_action = self.values[0]
+                await self.perform_action(select_interaction, selected_action)
+
+            async def perform_action(self, select_interaction: discord.Interaction, action: str):
+                """Führe die gewählte Aktion aus"""
+                drachi = drachigotchi_manager.get_drachigotchi(select_interaction.user.id)
+
+                # Check energy requirements
+                energy_cost = 15
+                if drachi.energy < energy_cost:
+                    return await select_interaction.response.send_message(
+                        f"❌ Du brauchst {energy_cost} Energie für diese Aktion! Du hast nur {drachi.energy}. 💡 **Tipp:** Gehe zur Schanze und schlafe oder kaufe ein Survival Kit im REWE für 5€.", ephemeral=True
+                    )
+
+                # Perform specific actions
+                result_embed = discord.Embed(color=0x00ff00)
+
+                if action == 'radio_z_besuchen':
+                    if drachi.location != 'nürnberg':
+                        return await select_interaction.response.send_message("❌ Du musst in Nürnberg sein!", ephemeral=True)
+
+                    drachi.energy -= energy_cost
+                    fame_gain = random.randint(5, 15)
+                    money_gain = random.randint(20, 50)
+                    drachi.fame += fame_gain
+                    drachi.money += money_gain
+                    drachi.gain_exp(25)
+
+                    result_embed.title = "📻 Radio Z Besuch"
+                    result_embed.description = "Du warst bei Radio Z und hast ein Interview gegeben!"
+                    result_embed.add_field(name="Belohnungen", value=f"+{fame_gain} Fame\n+{money_gain}€\n+25 EXP", inline=False)
+
+                elif action == 'gericht_besuchen':
+                    if drachi.location != 'nürnberg':
+                        return await select_interaction.response.send_message("❌ Du musst in Nürnberg sein!", ephemeral=True)
+
+                    drachi.energy -= energy_cost
+                    if random.random() < 0.7:  # 70% Erfolg
+                        money_loss = random.randint(100, 300)
+                        drachi.money = max(0, drachi.money - money_loss)
+                        result_embed.title = "⚖️ Gerichtsverhandlung"
+                        result_embed.description = "Du warst vor Gericht. Es lief... okay."
+                        result_embed.add_field(name="Kosten", value=f"-{money_loss}€ (Anwaltskosten)", inline=False)
+                    else:
+                        result_embed.title = "⚖️ Gerichtsverhandlung"
+                        result_embed.description = "Du warst vor Gericht und hast gewonnen!"
+                        result_embed.add_field(name="Erfolg", value="Keine Kosten!", inline=False)
+
+                elif action == 'mpu_machen':
+                    if drachi.location != 'nürnberg':
+                        return await select_interaction.response.send_message("❌ Du musst in Nürnberg sein!", ephemeral=True)
+
+                    drachi.energy -= energy_cost
+                    cost = 500
+                    if drachi.money < cost:
+                        return await select_interaction.response.send_message(f"❌ Du brauchst {cost}€ für die MPU! 💡 **Tipp:** Arbeite mit `/gotchi arbeiten` oder streame mit `/gotchi streamen` um Geld zu verdienen.", ephemeral=True)
+
+                    drachi.money -= cost
+                    if random.random() < 0.6:  # 60% Erfolg
+                        drachi.inventory['führerschein'] = 1
+                        result_embed.title = "🚗 MPU bestanden!"
+                        result_embed.description = "Glückwunsch! Du hast die MPU bestanden und deinen Führerschein zurück!"
+                        result_embed.add_field(name="Belohnung", value="Führerschein erhalten!", inline=False)
+                    else:
+                        result_embed.title = "🚗 MPU nicht bestanden"
+                        result_embed.description = "Leider hast du die MPU nicht bestanden. Versuch es später nochmal."
+                        result_embed.add_field(name="Kosten", value=f"-{cost}€", inline=False)
+
+                elif action == 'fame_sammeln':
+                    drachi.energy -= energy_cost
+                    fame_gain = random.randint(3, 10)
+                    drachi.fame += fame_gain
+                    drachi.gain_exp(15)
+
+                    result_embed.title = "⭐ Fame sammeln"
+                    result_embed.description = "Du hast dich in der Öffentlichkeit gezeigt und Fame gesammelt!"
+                    result_embed.add_field(name="Belohnungen", value=f"+{fame_gain} Fame\n+15 EXP", inline=False)
+
+                elif action == 'schlafen':
+                    if drachi.location != 'schanze':
+                        return await select_interaction.response.send_message("❌ Du kannst nur in der Schanze schlafen!", ephemeral=True)
+
+                    energy_gain = random.randint(30, 50)
+                    health_gain = random.randint(10, 20)
+                    drachi.energy = min(drachi.get_max_energy(), drachi.energy + energy_gain)
+                    drachi.health = min(100, drachi.health + health_gain)
+
+                    result_embed.title = "😴 Erholsamer Schlaf"
+                    result_embed.description = "Du hast gut geschlafen und fühlst dich erfrischt!"
+                    result_embed.add_field(name="Regeneration", value=f"+{energy_gain} Energie\n+{health_gain} Gesundheit", inline=False)
+
+                elif action == 'sammeln_holz':
+                    if drachi.location != 'wald':
+                        return await select_interaction.response.send_message("❌ Du musst im Wald sein!", ephemeral=True)
+
+                    drachi.energy -= energy_cost
+                    holz_amount = random.randint(2, 5)
+                    drachi.inventory['holz'] = drachi.inventory.get('holz', 0) + holz_amount
+                    drachi.gain_exp(15)
+                    drachi.skills['gathering'] += 1
+
+                    result_embed.title = "🪵 Holz gesammelt"
+                    result_embed.description = "Du hast erfolgreich Holz gesammelt!"
+                    result_embed.add_field(name="Belohnungen", value=f"+{holz_amount} Holz\n+15 EXP\n+1 Sammeln-Skill", inline=False)
+
+                elif action == 'pilze_sammeln':
+                    if drachi.location != 'wald':
+                        return await select_interaction.response.send_message("❌ Du musst im Wald sein!", ephemeral=True)
+
+                    drachi.energy -= energy_cost
+                    pilze_amount = random.randint(1, 3)
+                    drachi.inventory['pilze'] = drachi.inventory.get('pilze', 0) + pilze_amount
+                    drachi.gain_exp(12)
+                    drachi.skills['gathering'] += 1
+
+                    result_embed.title = "🍄 Pilze gesammelt"
+                    result_embed.description = "Du hast leckere Pilze gefunden!"
+                    result_embed.add_field(name="Belohnungen", value=f"+{pilze_amount} Pilze\n+12 EXP\n+1 Sammeln-Skill", inline=False)
+
+                elif action == 'abbauen_stein':
+                    if drachi.location != 'mine':
+                        return await select_interaction.response.send_message("❌ Du musst in der Mine sein!", ephemeral=True)
+
+                    drachi.energy -= energy_cost
+                    stein_amount = random.randint(1, 3)
+                    drachi.inventory['stein'] = drachi.inventory.get('stein', 0) + stein_amount
+                    drachi.gain_exp(18)
+                    drachi.skills['gathering'] += 1
+
+                    result_embed.title = "⛏️ Stein abgebaut"
+                    result_embed.description = "Du hast Stein aus der Mine abgebaut!"
+                    result_embed.add_field(name="Belohnungen", value=f"+{stein_amount} Stein\n+18 EXP\n+1 Sammeln-Skill", inline=False)
+
+                elif action == 'abbauen_eisen':
+                    if drachi.location != 'mine':
+                        return await select_interaction.response.send_message("❌ Du musst in der Mine sein!", ephemeral=True)
+
+                    drachi.energy -= energy_cost
+                    if random.random() < 0.6:  # 60% Chance
+                        eisen_amount = random.randint(1, 2)
+                        drachi.inventory['eisen'] = drachi.inventory.get('eisen', 0) + eisen_amount
+                        drachi.gain_exp(25)
+                        drachi.skills['gathering'] += 2
+
+                        result_embed.title = "⚒️ Eisen gefunden!"
+                        result_embed.description = "Du hast wertvolles Eisen abgebaut!"
+                        result_embed.add_field(name="Belohnungen", value=f"+{eisen_amount} Eisen\n+25 EXP\n+2 Sammeln-Skill", inline=False)
+                    else:
+                        drachi.gain_exp(10)
+                        result_embed.title = "⚒️ Kein Eisen gefunden"
+                        result_embed.description = "Du hast gegraben, aber kein Eisen gefunden."
+                        result_embed.add_field(name="Belohnung", value="+10 EXP", inline=False)
+
+                elif action == 'streamen':
+                    drachi.energy -= energy_cost
+                    viewers = random.randint(50, 500)
+                    money_gain = random.randint(10, 50)
+                    fame_gain = random.randint(3, 8)
+
+                    drachi.money += money_gain
+                    drachi.fame += fame_gain
+                    drachi.stream_hours += 2
+                    drachi.gain_exp(20)
+
+                    result_embed.title = "📺 Stream erfolgreich!"
+                    result_embed.description = f"Du hast 2 Stunden gestreamt und {viewers} Zuschauer erreicht!"
+                    result_embed.add_field(name="Belohnungen", value=f"+{money_gain}€\n+{fame_gain} Fame\n+20 EXP", inline=False)
+
+                elif action == 'craften':
+                    if drachi.location != 'schanze':
+                        return await select_interaction.response.send_message("❌ Du kannst nur in der Schanze craften!", ephemeral=True)
+
+                    drachi.energy -= energy_cost
+                    drachi.gain_exp(15)
+                    drachi.skills['crafting'] += 1
+
+                    result_embed.title = "🔨 Crafting"
+                    result_embed.description = "Du hast an deinen Crafting-Fähigkeiten gearbeitet!"
+                    result_embed.add_field(name="Belohnungen", value="+15 EXP\n+1 Crafting-Skill", inline=False)
+
+                elif action == 'verteidigen':
+                    if drachi.location != 'schanze':
+                        return await select_interaction.response.send_message("❌ Du kannst nur die Schanze verteidigen!", ephemeral=True)
+
+                    drachi.energy -= energy_cost
+                    if random.random() < 0.7:  # 70% Erfolg
+                        fame_gain = random.randint(5, 15)
+                        drachi.fame += fame_gain
+                        drachi.gain_exp(20)
+                        drachi.skills['defense'] += 1
+
+                        result_embed.title = "🛡️ Schanze erfolgreich verteidigt!"
+                        result_embed.description = "Du hast die Schanze gegen Eindringlinge verteidigt!"
+                        result_embed.add_field(name="Belohnungen", value=f"+{fame_gain} Fame\n+20 EXP\n+1 Defense-Skill", inline=False)
+                    else:
+                        health_loss = random.randint(10, 20)
+                        drachi.health = max(0, drachi.health - health_loss)
+                        drachi.gain_exp(10)
+
+                        result_embed.title = "🛡️ Verteidigung fehlgeschlagen"
+                        result_embed.description = "Die Angreifer waren zu stark!"
+                        result_embed.add_field(name="Verluste", value=f"-{health_loss} Gesundheit\n+10 EXP", inline=False)
+
+                elif action == 'jagen':
+                    if drachi.location != 'wald':
+                        return await select_interaction.response.send_message("❌ Du musst im Wald sein!", ephemeral=True)
+
+                    drachi.energy -= energy_cost
+                    if random.random() < 0.5:  # 50% Erfolg
+                        meat_amount = random.randint(1, 3)
+                        drachi.inventory['wurst'] = drachi.inventory.get('wurst', 0) + meat_amount
+                        drachi.gain_exp(20)
+                        drachi.skills['strength'] += 1
+
+                        result_embed.title = "🏹 Erfolgreiche Jagd!"
+                        result_embed.description = "Du hast erfolgreich gejagt!"
+                        result_embed.add_field(name="Belohnungen", value=f"+{meat_amount} Wurst\n+20 EXP\n+1 Stärke-Skill", inline=False)
+                    else:
+                        drachi.gain_exp(8)
+                        result_embed.title = "🏹 Jagd erfolglos"
+                        result_embed.description = "Die Tiere waren zu schnell!"
+                        result_embed.add_field(name="Belohnung", value="+8 EXP", inline=False)
+
+                elif action == 'schätze_suchen':
+                    if drachi.location != 'mine':
+                        return await select_interaction.response.send_message("❌ Du musst in der Mine sein!", ephemeral=True)
+
+                    drachi.energy -= energy_cost
+                    if random.random() < 0.3:  # 30% Chance für Schatz
+                        if random.random() < 0.1:  # 10% Chance für Gold
+                            gold_amount = random.randint(1, 2)
+                            drachi.inventory['gold'] = drachi.inventory.get('gold', 0) + gold_amount
+                            drachi.gain_exp(50)
+
+                            result_embed.title = "💰 Goldschatz gefunden!"
+                            result_embed.description = "Du hast einen wertvollen Goldschatz entdeckt!"
+                            result_embed.add_field(name="Belohnungen", value=f"+{gold_amount} Gold\n+50 EXP", inline=False)
+                        else:
+                            money_gain = random.randint(20, 100)
+                            drachi.money += money_gain
+                            drachi.gain_exp(25)
+
+                            result_embed.title = "💎 Schatz gefunden!"
+                            result_embed.description = "Du hast einen kleinen Schatz entdeckt!"
+                            result_embed.add_field(name="Belohnungen", value=f"+{money_gain}€\n+25 EXP", inline=False)
+                    else:
+                        drachi.gain_exp(12)
+                        result_embed.title = "🔍 Kein Schatz gefunden"
+                        result_embed.description = "Du hast gründlich gesucht, aber nichts gefunden."
+                        result_embed.add_field(name="Belohnung", value="+12 EXP", inline=False)
+
+                elif action == 'krankenhaus_besuchen':
+                    if drachi.location != 'neustadt_aisch':
+                        return await select_interaction.response.send_message("❌ Du musst in Neustadt a.d. Aisch sein!", ephemeral=True)
+
+                    drachi.energy -= energy_cost
+                    cost = 50
+                    if drachi.money < cost:
+                        return await select_interaction.response.send_message(f"❌ Du brauchst {cost}€ für die Behandlung!", ephemeral=True)
+
+                    drachi.money -= cost
+                    health_gain = random.randint(30, 50)
+                    drachi.health = min(drachi.get_max_health(), drachi.health + health_gain)
+
+                    result_embed.title = "🏥 Krankenhaus Behandlung"
+                    result_embed.description = "Du wurdest erfolgreich behandelt!"
+                    result_embed.add_field(name="Heilung", value=f"+{health_gain} Gesundheit\n-{cost}€", inline=False)
+
+                elif action == 'tor_reparieren':
+                    if drachi.location != 'schanze':
+                        return await select_interaction.response.send_message("❌ Du kannst nur das Schanzentor reparieren!", ephemeral=True)
+
+                    drachi.energy -= energy_cost
+                    if random.random() < 0.8:  # 80% Erfolg
+                        drachi.schanze_level += 1
+                        drachi.gain_exp(30)
+                        drachi.skills['crafting'] += 2
+
+                        result_embed.title = "🚪 Tor erfolgreich repariert!"
+                        result_embed.description = "Das Schanzentor ist wieder wie neu!"
+                        result_embed.add_field(name="Belohnungen", value=f"+1 Schanze Level\n+30 EXP\n+2 Crafting-Skill", inline=False)
+                    else:
+                        drachi.gain_exp(10)
+                        result_embed.title = "🚪 Reparatur fehlgeschlagen"
+                        result_embed.description = "Das Tor ist zu kaputt. Du brauchst bessere Werkzeuge!"
+                        result_embed.add_field(name="Belohnung", value="+10 EXP", inline=False)
+
+                elif action == 'oktoberfest':
+                    if drachi.location != 'münchen':
+                        return await select_interaction.response.send_message("❌ Du musst in München sein!", ephemeral=True)
+
+                    drachi.energy -= energy_cost
+                    cost = 20
+                    if drachi.money < cost:
+                        return await select_interaction.response.send_message(f"❌ Du brauchst {cost}€ für das Oktoberfest!", ephemeral=True)
+
+                    drachi.money -= cost
+                    happiness_gain = random.randint(20, 40)
+                    fame_gain = random.randint(5, 15)
+
+                    drachi.happiness = min(drachi.get_max_happiness(), drachi.happiness + happiness_gain)
+                    drachi.fame += fame_gain
+                    drachi.gain_exp(25)
+                    drachi.add_buff('drunk', 1, 3)  # 3 hours drunk
+
+                    result_embed.title = "🍺 Oktoberfest Besuch!"
+                    result_embed.description = "Du hast das Oktoberfest besucht und ordentlich gefeiert!"
+                    result_embed.add_field(name="Belohnungen", value=f"+{happiness_gain} Glück\n+{fame_gain} Fame\n+25 EXP\n🍺 Beschwipst für 3h", inline=False)
+
+                elif action == 'bka_besuchen':
+                    if drachi.location != 'berlin':
+                        return await select_interaction.response.send_message("❌ Du musst in Berlin sein!", ephemeral=True)
+
+                    drachi.energy -= energy_cost
+                    if drachi.fame >= 500:  # Braucht viel Fame
+                        fame_gain = random.randint(50, 100)
+                        drachi.fame += fame_gain
+                        drachi.gain_exp(100)
+                        drachi.inventory['bka_anerkennung'] = drachi.inventory.get('bka_anerkennung', 0) + 1
+
+                        result_embed.title = "🏛️ BKA Anerkennung erhalten!"
+                        result_embed.description = "Das BKA hat dich offiziell anerkannt!"
+                        result_embed.add_field(name="Belohnungen", value=f"+{fame_gain} Fame\n+100 EXP\nBKA Anerkennung erhalten!", inline=False)
+
+                        # Check quest completion
+                        completed_quests = check_quest_completion(drachi)
+                        if completed_quests:
+                            quest_text = []
+                            for quest in completed_quests:
+                                quest_text.append(f"🎉 {quest['name']}")
+                            result_embed.add_field(name="📜 Quests abgeschlossen!", value="\n".join(quest_text), inline=False)
+                    else:
+                        result_embed.title = "🏛️ BKA Besuch"
+                        result_embed.description = f"Du warst beim BKA, aber du bist noch nicht berühmt genug! (Brauche 500 Fame, habe {drachi.fame})"
+                        result_embed.add_field(name="Belohnung", value="+10 EXP", inline=False)
+                        drachi.gain_exp(10)
+
+                elif action == 'verstecken':
+                    if drachi.location != 'wald':
+                        return await select_interaction.response.send_message("❌ Du musst im Wald sein!", ephemeral=True)
+
+                    drachi.energy -= energy_cost
+                    drachi.happiness = min(drachi.get_max_happiness(), drachi.happiness + 15)
+                    drachi.gain_exp(12)
+                    drachi.skills['speed'] += 1
+
+                    result_embed.title = "🫥 Erfolgreich versteckt!"
+                    result_embed.description = "Du hast dich im Wald versteckt und etwas Ruhe gefunden."
+                    result_embed.add_field(name="Belohnungen", value="+15 Glück\n+12 EXP\n+1 Geschwindigkeit-Skill", inline=False)
+
+                elif action == 'entspannen':
+                    if drachi.location != 'wald':
+                        return await select_interaction.response.send_message("❌ Du musst im Wald sein!", ephemeral=True)
+
+                    drachi.energy -= energy_cost
+                    energy_gain = random.randint(10, 20)
+                    happiness_gain = random.randint(15, 25)
+
+                    drachi.energy = min(drachi.get_max_energy(), drachi.energy + energy_gain)
+                    drachi.happiness = min(drachi.get_max_happiness(), drachi.happiness + happiness_gain)
+                    drachi.gain_exp(15)
+
+                    result_embed.title = "😌 Entspannung im Wald"
+                    result_embed.description = "Du hast dich im Wald entspannt und neue Kraft getankt."
+                    result_embed.add_field(name="Belohnungen", value=f"+{energy_gain} Energie\n+{happiness_gain} Glück\n+15 EXP", inline=False)
+
+                else:
+                    # Generic action handling
+                    drachi.energy -= energy_cost
+                    exp_gain = random.randint(10, 20)
+                    drachi.gain_exp(exp_gain)
+
+                    result_embed.title = f"✅ {action.replace('_', ' ').title()}"
+                    result_embed.description = f"Du hast erfolgreich '{action.replace('_', ' ')}' ausgeführt!"
+                    result_embed.add_field(name="Belohnung", value=f"+{exp_gain} EXP", inline=False)
+
+                result_embed.add_field(name="Energiekosten", value=f"-{energy_cost} Energie", inline=True)
+                drachigotchi_manager.save()
+                await select_interaction.response.send_message(embed=result_embed, ephemeral=True)
+
+        view = discord.ui.View()
+        view.add_item(ActionSelect())
+
+        embed = discord.Embed(
+            title=f"🎯 Verfügbare Aktionen in {location_info.get('name', drachi.location)}",
+            description="Wähle eine Aktion aus dem Dropdown-Menü:",
+            color=0x3498db
+        )
+
+        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+
     @gotchi.command(name="ausrüsten")
     @app_commands.describe(item="Das Item, das du ausrüsten möchtest")
     async def ausrüsten(interaction: discord.Interaction, item: str):
@@ -1449,7 +2242,7 @@ def register_drachigotchi_commands(bot):
         cost = 500 + (drachi.mpu_attempts * 200)  # Gets more expensive
 
         if drachi.money < cost:
-            await interaction.response.send_message(f"❌ Du brauchst {cost}€ für die MPU!", ephemeral=True)
+            await interaction.response.send_message(f"❌ Du brauchst {cost}€ für die MPU! 💡 **Tipp:** Arbeite mit `/gotchi arbeiten` oder streame mit `/gotchi streamen` um Geld zu verdienen.", ephemeral=True)
             return
         
         drachi.money -= cost
@@ -1461,15 +2254,22 @@ def register_drachigotchi_commands(bot):
         if random.random() < success_chance:
             drachi.mpu_passed = True
             drachi.has_führerschein = True
-            drachi.inventory['führerschein'] = drachi.inventory.get('führerschein', 0) + 1
-            
-            await interaction.response.send_message(
+
+            # Check quest completion
+            completed_quests = check_quest_completion(drachi)
+
+            response_text = (
                 f"🎉 **MPU bestanden!** 🎉\n"
                 f"🚗 Du hast jetzt einen Führerschein!\n"
                 f"💰 Kosten: {cost}€\n"
-                f"📊 Versuch: {drachi.mpu_attempts}",
-                ephemeral=True
+                f"📊 Versuch: {drachi.mpu_attempts}"
             )
+
+            if completed_quests:
+                quest_names = [quest['name'] for quest in completed_quests]
+                response_text += f"\n\n🎉 Quests abgeschlossen: {', '.join(quest_names)}"
+
+            await interaction.response.send_message(response_text, ephemeral=True)
         else:
             await interaction.response.send_message(
                 f"❌ **MPU nicht bestanden!** ❌\n"
@@ -1515,6 +2315,9 @@ def register_drachigotchi_commands(bot):
                     value=f"{item_info.get('description', 'Kein Beschreibung')}\nTyp: {item_info['type']}",
                     inline=True
                 )
+            else:
+                # Debug: Item exists in shop but not in ITEMS
+                print(f"⚠️ WARNING: Item '{item}' in shop '{drachi.location}' not found in ITEMS dictionary!")
         
         embed.set_footer(text="Nutze /gotchi kaufen <item> um zu kaufen")
         await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -1578,12 +2381,14 @@ def register_drachigotchi_commands(bot):
                 if selected_item not in shop_items or selected_item not in ITEMS:
                     return await select_interaction.response.send_message(f"❌ {selected_item} ist nicht mehr verfügbar!", ephemeral=True)
 
+                # Survival kit is always available - it's an emergency item!
+
                 item_info = ITEMS[selected_item]
                 price = item_info.get('price', 50)
 
                 if drachi.money < price:
                     return await select_interaction.response.send_message(
-                        f"❌ Du brauchst {price}€ für {item_info.get('name', selected_item)}! Du hast nur {drachi.money}€.", ephemeral=True
+                        f"❌ Du brauchst {price}€ für {item_info.get('name', selected_item)}! Du hast nur {drachi.money}€. 💡 **Tipp:** Arbeite mit `/gotchi arbeiten` oder streame mit `/gotchi streamen` um Geld zu verdienen.", ephemeral=True
                     )
 
                 drachi.money -= price

@@ -59,6 +59,35 @@ class MemeGenerator:
             
         return font_size
 
+    def add_watermark(self, image, draw):
+        """Fügt ein dezentes Wasserzeichen hinzu"""
+        watermark_text = "@Buttergolem"
+
+        # Kleine Schriftgröße für das Wasserzeichen (2% der Bildbreite)
+        watermark_font_size = max(12, int(image.width * 0.02))
+
+        try:
+            watermark_font = ImageFont.truetype(self.font_path, watermark_font_size)
+        except:
+            # Fallback auf Standard-Font falls Impact nicht verfügbar
+            watermark_font = ImageFont.load_default()
+
+        # Position: Unten rechts mit kleinem Abstand
+        bbox = watermark_font.getbbox(watermark_text)
+        text_width = bbox[2] - bbox[0]
+        text_height = bbox[3] - bbox[1]
+
+        x = image.width - text_width - 10  # 10px Abstand vom rechten Rand
+        y = image.height - text_height - 10  # 10px Abstand vom unteren Rand
+
+        # Halbtransparenter Hintergrund für bessere Lesbarkeit
+        overlay = Image.new('RGBA', (text_width + 8, text_height + 4), (0, 0, 0, 128))
+        image.paste(overlay, (x - 4, y - 2), overlay)
+
+        # Wasserzeichen-Text in weiß mit leichtem Schatten
+        draw.text((x + 1, y + 1), watermark_text, font=watermark_font, fill=(0, 0, 0, 180))  # Schatten
+        draw.text((x, y), watermark_text, font=watermark_font, fill=(255, 255, 255, 200))  # Text
+
     def generate_meme(self, text, position="top"):
         """Erstellt ein Meme mit dem gegebenen Text"""
         # Wähle ein zufälliges Bild aus
@@ -71,8 +100,8 @@ class MemeGenerator:
         
         # Maximale Breite und Höhe für Text
         max_width = int(image.width * 0.9)
-        max_height_top = int(image.height * 0.25)    # 25% der Bildhöhe für oberen Text
-        max_height_bottom = int(image.height * 0.25)  # 25% der Bildhöhe für unteren Text
+        max_height_top = int(image.height * 0.15)    # 25% der Bildhöhe für oberen Text
+        max_height_bottom = int(image.height * 0.15)  # 25% der Bildhöhe für unteren Text
 
         # Text aufteilen und in Großbuchstaben umwandeln basierend auf Position
         if position == "both":
@@ -146,6 +175,9 @@ class MemeGenerator:
                 draw.text((x, y), line, font=font, fill="white")
                 y += line_height
 
+        # Wasserzeichen hinzufügen
+        self.add_watermark(image, draw)
+
         # Bild speichern
         output_path = os.path.join(self.output_folder, f"meme_{uuid.uuid4().hex}.png")
         image.save(output_path)
@@ -153,21 +185,8 @@ class MemeGenerator:
 
 def register_meme_commands(bot):
     # lordmeme befehl entfernt - nur !lord bleibt bestehen
-
-    @create_meme.error
-    async def meme_error(ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send("❌ Du musst einen Text für das Meme angeben!\n"
-                          "Beispiel: `!lordmeme Das ist lustig`\n"
-                          "Für Text oben und unten: `!lordmeme Oben | Unten`\n\n"
-                          "*# Hinweis: Verwende zukünftig `!drache meme` - alte Befehle werden demnächst abgeschaltet.*")
-        elif isinstance(error, commands.CommandOnCooldown):
-            await ctx.send(f"⏱️ Bitte warte noch {error.retry_after:.1f} Sekunden bis zum nächsten Meme!")
-        else:
-            await ctx.send("❌ Ein Fehler ist aufgetreten. Überprüfe deine Eingabe.")
-            if hasattr(bot, 'logging_channel'):
-                channel = bot.get_channel(bot.logging_channel)
-                await channel.send(f"Error in lordmeme command: {str(error)}")
+    # Error handler entfernt da kein create_meme command mehr existiert
+    pass
 
 def setup(bot):
     # Remove MemeGenerator creation from here

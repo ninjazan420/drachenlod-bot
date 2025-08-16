@@ -74,7 +74,7 @@ async def create_help_embed(user_id: int, is_server_admin: bool, admin_user_id: 
     # Spenden- und Support-Bereich
     embed.add_field(
         name="💰 Spenden & Support",
-        value="[☕ Spende auf Ko-fi](https://ko-fi.com/buttergolem)\n[🔧 Support-Server](https://discord.gg/4kHkaaS2wq)",
+        value="💰 `/spende` - Bot mit Monero unterstützen\n[🔧 Support-Server](https://support.f0ck.org)",
         inline=False
     )
 
