@@ -46,30 +46,31 @@ DRACHENLORD_SHREK_ASCII = r"""
           BUTTERGOLEM DRACHE
 """
 
-# Neofetch-Style System ASCII
+# Neofetch-Style System ASCII - KORRIGIERT für konsistente Zeilenlängen
 NEOFETCH_ASCII = r"""
-      ████████████████████████
-    ██                      ██
-  ██    ██████████████████      ██
-██    ██              ██      ██
-██  ██    ████████████  ██    ██
-██  ██  ██          ██  ██    ██
-██  ██  ██  ██████  ██  ██    ██
-██  ██  ██  ██  ██  ██  ██    ██
-██  ██  ██  ██████  ██  ██    ██
-██  ██  ██          ██  ██    ██
-██  ██    ████████████  ██    ██
-██    ██              ██      ██
-  ██    ████████████████      ██
-    ██                      ██
-      ████████████████████████
 
-        BUTTERGOLEM SYSTEM
+ ████████████████████████
+██                      ██
+██  ██████████████████  ██
+██  ██              ██  ██
+██  ██  ████████████  ██
+██  ██  ██      ██  ██  ██
+██  ██  ██  ██  ██  ██  ██
+██  ██  ██  ██  ██  ██  ██
+██  ██  ██      ██  ██  ██
+██  ██  ████████████  ██
+██  ██              ██  ██
+██  ██████████████████  ██
+██                      ██
+  ████████████████████████
+
+    BUTTERGOLEM SYSTEM
 """
 
-# Minimalistisches ASCII für bessere Performance
+# Minimalistisches ASCII für bessere Performance - KORRIGIERT
 MINIMAL_ASCII = r"""
-        ╭─────────────────╮
+
+    ╭─────────────────╮
     │  ◉   ◉   ◉   ◉  │
     │                 │
     │   BUTTERGOLEM   │
@@ -78,152 +79,6 @@ MINIMAL_ASCII = r"""
     ╰─────────────────╯
 """
 
-# Drachenlord Donkey Kong Style ASCII Frames (Verbessert)
-DRACHENLORD_FRAMES = [
-    # Frame 1: Drachenlord steht, Fass rollt von rechts
-    """
-⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛    🧍                                          🛢️     ⬛
-⬛  MEDDL                                              ⬛
-⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛
-    """,
-
-    # Frame 2: Drachenlord bereitet sich auf Sprung vor, Fass rollt näher
-    """
-⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛    🧍                                     🛢️          ⬛
-⬛  MEDDL                                              ⬛
-⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛
-    """,
-
-    # Frame 3: Drachenlord springt, Fass direkt unter ihm
-    """
-⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛    🦘                                                ⬛
-⬛  MEDDL                              🛢️               ⬛
-⬛                                                      ⬛
-⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛
-    """,
-
-    # Frame 4: Drachenlord landet, Fass rollt weiter
-    """
-⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛      🧍                        🛢️                     ⬛
-⬛    MEDDL                                            ⬛
-⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛
-    """,
-    
-    # Frame 5: Neues Fass erscheint, Drachenlord geht weiter
-    """
-⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛        🧍                                      🛢️     ⬛
-⬛      MEDDL                                          ⬛
-⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛
-    """,
-    
-    # Frame 6: Drachenlord bereitet sich auf nächsten Sprung vor
-    """
-⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛                                                      ⬛
-⬛        🧍                                 🛢️          ⬛
-⬛      MEDDL                                          ⬛
-⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛
-    """
-]
-
-# Snake-Spiel mit Drachenlord und Brötchen
-# Spielfeld ist 15x15 Zellen groß
-SNAKE_FIELD = [
-    "⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛",
-    "⬛                 ⬛",
-    "⬛                 ⬛",
-    "⬛                 ⬛",
-    "⬛                 ⬛",
-    "⬛                 ⬛",
-    "⬛                 ⬛",
-    "⬛                 ⬛",
-    "⬛                 ⬛",
-    "⬛                 ⬛",
-    "⬛                 ⬛",
-    "⬛                 ⬛",
-    "⬛                 ⬛",
-    "⬛                 ⬛",
-    "⬛                 ⬛",
-    "⬛                 ⬛",
-    "⬛                 ⬛",
-    "⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛"
-]
-
-# Spielelemente
-SNAKE_HEAD = "🧍"  # Drachenlord als Schlangenkopf
-SNAKE_BODY = "👣"  # Fußspuren als Schlangenkörper
-SNAKE_FOOD = "🥖"  # Brötchen als Futter
-    
 
 # Einfache Drachenlord Emojis für Animation
 SIMPLE_DRACHENLORD_FRAMES = [
@@ -641,213 +496,11 @@ def create_simple_neofetch(stats_text, color="blue"):
     result += "\u001b[0m```"
     return result
 
-async def create_drachenlord_animation():
-    """Erstellt eine Donkey Kong-ähnliche Animation mit Drachenlord und echten rollenden Fässern"""
-    import copy
-    import random
-    frames = []
-    # Spielfeldgröße
-    width = 30
-    height = 10  # Erhöht für bessere Darstellung
-    # Startpositionen
-    drache_x = 5
-    drache_y = height - 2
-    fass_start_x = width - 3
-    fass_y = height - 2
-    # Fässer-Logik: mehrere Fässer können gleichzeitig rollen
-    fass_list = []
-    fass_timer = 0
-    max_frames = 30
-    for frame_idx in range(max_frames):
-        # Fässer generieren
-        if fass_timer == 0 or (frame_idx % 7 == 0 and len(fass_list) < 3):
-            fass_list.append({'x': fass_start_x, 'y': fass_y})
-            fass_timer = 1
-        # Fässer bewegen
-        for fass in fass_list:
-            fass['x'] -= 1
-        # Entferne Fässer, die aus dem Bild sind
-        fass_list = [f for f in fass_list if f['x'] > 0]
-        # Drachenlord springt, wenn ein Fass in der Nähe ist
-        drache_symbol = '🧍'
-        for fass in fass_list:
-            if abs(fass['x'] - drache_x) <= 2:  # Erhöhter Erkennungsbereich
-                drache_symbol = '🦘'
-                break
-        # Zeichne das Spielfeld
-        field = []
-        field.append('⬛' * width)
-        for y in range(1, height-1):
-            row = ['⬛'] + [' ']*(width-2) + ['⬛']
-            if y == drache_y:
-                row[drache_x] = drache_symbol
-            for fass in fass_list:
-                if fass['y'] == y and 0 < fass['x'] < width-1:
-                    row[fass['x']] = '🛢️'
-            if y == drache_y+1 and drache_x >= 2:  # Sicherheitscheck für Index
-                # Stelle sicher, dass wir nicht über die Grenzen hinausgehen
-                start_idx = max(1, drache_x-1)
-                end_idx = min(width-2, drache_x+2)
-                # Füge 'MEDDL' ein, wenn genug Platz ist
-                if end_idx - start_idx >= 3:
-                    row[start_idx:start_idx+3] = list('MED')
-            field.append(''.join(row))
-        field.append('⬛' * width)
-        # Farbiges Frame
-        color = RAINBOW_COLORS[frame_idx % len(RAINBOW_COLORS)]
-        color_code = color.replace('```ansi\n', '')
-        frames.append(f"```ansi\n{color_code}" + '\n'.join(field) + "\n\u001b[0m```")
-    # Endbild
-    frames.append("```ansi\n\u001b[32;1mLEVEL GESCHAFFT! 🏆 Drachenlord hat alle Fässer übersprungen! MEDDL LEUDE! 🏆\u001b[0m```")
-    return frames
 
-async def create_snake_game(max_turns=30):
-    """Erstellt eine Snake-Spiel Animation mit Drachenlord und Brötchen
-    
-    Args:
-        max_turns (int): Maximale Anzahl der Spielzüge
-        
-    Returns:
-        list: Liste mit Frames der Animation und Spielstatus
-    """
-    import random
-    import copy
-    
-    # Spielfeld-Dimensionen (ohne Rand)
-    width = 15
-    height = 15
-    
-    # Initialisiere Schlange in der Mitte
-    snake = [(height // 2, width // 2)]
-    direction = random.choice([(0, 1), (1, 0), (0, -1), (-1, 0)])  # (y, x) Format
-    
-    # Platziere erstes Brötchen
-    food = None
-    while food is None or food in snake:
-        food = (random.randint(1, height-2), random.randint(1, width-2))
-    
-    # Spielstatus
-    score = 0
-    game_over = False
-    frames = []
-    
-    # Erstelle Frames für jeden Spielzug
-    for _ in range(max_turns):
-        if game_over:
-            break
-            
-        # Bewege Schlange
-        head_y, head_x = snake[0]
-        new_head = (head_y + direction[0], head_x + direction[1])
-        
-        # Prüfe Kollision mit Wand
-        if (new_head[0] <= 0 or new_head[0] >= height-1 or 
-            new_head[1] <= 0 or new_head[1] >= width-1):
-            game_over = True
-            break
-            
-        # Prüfe Kollision mit sich selbst
-        if new_head in snake:
-            game_over = True
-            break
-            
-        # Füge neuen Kopf hinzu
-        snake.insert(0, new_head)
-        
-        # Prüfe, ob Brötchen gefressen wurde
-        if new_head == food:
-            score += 1
-            # Neues Brötchen platzieren
-            food = None
-            while food is None or food in snake:
-                food = (random.randint(1, height-2), random.randint(1, width-2))
-        else:
-            # Entferne Schwanz, wenn kein Brötchen gefressen wurde
-            snake.pop()
-        
-        # Ändere Richtung zufällig, aber nicht in die entgegengesetzte Richtung
-        possible_directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
-        opposite = (-direction[0], -direction[1])
-        if opposite in possible_directions:  # Sicherheitscheck
-            possible_directions.remove(opposite)
-        
-        # Mit 30% Wahrscheinlichkeit Richtung ändern
-        if random.random() < 0.3 and possible_directions:  # Sicherheitscheck
-            direction = random.choice(possible_directions)
-        
-        # Erstelle Frame
-        field_copy = copy.deepcopy(SNAKE_FIELD)
-        
-        # Zeichne Schlange
-        for i, (y, x) in enumerate(snake):
-            # Stelle sicher, dass die Koordinaten im gültigen Bereich liegen
-            if 0 <= y < len(field_copy) and 0 <= x < len(field_copy[y]):
-                # Konvertiere Koordinaten zu Indizes im Spielfeld
-                char = SNAKE_HEAD if i == 0 else SNAKE_BODY
-                row = list(field_copy[y])
-                row[x] = char
-                field_copy[y] = ''.join(row)
-        
-        # Zeichne Brötchen
-        if food:
-            y, x = food
-            # Stelle sicher, dass die Koordinaten im gültigen Bereich liegen
-            if 0 <= y < len(field_copy) and 0 <= x < len(field_copy[y]):
-                row = list(field_copy[y])
-                row[x] = SNAKE_FOOD
-                field_copy[y] = ''.join(row)
-        
-        # Füge Punktestand hinzu
-        field_str = '\n'.join(field_copy)
-        field_str += f"\n\nMEDDL LEUDE! Brötchen: {score}"
-        
-        # Färbe Frame
-        color = RAINBOW_COLORS[len(frames) % len(RAINBOW_COLORS)]
-        color_code = color.replace("```ansi\n", "")
-        colored_frame = f"```ansi\n{color_code}{field_str}\u001b[0m```"
-        
-        frames.append(colored_frame)
-    
-    # Füge Game Over oder Gewonnen Frame hinzu
-    final_frame = "```ansi\n"
-    if game_over:
-        final_frame += f"\u001b[31;1m🎮 GAME OVER! 🎮\n\nDrachenlord hat {score} Brötchen gesammelt!\u001b[0m"
-    else:
-        final_frame += f"\u001b[32;1m🎮 LEVEL GESCHAFFT! 🎮\n\nDrachenlord hat {score} Brötchen gesammelt!\u001b[0m"
-    final_frame += "```"
-    
-    return frames + [final_frame]
 
-async def create_train_animation(frames=20):
-    """Erstellt eine einfache Drachenlord-Animation für /sl"""
-    animation_frames = []
-    train_length = 10
-    max_width = 40
-    
-    for i in range(frames):
-        position = i % (max_width - train_length)  # Bewegung über max_width Zeichen, dann Neustart
-        
-        # Erstelle Zug mit Drachenlord
-        train = ' ' * position + 'ᕕ(ᐛ)ᕗ' + '=' * (train_length - 3) + '>'
-        
-        # Füge Rauch hinzu (mit Sicherheitscheck)
-        smoke = ' ' * (position - 2) + '~' * 3 if position > 2 else ''
-        
-        # Stelle sicher, dass die Farbe gültig ist
-        if RAINBOW_COLORS and len(RAINBOW_COLORS) > 0:
-            color_index = i % len(RAINBOW_COLORS)
-            color = RAINBOW_COLORS[color_index]
-            # Entferne Markdown-Code-Block-Marker falls vorhanden
-            color_code = color.replace("```ansi\n", "")
-            
-            frame = f"```ansi\n{color_code}{smoke}\n{train}\u001b[0m```"
-        else:
-            # Fallback ohne Farbe, falls RAINBOW_COLORS leer ist
-            frame = f"```\n{smoke}\n{train}```"
-            
-        animation_frames.append(frame)
-    
-    return animation_frames
+
+
+
 
 def format_stats_with_ascii_color(stats_text, animation_type="static", color="blue"):
     """

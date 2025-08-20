@@ -101,6 +101,10 @@ register_ki_commands(client)
 register_memory_manager(client)
 # register_memory_commands(client)  # Deaktiviert wegen Command-Konflikten
 
+# Register Hangman commands
+from hangman import register_hangman_commands
+register_hangman_commands(client)
+
 # Register Changelog Cog
 # client.add_cog(ChangelogCog(client))
 setup_mirror(client)
@@ -155,24 +159,22 @@ def cooldown_check():
 
 # Globale Status-Nachrichten
 STATUS_MESSAGES = [
-    "Meddl Loide, Bot is am lordn! | /hilfe",
-    "Schanze brennt, Golem bleibt cool | /hilfe",
-    "Winklers Weisheiten incoming | /hilfe",
-    "Butterbrot und Metal – Priorität! | /hilfe",
-    "Haiderfreie Zone, passd scho | /hilfe",
-    "Gummibärenarmee versammelt sich | /hilfe",
-    "Livestream ausm Keller gestartet | /hilfe",
-    "Server is wie a Community, gell | /hilfe",
-    "Fettsackmodus: aktiviert | /hilfe",
-    "Bissl zocken, bissl chilln | /hilfe",
-    "KuchenTV redet, keiner hört zu | /hilfe",
-    "Drachengame im Hintergrund läuft | /hilfe",
-    "Bot rennt stabil wie mei Router | /hilfe",
-    "Lust auf a Rage? Frag Rainer | /hilfe",
-    "Schanzenkino hat offen | /hilfe",
-    "Mett, Metal und Minecraft | /hilfe",
-    "Endboss vom Altschauerberg | /hilfe",
-    "Hier wird ned g'haidet, nur g'lordet | /hilfe"
+    "Schaugn ma moi, dann seng ma scho | /hilfe",
+    "Meddl, Loidde! Net amoi ignoriern | /hilfe",
+    "Dosenfutter und Energy – Lifestyle | /hilfe",
+    "PC kracht, Rainer lacht | /hilfe",
+    "Im Herzen Metal, im Kopf Content | /hilfe",
+    "Mit 5 Kilo mehr Elo im Game | /hilfe",
+    "Wenn’s kracht, is Content | /hilfe",
+    "Haider raus, Drachis rein | /hilfe",
+    "Router glüht, Stream is online | /hilfe",
+    "Haut is kein Organ | /hilfe",
+    "Meddl bis die Schanze fällt | /hilfe",
+    "Gönn dir a Kasten Energy | /hilfe",
+    "Rainer is stabiler als dein WLAN | /hilfe",
+    "Brot und Brötchen | /hilfe",
+    "Klar hab ich aufm Dach gearbeitet | /hilfe"
+    "Gib Haidern koane Chance | /hilfe"
 ]
 
 @tasks.loop(minutes=10.0)
@@ -220,6 +222,13 @@ async def on_ready():
             if logging_channel:
                 await _log("🐉 Drachigotchi background task gestartet!")
 
+    # Hangman Cleanup Task starten (falls verfügbar)
+    if hasattr(client, 'hangman_cleanup_task'):
+        if not client.hangman_cleanup_task.is_running():
+            client.hangman_cleanup_task.start()
+            if logging_channel:
+                await _log("🎯 Hangman cleanup task gestartet!")
+
 
 
     # Start time für Uptime Counter setzen
@@ -233,7 +242,7 @@ async def on_ready():
             await _log("⏲ Timer wird initialisiert...")
         await create_random_timer(1, 1)
 
-    await client.tree.sync()
+    # Sync wird bereits in on_ready() durchgeführt - doppelter Sync entfernt
 
 @client.event
 async def on_command_completion(ctx):
@@ -400,35 +409,65 @@ async def on_message(message):
 
     # Hangman Handler für Thread-Nachrichten
     try:
-        from hangman import active_hangman_games, process_hangman_guess
+        from hangman import active_hangman_games, process_hangman_guess, process_hangman_word_guess
 
         # Prüfe ob Nachricht in einem Hangman-Thread ist
         if isinstance(message.channel, discord.Thread):
-            # Finde das zugehörige Hangman-Spiel
-            parent_channel_id = message.channel.parent.id if message.channel.parent else None
-            if parent_channel_id and parent_channel_id in active_hangman_games:
-                game = active_hangman_games[parent_channel_id]
+            # Finde das zugehörige Hangman-Spiel über guild_id (nicht channel_id!)
+            guild_id = message.guild.id if message.guild else None
+            if guild_id and guild_id in active_hangman_games:
+                game = active_hangman_games[guild_id]
                 if game.thread and game.thread.id == message.channel.id:
+                    # Prüfe zuerst ob der User überhaupt am Spiel teilnimmt
+                    if message.author.id not in game.participants:
+                        # User ist nicht am Spiel beteiligt - ignoriere die Nachricht komplett
+                        return
+
+                    # Verarbeite Hangman-Eingaben und blockiere KI komplett
+                    content = message.content.strip()
+
+                    # Entferne Bot-Mentions aus dem Content (falls vorhanden, aber nicht erforderlich)
+                    import re
+                    # Entferne alle Mentions (User und Bot)
+                    clean_content = re.sub(r'<@!?\d+>', '', content).strip()
+                    # Entferne führende/nachfolgende Leerzeichen und konvertiere zu uppercase
+                    clean_content = clean_content.strip().upper()
+
+                    # Entferne nur mehrfache Leerzeichen, aber behalte einzelne
+                    clean_content = re.sub(r'\s+', ' ', clean_content).strip()
+
+                    # Für Hangman sollten nur reine Buchstaben ohne Leerzeichen erlaubt sein
+                    # Also entferne alle Leerzeichen für die Validierung
+                    validation_content = clean_content.replace(' ', '')
+
                     # Prüfe ob es ein einzelner Buchstabe ist
-                    content = message.content.strip().upper()
-                    if len(content) == 1 and content.isalpha():
-                        # Verarbeite den Buchstaben-Tipp
-                        success = await process_hangman_guess(game, message.author, content)
-                        if success:
-                            # Lösche die Nachricht um Spam zu vermeiden
+                    if len(validation_content) == 1 and validation_content.isalpha():
+                        # Verarbeite den Buchstaben-Tipp - übergebe original message für korrekte behandlung
+                        await process_hangman_guess(game, message.author, validation_content, message)
+                        return  # Wichtig: return verhindert KI-Verarbeitung
+
+                    # Prüfe ob es ein ganzes Wort ist (mehr als 1 Buchstabe, nur Buchstaben)
+                    elif len(validation_content) > 1 and validation_content.isalpha():
+                        # Verarbeite den Wort-Tipp - übergebe original message für korrekte behandlung
+                        await process_hangman_word_guess(game, message.author, validation_content, message)
+                        return  # Wichtig: return verhindert KI-Verarbeitung
+
+                    # Nur bei wirklich ungültigen Eingaben Fehlermeldung (nur für teilnehmer)
+                    else:
+                        # Prüfe ob es überhaupt Text enthält
+                        if validation_content:  # Nur wenn tatsächlich Text da ist
+                            try:
+                                await message.delete()
+                                await message.channel.send(f"❌ {message.author.mention}, bitte nur Buchstaben oder Wörter eingeben!\n💡 Beispiele: `E` oder `WORT`", delete_after=5)
+                            except:
+                                pass
+                        else:
+                            # Leere Nachricht oder nur Leerzeichen - einfach löschen ohne Fehlermeldung
                             try:
                                 await message.delete()
                             except:
                                 pass
-                        return
-                    elif len(content) > 1:
-                        # Lösche längere Nachrichten um Spam zu vermeiden
-                        try:
-                            await message.delete()
-                            await message.channel.send(f"❌ {message.author.mention}, bitte nur einzelne Buchstaben!", delete_after=3)
-                        except:
-                            pass
-                        return
+                        return  # Wichtig: return verhindert KI-Verarbeitung
     except Exception as e:
         print(f"Fehler im Hangman Handler: {e}")
 

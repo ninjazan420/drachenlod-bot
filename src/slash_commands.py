@@ -304,8 +304,8 @@ def register_slash_commands(bot):
         except Exception as e:
             await interaction.followup.send(f"❌ Fehler beim Verlassen des Servers: {str(e)}", ephemeral=True)
     
-    # Add the admin group to the bot's command tree
-    bot.tree.add_command(admin_group)
+    # Admin commands werden nur am Ende für den spezifischen Server registriert
+    # Globale Registrierung entfernt - siehe Ende der Funktion
     
     # lordquiz befehl entfernt - nutze /quiz stattdessen
     
@@ -773,149 +773,11 @@ def register_slash_commands(bot):
         else:
             await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
-    @bot.tree.command(name="sl", description="🎮 Drachenlord springt über Fässer wie bei Donkey Kong!")
-    @app_commands.checks.cooldown(1, 30.0)  # 30 Sekunden Cooldown
-    async def sl_slash(interaction: discord.Interaction):
-        """SL Slash Command - Drachenlord Donkey Kong Animation"""
-        import asyncio
-        from ascii_art import create_drachenlord_animation
 
-        # Sofort antworten um timeout zu vermeiden
-        await interaction.response.send_message("🎮 Drachenlord startet sein Donkey Kong Abenteuer...", ephemeral=True)
 
-        try:
-            # Animation frames erstellen
-            frames = await create_drachenlord_animation()
+    # Hangman commands sind jetzt in hangman.py registriert - doppelte definition entfernt
 
-            # Erste Nachricht senden
-            message = await interaction.channel.send("🎮 **DRACHENLORD DONKEY KONG** 🎮\n" + frames[0])
 
-            # Animation für 15 Sekunden (alle 0.5 Sekunden ein neuer Frame für schnellere Animation)
-            for i in range(30):  # 30 frames * 0.5 sekunden = 15 sekunden
-                await asyncio.sleep(0.5)  # Noch schnellere Animation (0.5 Sekunden statt 1)
-                frame_index = (i + 1) % len(frames)
-
-                try:
-                    await message.edit(content="🎮 **DRACHENLORD DONKEY KONG** 🎮\n" + frames[frame_index])
-                except discord.NotFound:
-                    # Nachricht wurde gelöscht, beende animation
-                    break
-                except discord.HTTPException:
-                    # Rate limit oder anderer fehler, warte länger
-                    await asyncio.sleep(0.5)  # Kürzere Wartezeit bei Fehlern
-
-            # Finale nachricht
-            await asyncio.sleep(0.5)  # Kürzere Wartezeit vor der finalen Nachricht
-            try:
-                # Nutze das finale Endbild aus der Animation, falls vorhanden
-                if hasattr(frames, "__getitem__") and len(frames) > 0:
-                    await message.edit(content="🎮 **LEVEL GESCHAFFT!** 🎮\n" + frames[-1])
-                else:
-                    await message.edit(content="🎮 **LEVEL GESCHAFFT!** 🎮\n```\n🏆 Drachenlord hat alle Fässer übersprungen! MEDDL LEUDE! 🏆\n```")
-            except Exception as e:
-                print(f"Error updating final frame: {e}")
-                # Nutze das finale Endbild aus der Animation, falls vorhanden
-                try:
-                    if hasattr(frames, "__getitem__") and len(frames) > 0:
-                        await message.edit(content="🎮 **LEVEL GESCHAFFT!** 🎮\n" + frames[-1])
-                    else:
-                        await message.edit(content="🎮 **LEVEL GESCHAFFT!** 🎮\n```\n🏆 Drachenlord hat alle Fässer übersprungen! MEDDL LEUDE! 🏆\n```")
-                except:
-                    pass
-
-        except Exception as e:
-            print(f"Fehler in sl animation: {e}")
-            await interaction.channel.send("❌ Animation fehlgeschlagen, aber MEDDL LEUDE! 🐉")
-
-    @bot.tree.command(name="hangman", description="🎯 Spiele Hangman mit Drachenlord-Wörtern!")
-    @app_commands.checks.cooldown(1, 30.0)  # 30 Sekunden Cooldown
-    async def hangman_slash(interaction: discord.Interaction):
-        """Hangman Slash Command - Drachenlord Hangman Spiel"""
-        # Importiere Hangman-Funktionen
-        import sys
-        import os
-        sys.path.append(os.path.dirname(__file__))
-
-        try:
-            from hangman import start_hangman, active_hangman_games
-
-            # Mock Context für Kompatibilität mit bestehenden Funktionen
-            class MockContext:
-                def __init__(self, interaction):
-                    self.channel = interaction.channel
-                    self.guild = interaction.guild
-                    self.author = interaction.user
-                    self.send = interaction.channel.send
-
-            # Prüfe ob bereits ein Spiel auf diesem Server läuft
-            server_has_game = any(
-                game.thread and game.thread.guild and game.thread.guild.id == interaction.guild.id
-                for game in active_hangman_games.values()
-            )
-
-            if server_has_game:
-                await interaction.response.send_message("Es läuft bereits ein Hangman-Spiel auf diesem Server!", ephemeral=True)
-                return
-
-            if interaction.channel.id in active_hangman_games:
-                await interaction.response.send_message("Es läuft bereits ein Hangman-Spiel in diesem Kanal!", ephemeral=True)
-                return
-
-            mock_ctx = MockContext(interaction)
-
-            await interaction.response.send_message(
-                "🎯 **Hangman startet!**\n"
-                "Sammle Teilnehmer und errate Drachenlord-Wörter!\n"
-                "Das Spiel wird in einem separaten Thread gespielt um Spam zu vermeiden."
-            )
-
-            # Starte Hangman
-            await start_hangman(mock_ctx)
-
-        except Exception as e:
-            print(f"Fehler in hangman command: {e}")
-            await interaction.response.send_message("❌ Hangman konnte nicht gestartet werden!", ephemeral=True)
-
-    @bot.tree.command(name="snake", description="🐍 Spiele Snake mit Drachenlord und sammle Brötchen!")
-    @app_commands.checks.cooldown(1, 30.0)  # 30 Sekunden Cooldown
-    async def snake_slash(interaction: discord.Interaction):
-        """Snake Slash Command - Drachenlord Snake Spiel"""
-        import asyncio
-        from ascii_art import create_snake_game
-
-        # Sofort antworten um timeout zu vermeiden
-        await interaction.response.send_message("🐍 Drachenlord startet sein Snake Abenteuer...", ephemeral=True)
-
-        try:
-            # Animation frames erstellen
-            frames = await create_snake_game(max_turns=30)
-
-            # Erste Nachricht senden
-            message = await interaction.channel.send("🐍 **DRACHENLORD SNAKE** 🐍\n" + frames[0])
-
-            # Animation für 15 Sekunden (alle 0.5 Sekunden ein neuer Frame)
-            for i in range(len(frames) - 1):  # Letzter Frame ist das Endergebnis
-                await asyncio.sleep(0.5)
-
-                try:
-                    await message.edit(content="🐍 **DRACHENLORD SNAKE** 🐍\n" + frames[i])
-                except discord.NotFound:
-                    # Nachricht wurde gelöscht, beende animation
-                    break
-                except discord.HTTPException:
-                    # Rate limit oder anderer fehler, warte länger
-                    await asyncio.sleep(0.5)  # Kürzere Wartezeit bei Fehlern
-
-            # Finale nachricht
-            await asyncio.sleep(0.5)  # Kürzere Wartezeit vor der finalen Nachricht
-            try:
-                await message.edit(content="🐍 **DRACHENLORD SNAKE** 🐍\n" + frames[-1])
-            except:
-                pass
-
-        except Exception as e:
-            print(f"Fehler in snake animation: {e}")
-            await interaction.channel.send("❌ Animation fehlgeschlagen, aber MEDDL LEUDE! 🐉")
 
     @bot.tree.command(name="hilfe", description="Zeigt alle verfügbaren Befehle")
     async def hilfe_slash(interaction: discord.Interaction):
@@ -933,11 +795,11 @@ def register_slash_commands(bot):
             name="🎮 Spiel-Befehle",
             value="• `/quiz` - Drachenlord Quiz\n"
                   "• `/hangman` - 🎯 **Hangman mit Drachenlord-Wörtern** (30s Cooldown)\n"
+                  "• `/hangman_rankings` - 🏆 **Hangman-Bestenliste anzeigen**\n"
+                  "• `/hangman_hilfe` - 📋 **Hangman-Spielregeln und Hilfe**\n"
                   "• `/mett` - Mett-Level anzeigen\n"
                   "• `/zitat` - Zufälliges Zitat\n"
                   "• `/lordmeme <text> [position]` - Drachenlord Meme erstellen\n"
-                  "• `/sl` - 🚂 **Drachenlord Donkey Kong Animation** (30s Cooldown)\n"
-                  "• `/snake` - 🐍 **Drachenlord Snake Spiel** (30s Cooldown)\n"
                   "• `/gotchi hilfe` - **Drachigotchi Spiel-Anleitung** (🔥 NEU: Dropdown-Menüs!)",
             inline=False
         )
@@ -1624,9 +1486,10 @@ def register_slash_commands(bot):
         guild_obj = discord.Object(id=member_counter_server)
         bot.tree.add_command(admin_group, guild=guild_obj)
         print(f"✅ Admin command group registered for guild {member_counter_server} with {len(admin_group.commands)} commands")
-    except discord.app_commands.errors.CommandAlreadyRegistered:
-        print("⚠️ Admin command group already registered")
-        pass  # Command already exists, skip
+    except (discord.app_commands.errors.CommandAlreadyRegistered, Exception) as e:
+        print(f"⚠️ Admin command group registration: {type(e).__name__}: {e}")
+        # Command already exists or other error, skip
+        pass
 
 def setup(bot):
     register_slash_commands(bot)
