@@ -202,7 +202,15 @@ async def collect_hangman_participants(ctx, game):
         "Reagiere mit 🎯 um teilzunehmen!\n"
         "Start in 20 Sekunden..."
     )
-    await signup_msg.add_reaction("🎯")
+
+    # Versuche Reaktion hinzuzufügen
+    try:
+        await signup_msg.add_reaction("🎯")
+    except discord.Forbidden:
+        await ctx.send("⚠️ **Warnung:** Kann keine Reaktionen hinzufügen - fehlende `Reaktionen hinzufügen` Berechtigung!\n"
+                      "Teilnehmer können trotzdem manuell beitreten indem sie 'join' schreiben.")
+    except Exception as e:
+        print(f"Fehler beim Hinzufügen der Reaktion: {e}")
     
     await asyncio.sleep(20)  # 20 Sekunden Wartezeit
     
@@ -218,42 +226,65 @@ async def collect_hangman_participants(ctx, game):
     
     return len(game.participants) > 0
 
-async def start_hangman(ctx):
+async def start_hangman(ctx, skip_checks=False):
     """Startet ein neues Hangman-Spiel"""
     guild_id = ctx.guild.id if ctx.guild else None
-    if not guild_id:
-        await ctx.send("❌ Hangman kann nur auf Servern gespielt werden!")
-        return
 
-    if guild_id in active_hangman_games:
-        # Es läuft bereits ein Spiel auf diesem Server
-        existing_game = active_hangman_games[guild_id]
-        thread_mention = existing_game.thread.mention if existing_game.thread else "Unknown Thread"
-
-        msg = await ctx.send(
-            f"❌ **Es läuft bereits ein Hangman-Spiel auf diesem Server!**\n"
-            f"🧵 **Aktuelles Spiel:** {thread_mention}\n\n"
-            f"Warte bis das aktuelle Spiel beendet ist oder tritt dem laufenden Spiel bei!"
-        )
-
-        # Lösche die Nachricht nach 10 Sekunden
-        await asyncio.sleep(10)
-        try:
-            await msg.delete()
-        except:
-            pass
-        return
-
-    # Prüfe Bot-Berechtigungen
-    bot_member = ctx.guild.me if ctx.guild else None
-    if bot_member:
-        channel_perms = ctx.channel.permissions_for(bot_member)
-        if not channel_perms.create_public_threads:
-            await ctx.send("❌ **Fehlende Berechtigung!**\nIch brauche die `Erstelle öffentliche Threads` Rolle um Hangman zu starten!")
+    # Nur checks machen wenn nicht übersprungen (für slash command)
+    if not skip_checks:
+        if not guild_id:
+            await ctx.send("❌ Hangman kann nur auf Servern gespielt werden!")
             return
-        if not channel_perms.manage_messages:
-            await ctx.send("❌ **Fehlende Berechtigung!**\nnIch brauche die `Nachrichten bearbeiten` Rolle um Hangman zu starten!")
+
+        if guild_id in active_hangman_games:
+            # Es läuft bereits ein Spiel auf diesem Server
+            existing_game = active_hangman_games[guild_id]
+            thread_mention = existing_game.thread.mention if existing_game.thread else "Unknown Thread"
+
+            msg = await ctx.send(
+                f"❌ **Es läuft bereits ein Hangman-Spiel auf diesem Server!**\n"
+                f"🧵 **Aktuelles Spiel:** {thread_mention}\n\n"
+                f"Warte bis das aktuelle Spiel beendet ist oder tritt dem laufenden Spiel bei!"
+            )
+
+            # Lösche die Nachricht nach 10 Sekunden
+            await asyncio.sleep(10)
+            try:
+                await msg.delete()
+            except:
+                pass
             return
+
+        # Prüfe Bot-Berechtigungen
+        bot_member = ctx.guild.me if ctx.guild else None
+        if bot_member:
+            channel_perms = ctx.channel.permissions_for(bot_member)
+            missing_perms = []
+
+            # Prüfe alle benötigten Berechtigungen
+            if not channel_perms.create_public_threads:
+                missing_perms.append("`Erstelle öffentliche Threads`")
+            if not channel_perms.manage_messages:
+                missing_perms.append("`Nachrichten bearbeiten`")
+            if not channel_perms.manage_threads:
+                missing_perms.append("`Threads verwalten`")
+            if not channel_perms.send_messages_in_threads:
+                missing_perms.append("`Nachrichten in Threads senden`")
+            if not channel_perms.add_reactions:
+                missing_perms.append("`Reaktionen hinzufügen`")
+            if not channel_perms.read_message_history:
+                missing_perms.append("`Nachrichtenverlauf lesen`")
+            if not channel_perms.manage_channels:
+                missing_perms.append("`Kanäle verwalten`")
+
+            # Wenn Berechtigungen fehlen, zeige alle fehlenden an
+            if missing_perms:
+                perms_text = "\n• ".join(missing_perms)
+                await ctx.send(f"❌ **Fehlende Berechtigungen!**\n"
+                              f"Ich brauche folgende Berechtigungen um Hangman zu starten:\n"
+                              f"• {perms_text}\n\n"
+                              f"💡 **Tipp:** Gib mir die `Administrator` Berechtigung oder füge diese einzeln hinzu!")
+                return
 
     game = HangmanGame(guild_id)
     
@@ -404,17 +435,35 @@ async def cleanup_hangman_game(game):
         if game.thread:
             # Sperre den Thread für weitere Nachrichten
             try:
-                # Setze Thread-Berechtigungen so dass User nicht mehr schreiben können
-                overwrites = game.thread.overwrites
-                for target, overwrite in overwrites.items():
-                    if isinstance(target, discord.Role) and target.name == "@everyone":
-                        overwrite.send_messages = False
-                        await game.thread.set_permissions(target, overwrite=overwrite)
+                # Prüfe ob Bot noch die nötigen Rechte hat
+                bot_member = game.thread.guild.me
+                thread_perms = game.thread.permissions_for(bot_member)
+
+                if thread_perms.manage_channels:
+                    # Setze Thread-Berechtigungen so dass User nicht mehr schreiben können
+                    overwrites = game.thread.overwrites
+                    for target, overwrite in overwrites.items():
+                        if isinstance(target, discord.Role) and target.name == "@everyone":
+                            overwrite.send_messages = False
+                            await game.thread.set_permissions(target, overwrite=overwrite)
+                else:
+                    await game.thread.send("⚠️ **Warnung:** Kann Thread nicht sperren - fehlende `Kanäle verwalten` Berechtigung!")
 
                 # Warte 1 Minute dann lösche Thread
                 await asyncio.sleep(60)
-                await game.thread.delete()
-                print(f"Hangman-Thread {game.thread.id} wurde nach Timeout gelöscht")
+
+                if thread_perms.manage_threads:
+                    await game.thread.delete()
+                    print(f"Hangman-Thread {game.thread.id} wurde nach Timeout gelöscht")
+                else:
+                    await game.thread.send("⚠️ **Warnung:** Kann Thread nicht löschen - fehlende `Threads verwalten` Berechtigung!")
+                    # Fallback: Thread archivieren
+                    try:
+                        await game.thread.edit(archived=True)
+                        print(f"Hangman-Thread {game.thread.id} wurde archiviert (Fallback)")
+                    except:
+                        pass
+
             except Exception as e:
                 print(f"Fehler beim Thread-Management: {e}")
                 # Fallback: Thread archivieren
@@ -754,8 +803,19 @@ async def end_hangman_game(game):
         # Thread nach 30 Sekunden löschen (schnelle Bereinigung)
         await asyncio.sleep(30)  # 30 Sekunden warten damit User das Ergebnis sehen können
         try:
-            await game.thread.delete()
-            print(f"Hangman-Thread {game.thread.id} wurde nach Spielende gelöscht")
+            # Prüfe ob Bot noch die nötigen Rechte hat
+            bot_member = game.thread.guild.me
+            thread_perms = game.thread.permissions_for(bot_member)
+
+            if thread_perms.manage_threads:
+                await game.thread.delete()
+                print(f"Hangman-Thread {game.thread.id} wurde nach Spielende gelöscht")
+            else:
+                await game.thread.send("⚠️ **Warnung:** Kann Thread nicht löschen - fehlende `Threads verwalten` Berechtigung!")
+                # Fallback: Thread archivieren
+                await game.thread.edit(archived=True)
+                print(f"Hangman-Thread {game.thread.id} wurde archiviert (fehlende Rechte)")
+
         except Exception as e:
             print(f"Fehler beim Löschen des Hangman-Threads: {e}")
             # Fallback: Thread archivieren falls löschen fehlschlägt
@@ -927,14 +987,67 @@ def register_hangman_commands(bot):
 
             mock_ctx = MockContext(interaction)
 
+            # Prüfe zuerst Berechtigungen bevor wir "Hangman startet" senden
+            guild_id = interaction.guild.id if interaction.guild else None
+            if not guild_id:
+                await interaction.response.send_message("❌ Hangman kann nur auf Servern gespielt werden!", ephemeral=True)
+                return
+
+            # Prüfe ob bereits ein Spiel läuft
+            if guild_id in active_hangman_games:
+                existing_game = active_hangman_games[guild_id]
+                thread_mention = existing_game.thread.mention if existing_game.thread else "Unknown Thread"
+                await interaction.response.send_message(
+                    f"❌ **Es läuft bereits ein Hangman-Spiel auf diesem Server!**\n"
+                    f"🧵 **Aktuelles Spiel:** {thread_mention}\n\n"
+                    f"Warte bis das aktuelle Spiel beendet ist oder tritt dem laufenden Spiel bei!",
+                    ephemeral=True
+                )
+                return
+
+            # Prüfe Bot-Berechtigungen
+            bot_member = interaction.guild.me if interaction.guild else None
+            if bot_member:
+                channel_perms = interaction.channel.permissions_for(bot_member)
+                missing_perms = []
+
+                # Prüfe alle benötigten Berechtigungen
+                if not channel_perms.create_public_threads:
+                    missing_perms.append("`Erstelle öffentliche Threads`")
+                if not channel_perms.manage_messages:
+                    missing_perms.append("`Nachrichten bearbeiten`")
+                if not channel_perms.manage_threads:
+                    missing_perms.append("`Threads verwalten`")
+                if not channel_perms.send_messages_in_threads:
+                    missing_perms.append("`Nachrichten in Threads senden`")
+                if not channel_perms.add_reactions:
+                    missing_perms.append("`Reaktionen hinzufügen`")
+                if not channel_perms.read_message_history:
+                    missing_perms.append("`Nachrichtenverlauf lesen`")
+                if not channel_perms.manage_channels:
+                    missing_perms.append("`Kanäle verwalten`")
+
+                # Wenn Berechtigungen fehlen, zeige alle fehlenden an
+                if missing_perms:
+                    perms_text = "\n• ".join(missing_perms)
+                    await interaction.response.send_message(
+                        f"❌ **Fehlende Berechtigungen!**\n"
+                        f"Ich brauche folgende Berechtigungen um Hangman zu starten:\n"
+                        f"• {perms_text}\n\n"
+                        f"💡 **Tipp:** Gib mir die `Administrator` Berechtigung oder füge diese einzeln hinzu!",
+                        ephemeral=True
+                    )
+                    return
+
+            # Alle Checks bestanden - jetzt können wir starten
             await interaction.response.send_message(
                 "🎯 **Hangman startet!**\n"
                 "Sammle Teilnehmer und errate Drachenlord-Wörter!\n"
                 "Das Spiel wird in einem separaten Thread gespielt um Spam zu vermeiden."
             )
 
-            # Starte Hangman (die Funktion macht jetzt alle checks selbst)
-            await start_hangman(mock_ctx)
+            # Starte Hangman (checks wurden bereits oben gemacht)
+            await start_hangman(mock_ctx, skip_checks=True)
 
         except Exception as e:
             print(f"Fehler in hangman command: {e}")
